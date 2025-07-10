@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "enchantmaxxing",
 	"version": "${version}",
-	"name": "Enchantmaxxing",
+	"name": "Enchantify",
 	"description": "Mod that helps max out enchants on items.",
 	"authors": [
 		"Nosam08"
