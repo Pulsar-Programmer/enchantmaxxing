@@ -1,22 +1,27 @@
 package net.nosam08.enchantmaxxing.config;
 
 import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.annotation.*;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+import me.shedaniel.math.Color;
 
 @Config(name = "enchantify")
 public class EnchantifyConfig implements ConfigData {
-    public boolean toggleA = true;
-    public boolean toggleB = false;
+
+    @Comment("The color of enchantments that appear under the item.")
+    public Color hoverColor = Color.ofRGB(0xFF, 0xA5, 0x00);
     
-    @ConfigEntry.Gui.CollapsibleObject
-    InnerStuff stuff = new InnerStuff();
+    @Comment("Skips the `X` button press required to start maxing out an item.")
+    public boolean defaultX = true;
     
-    @ConfigEntry.Gui.Excluded
-    InnerStuff invisibleStuff = new InnerStuff();
+    // @ConfigEntry.Gui.CollapsibleObject
+    // InnerStuff stuff = new InnerStuff();
     
-    static class InnerStuff {
-        int a = 0;
-        int b = 1;
-    }
+    // @ConfigEntry.Gui.Excluded
+    // InnerStuff invisibleStuff = new InnerStuff();
+    
+    // static class InnerStuff {
+    //     int a = 0;
+    //     int b = 1;
+    // }
 }

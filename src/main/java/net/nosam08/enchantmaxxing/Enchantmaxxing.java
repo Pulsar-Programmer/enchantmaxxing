@@ -20,6 +20,6 @@ public class Enchantmaxxing implements ModInitializer {
 		AutoConfig.register(EnchantifyConfig.class, JanksonConfigSerializer::new);
         CONFIG = AutoConfig.getConfigHolder(EnchantifyConfig.class).getConfig();
 
-        System.out.println("Particles enabled: " + CONFIG.toggleA);
+        // System.out.println("Particles enabled: " + CONFIG.toggleA);
 	}
 }
