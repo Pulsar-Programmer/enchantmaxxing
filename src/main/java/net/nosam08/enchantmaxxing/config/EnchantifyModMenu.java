@@ -7,8 +7,11 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.math.Color;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+import net.nosam08.enchantmaxxing.Enchantmaxxing;
 
 public class EnchantifyModMenu implements ModMenuApi {
 
@@ -18,29 +21,28 @@ public class EnchantifyModMenu implements ModMenuApi {
     }
 
     private Screen config_screen(Screen parent){
-        return AutoConfig.getConfigScreen(EnchantifyConfig.class, parent).get();
-        // ConfigBuilder builder = ConfigBuilder.create()
-        //     .setParentScreen(parent)
-        //     .setTitle(Text.literal("FTT Configuration"));
+        ConfigBuilder builder = ConfigBuilder.create()
+            .setParentScreen(parent)
+            .setTitle(Text.translatable("title.enchantify.config"));
 
-        // ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-        // ConfigCategory general = builder.getOrCreateCategory(Text.literal("General"));
+        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+        ConfigCategory general = builder.getOrCreateCategory(Text.translatable("category.enchantify.general"));
 
         // general.addEntry(entryBuilder
-            
+        //     .startBooleanToggle(Text.translatable("option.enchantify.defaultX"), false)
         // )
 
-        // general.addEntry(entryBuilder
-        //     .startColorField(Text.literal("UI Accent Color"), MyMod.CONFIG.uiAccentColor)
-        //     .setDefaultValue(new Color(0, 255, 128))
-        //     .setSaveConsumer(newColor -> MyMod.CONFIG.uiAccentColor = newColor)
-        //     .build()
-        // );
+        general.addEntry(entryBuilder
+            .startColorField(Text.translatable("option.enchantify.hoverColor"), Enchantmaxxing.CONFIG.hoverColor)
+            .setDefaultValue(TextColor.fromRgb())
+            .setSaveConsumer(newColor -> Enchantmaxxing.CONFIG.hoverColor = newColor)
+            .build()
+        );
 
-        // builder.setSavingRunnable(() -> {
-        //     AutoConfig.getConfigHolder(MyModConfig.class).save();
-        // });
+        builder.setSavingRunnable(() -> {
+            AutoConfig.getConfigHolder(MyModConfig.class).save();
+        });
 
-        // return builder.build();
+        return builder.build();
     }
 }

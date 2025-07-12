@@ -14,14 +14,4 @@ public class EnchantifyConfig implements ConfigData {
     @Comment("Skips the `X` button press required to start maxing out an item.")
     public boolean defaultX = true;
     
-    // @ConfigEntry.Gui.CollapsibleObject
-    // InnerStuff stuff = new InnerStuff();
-    
-    // @ConfigEntry.Gui.Excluded
-    // InnerStuff invisibleStuff = new InnerStuff();
-    
-    // static class InnerStuff {
-    //     int a = 0;
-    //     int b = 1;
-    // }
 }
