@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "enchantify",
 	"version": "${version}",
-	"name": "Enchantify",
+	"name": "Final Tinted Touch",
 	"description": "Mod that helps max out enchants on items.",
 	"authors": [
 		"Nosam08"
@@ -23,6 +23,11 @@
 		],
 		"client": [
 			"net.nosam08.enchantmaxxing.EnchantmaxxingClient"
+		],
+
+
+		"modmenu": [
+			"net.nosam08.enchantmaxxing.config.EnchantifyModMenu"
 		]
 	},
 	"depends": {
