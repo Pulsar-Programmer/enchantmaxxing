@@ -30,7 +30,11 @@ public class EnchantifyModMenu implements ModMenuApi {
         return parent -> config_screen(parent);
     }
 
+    /** Builds and creates the configuration screen. */
     private static Screen config_screen(Screen parent){
+
+        final EnchantifyConfig def = new EnchantifyConfig();
+
         ConfigBuilder builder = ConfigBuilder.create()
             .setParentScreen(parent)
             .setTitle(Text.translatable("title.enchantify.config"));
@@ -40,7 +44,7 @@ public class EnchantifyModMenu implements ModMenuApi {
 
         general.addEntry(entryBuilder
             .startBooleanToggle(Text.translatable("option.enchantify.defaultX"), Enchantmaxxing.CONFIG.defaultX)
-            .setDefaultValue(true)
+            .setDefaultValue(def.defaultX)
             .setTooltip(Text.translatable("option.enchantify.defaultX.tooltip"))
             .setSaveConsumer(newBool -> Enchantmaxxing.CONFIG.defaultX = newBool)
             .build()
@@ -49,7 +53,7 @@ public class EnchantifyModMenu implements ModMenuApi {
         general.addEntry(entryBuilder
             .startColorField(Text.translatable("option.enchantify.hoverColor"), Enchantmaxxing.CONFIG.hoverColor)
             // .setAlphaMode(true)
-            .setDefaultValue(TextColor.fromRgb(0xFFA500))
+            .setDefaultValue(TextColor.fromRgb(def.hoverColor))
             .setTooltip(Text.translatable("option.enchantify.hoverColor.tooltip"))
             .setSaveConsumer(newColor -> Enchantmaxxing.CONFIG.hoverColor = newColor)
             .build()
