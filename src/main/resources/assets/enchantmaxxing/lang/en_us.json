@@ -4,5 +4,5 @@
     "option.enchantify.defaultX": "Max Out Items by Default",
     "option.enchantify.defaultX.tooltip": "Skips the `X` button press required to start maxing out an item.",
     "option.enchantify.hoverColor": "Enchantment Tooltip Hover Color",
-    "option.enchantify.hoverColor.tooltip": "The color of enchantments that appear under the item."
+    "option.enchantify.hoverColor.tooltip": "The color of needed enchantments that appear under the item."
 }
