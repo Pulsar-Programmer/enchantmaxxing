@@ -17,7 +17,8 @@ public class Enchantmaxxing implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		AutoConfig.register(EnchantifyConfig.class, JanksonConfigSerializer::new);
-        CONFIG = AutoConfig.getConfigHolder(EnchantifyConfig.class).getConfig();
+		// AutoConfig.register(EnchantifyConfig.class, JanksonConfigSerializer::new);
+		
+        // CONFIG = AutoConfig.getConfigHolder(EnchantifyConfig.class).getConfig();
 	}
 }

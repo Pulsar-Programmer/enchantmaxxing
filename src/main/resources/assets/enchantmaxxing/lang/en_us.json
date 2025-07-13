@@ -2,5 +2,7 @@
     "title.enchantify.config": "FTT Configuration",
     "category.enchantify.general": "General",
     "option.enchantify.defaultX": "Max Out Items by Default",
-    "option.enchantify.hoverColor": "Enchantment Tooltip Hover Color"
+    "option.enchantify.defaultX.tooltip": "Skips the `X` button press required to start maxing out an item.",
+    "option.enchantify.hoverColor": "Enchantment Tooltip Hover Color",
+    "option.enchantify.hoverColor.tooltip": "The color of enchantments that appear under the item."
 }
