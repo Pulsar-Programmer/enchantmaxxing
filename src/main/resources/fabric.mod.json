@@ -17,13 +17,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"main": [
-			"net.nosam08.enchantmaxxing.Enchantmaxxing"
-		],
-		"fabric-datagen": [
-			"net.nosam08.enchantmaxxing.EnchantmaxxingDataGenerator"
+			"net.nosam08.enchantmaxxing.Enchantify"
 		],
 		"client": [
-			"net.nosam08.enchantmaxxing.EnchantmaxxingClient"
+			"net.nosam08.enchantmaxxing.EnchantifyClient"
 		],
 
 

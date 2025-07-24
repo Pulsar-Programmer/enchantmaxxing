@@ -15,18 +15,18 @@ public class EnchantifyClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         
-        openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.enchantify.opengui", 
-            InputUtil.Type.KEYSYM, 
-            GLFW.GLFW_KEY_X, 
-            "category.enchantify"
-        ));
+        // openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        //     "key.enchantify.opengui", 
+        //     InputUtil.Type.KEYSYM, 
+        //     GLFW.GLFW_KEY_X, 
+        //     "category.enchantify"
+        // ));
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (openGuiKey.wasPressed()) {
-                client.setScreen(null); //not sure what to put here
-            }
-        });
+        // ClientTickEvents.END_CLIENT_TICK.register(client -> {
+        //     while (openGuiKey.wasPressed()) {
+        //         client.setScreen(null); //not sure what to put here
+        //     }
+        // });
         
     }
     
