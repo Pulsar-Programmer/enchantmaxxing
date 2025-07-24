@@ -12,7 +12,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
-import net.nosam08.enchantmaxxing.Enchantmaxxing;
+import net.nosam08.enchantmaxxing.Enchantify;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,24 +43,24 @@ public class EnchantifyModMenu implements ModMenuApi {
         ConfigCategory general = builder.getOrCreateCategory(Text.translatable("category.enchantify.general"));
 
         general.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.defaultX"), Enchantmaxxing.CONFIG.defaultX)
+            .startBooleanToggle(Text.translatable("option.enchantify.defaultX"), Enchantify.CONFIG.defaultX)
             .setDefaultValue(def.defaultX)
             .setTooltip(Text.translatable("option.enchantify.defaultX.tooltip"))
-            .setSaveConsumer(newBool -> Enchantmaxxing.CONFIG.defaultX = newBool)
+            .setSaveConsumer(newBool -> Enchantify.CONFIG.defaultX = newBool)
             .build()
         );
 
         general.addEntry(entryBuilder
-            .startColorField(Text.translatable("option.enchantify.hoverColor"), Enchantmaxxing.CONFIG.hoverColor)
+            .startColorField(Text.translatable("option.enchantify.hoverColor"), Enchantify.CONFIG.hoverColor)
             // .setAlphaMode(true)
             .setDefaultValue(TextColor.fromRgb(def.hoverColor))
             .setTooltip(Text.translatable("option.enchantify.hoverColor.tooltip"))
-            .setSaveConsumer(newColor -> Enchantmaxxing.CONFIG.hoverColor = newColor)
+            .setSaveConsumer(newColor -> Enchantify.CONFIG.hoverColor = newColor)
             .build()
         );
 
         builder.setSavingRunnable(() -> {
-            save(Enchantmaxxing.CONFIG);
+            save(Enchantify.CONFIG);
         });
 
         return builder.build();
