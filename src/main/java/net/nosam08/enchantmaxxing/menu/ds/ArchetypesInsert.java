@@ -3,14 +3,10 @@ package net.nosam08.enchantmaxxing.menu.ds;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 import net.minecraft.enchantment.Enchantment;
 
 public class ArchetypesInsert {
-    HashMap<Enchantment, ArrayList<Enchantment>> inner = new HashMap<>();
+    public HashMap<Enchantment, ArrayList<Enchantment>> inner = new HashMap<>();
 
     /** Inserts into the Archetype Portal. Only insert when A is compatible with B. */
     // private void lac_insert(Enchantment a, Enchantment b){
