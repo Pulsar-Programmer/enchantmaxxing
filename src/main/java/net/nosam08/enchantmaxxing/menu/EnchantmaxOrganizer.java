@@ -1,5 +1,7 @@
 package net.nosam08.enchantmaxxing.menu;
 
+import java.util.stream.Stream;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.registry.RegistryKeys;
@@ -16,14 +18,13 @@ public class EnchantmaxOrganizer {
             .getOrThrow(RegistryKeys.ENCHANTMENT);
     }
 
-    /** Builds the ArchetypesInsert */
-    public static ArchetypesInsert build_from_start(){
+    /** Builds the ArchetypesInsert from a stream. */
+    public static ArchetypesInsert build_from_start(Stream<Enchantment> all){
         var built = new ArchetypesInsert();
 
-        var all = all_enchantments();
-        for(var ench : all){
-            ench.exclusiveSet().forEach((x) -> built.oa_insert(ench, x.value()));
-        }
+        all.forEach(ench -> {
+            ench.exclusiveSet().forEach(x -> built.oa_insert(ench, x.value()));
+        });
 
         return built;
     }
