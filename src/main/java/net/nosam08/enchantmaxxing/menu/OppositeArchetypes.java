@@ -2,6 +2,9 @@ package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
 
+import com.google.common.base.Optional;
+
+import net.minecraft.enchantment.Enchantment;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
@@ -12,22 +15,56 @@ public class OppositeArchetypes {
     public static ArrayList<BucketGroup> opposite_archetypes(ArchetypesInsert insert){
         ArrayList<BucketGroup> built = new ArrayList<>();
 
-        for(var pair : insert.inner.entrySet()){
+        var stream = insert.inner.entrySet().stream();
+
+        var firstElement = stream.findFirst();
+        var first = firstElement.get();
+        if(firstElement.isEmpty()) return new ArrayList<>();
+        built.add(BucketGroup.from_insert(first.getKey(), first.getValue()));
+
+        stream.skip(1);
+
+        stream.forEach(pair -> {
             var pivot = pair.getKey();
             var rest = pair.getValue();
 
-            //TODO
-
-        }
+            merge(built, pivot, rest);
+        });
         
-
-
-
-        return null; //TODO
+        return built;
     }
 
-    //merge (puts it in the Vec<BucketGroup>)
-    //fuse (puts it in the BucketGroup if needed)
+    /** From the ArchetypesInsert, it adds the next element to the ArchetypesPool or Vec<BucketGroup>. */
+    private static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
+        built.stream().forEach(x -> {
+            if(x.generally_contains(pivot) || x.generally_contains_any(rest)) {
+                fuse(x, pivot, rest);
+                return;
+            }
+        });
+        built.add(BucketGroup.from_insert(pivot, rest));
+    }
+
+    // TODO inefficiency here - you have to refind the repivot
+    // maybe we can fix this by doing the check within the fuse already.
+
+    /** Places the, if newfound, Buckets in the BucketGroup. */
+    private static void fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
+        ///Refind repivot.
+        Optional<Integer> repivot_idx = Optional.absent();
+        if(!fuse.generally_contains(pivot)){
+            for(var i = 0; i < rest.size(); i++){
+                if(fuse.generally_contains(rest.get(i))){
+                    repivot_idx = Optional.of(i);
+                }
+            }
+            return; //just adding this fixes the inefficiency
+        }
+
+
+
+        //TODO
+    }
 
 
 
