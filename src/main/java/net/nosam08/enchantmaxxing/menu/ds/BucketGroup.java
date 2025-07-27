@@ -113,7 +113,14 @@ public class BucketGroup {
         }
     }
 
-    
-
-
+    /** Display implementation. */
+    public String display(){
+        var string = new StringBuilder();
+        for (Bucket bucket : inner) {
+            string.append(bucket.display());
+            string.append(" | ");
+        }
+        string.delete(string.length()-3, string.length());
+        return string.toString();
+    }
 }

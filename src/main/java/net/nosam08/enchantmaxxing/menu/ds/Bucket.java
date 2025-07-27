@@ -40,4 +40,15 @@ public class Bucket {
         }
         return true;
     }
+
+    /** Display implementation. */
+    public String display(){
+        var string = new StringBuilder();
+        for (Enchantment enchantment : inner) {
+            string.append(enchantment.toString());
+            string.append(", ");
+        }
+        string.delete(string.length()-2, string.length());
+        return string.toString();
+    }
 }
