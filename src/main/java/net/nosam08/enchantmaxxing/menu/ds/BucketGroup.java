@@ -42,13 +42,8 @@ public class BucketGroup {
         return false;
     }
 
-    /** Checks across all the buckets for each enchantment whether an item is contained. */
-    public boolean generally_contains_any(ArrayList<Enchantment> e){
-        for(var x: e){
-            if(generally_contains(x)){
-                return true;
-            }
-        }
-        return false;
+    /** Performs a minifuse. */
+    public void minifuse(Enchantment a, Enchantment b){
+        // TODO A LOT HERE
     }
 }

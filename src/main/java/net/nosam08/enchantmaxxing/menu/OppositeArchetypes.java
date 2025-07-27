@@ -37,20 +37,15 @@ public class OppositeArchetypes {
     /** From the ArchetypesInsert, it adds the next element to the ArchetypesPool or Vec<BucketGroup>. */
     private static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
         built.stream().forEach(x -> {
-            if(x.generally_contains(pivot) || x.generally_contains_any(rest)) {
-                fuse(x, pivot, rest);
-                return;
-            }
+            ///Fuse checks for fall-throughs.
+            fuse(x, pivot, rest);
         });
         built.add(BucketGroup.from_insert(pivot, rest));
     }
 
-    // TODO inefficiency here - you have to refind the repivot
-    // maybe we can fix this by doing the check within the fuse already.
-
     /** Places the, if newfound, Buckets in the BucketGroup. */
     private static void fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
-        ///Refind repivot.
+        ///Find repivot.
         Optional<Integer> repivot_idx = Optional.absent();
         if(!fuse.generally_contains(pivot)){
             for(var i = 0; i < rest.size(); i++){
@@ -58,13 +53,30 @@ public class OppositeArchetypes {
                     repivot_idx = Optional.of(i);
                 }
             }
-            return; //just adding this fixes the inefficiency
+            return;
         }
 
+        // var to_scan = new ArrayList<Enchantment>();
+        //to_scan always is rest since we are using remove
 
+        ///Perform the repivot minifuse if needed.
+        if(repivot_idx.isPresent()){
+            var idx = repivot_idx.get();
 
-        //TODO
+            ///Repivot minifuse.
+            fuse.minifuse(rest.get(idx), pivot);
+
+            rest.remove(idx.intValue());
+        }
+
+        //var to_scan = next
+        for (Enchantment enchantment : rest) {
+            ///Report the minifuse.
+            fuse.minifuse(pivot, enchantment);
+        }
     }
+
+    
 
 
 
