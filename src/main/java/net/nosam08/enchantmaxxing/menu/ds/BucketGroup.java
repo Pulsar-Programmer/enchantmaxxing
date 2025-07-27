@@ -66,7 +66,8 @@ public class BucketGroup {
             }
         }
         
-        for (Bucket bucket : archetypes) {
+        for (var i = 0; i < archetypes.size(); i++) {
+            Bucket bucket = archetypes.get(i);
             ///Substitution and the Drive Mechanic are technically the same, but they happen in different circumstances.
             
             ///Just like OA, you do not want to do substitution or LA (like-archetypes) for risk of contaminating the already-considered, delicate pool.
@@ -85,14 +86,34 @@ public class BucketGroup {
                 ///DRIVE MECHANIC
                 var clone = bucket.clone();
                 clone.replace(a, b);
-                inner.add(clone);
+                archetypes.add(clone);
             }
         }
 
-        
-        
-        //TODO do not forget to check for subsets (subset buckets to the left and right or just any generally new ones or OA)
+        ///For subsets, you only need to check the new archetypes against the opposite archetypes.
+        ///This is due to the structure of the way they are created - opposite archetypes won't be self-contained since they were already validated and just may have an attached secondary. The same goes mostly for the like archetypes.
+        check_elim_subsets(opposite_archetypes, archetypes);
     }
+
+    /** Checks the subsets and eliminates them from the two lists. */
+    public static void check_elim_subsets(ArrayList<Bucket> first, ArrayList<Bucket> second){
+        for(var i = 0; i < first.size(); i++){
+            var elem_i = first.get(i);
+            for(var j = 0; j < second.size(); j++){
+                var elem_j = second.get(j);
+                if(elem_i.is_superset_of(elem_j)){
+                    second.remove(j);
+                    j--;
+                }
+                if(elem_j.is_superset_of(elem_i)){
+                    first.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    
 
 
 }

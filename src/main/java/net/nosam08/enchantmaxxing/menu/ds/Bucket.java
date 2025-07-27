@@ -30,4 +30,14 @@ public class Bucket {
         inner.remove(a);
         inner.add(b);
     }
+
+    /** Checks if the bucket is a subset of this bucket. */
+    public boolean is_superset_of(Bucket subset){
+        for (var a : subset.inner) {
+            if(!inner.contains(a)){
+                return false;
+            }
+        }
+        return true;
+    }
 }
