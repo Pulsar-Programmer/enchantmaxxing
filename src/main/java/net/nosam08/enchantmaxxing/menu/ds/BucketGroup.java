@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.enchantment.Enchantment;
 
 public class BucketGroup {
-    ArrayList<Bucket> inner;
+    public ArrayList<Bucket> inner;
 
     public BucketGroup(){
         inner = new ArrayList<>();
