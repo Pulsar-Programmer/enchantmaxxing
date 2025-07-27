@@ -35,7 +35,7 @@ public class OppositeArchetypes {
     }
 
     /** From the ArchetypesInsert, it adds the next element to the ArchetypesPool or Vec<BucketGroup>. */
-    private static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
+    public static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
         built.stream().forEach(x -> {
             ///Fuse checks for fall-throughs.
             fuse(x, pivot, rest);
@@ -44,7 +44,7 @@ public class OppositeArchetypes {
     }
 
     /** Places the, if newfound, Buckets in the BucketGroup. */
-    private static void fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
+    public static void fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
         ///Find repivot.
         Optional<Integer> repivot_idx = Optional.absent();
         if(!fuse.generally_contains(pivot)){
