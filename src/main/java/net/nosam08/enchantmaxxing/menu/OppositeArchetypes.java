@@ -56,9 +56,6 @@ public class OppositeArchetypes {
             return;
         }
 
-        // var to_scan = new ArrayList<Enchantment>();
-        //to_scan always is rest since we are using remove
-
         ///Perform the repivot minifuse if needed.
         if(repivot_idx.isPresent()){
             var idx = repivot_idx.get();
@@ -69,7 +66,6 @@ public class OppositeArchetypes {
             rest.remove(idx.intValue());
         }
 
-        //var to_scan = next
         for (Enchantment enchantment : rest) {
             ///Report the minifuse.
             fuse.minifuse(pivot, enchantment);

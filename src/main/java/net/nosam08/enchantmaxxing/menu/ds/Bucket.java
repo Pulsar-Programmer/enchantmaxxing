@@ -17,4 +17,17 @@ public class Bucket {
         this();
         inner.addAll(inner);
     }
+    
+    /** Clones the bucket. */
+    public Bucket clone(){
+        var cloned = new Bucket();
+        cloned.inner.addAll(inner);
+        return cloned;
+    }
+
+    /** Replaces the element in the Bucket with a different one. */
+    public void replace(Enchantment a, Enchantment b){
+        inner.remove(a);
+        inner.add(b);
+    }
 }
