@@ -38,22 +38,28 @@ public class OppositeArchetypes {
     public static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
         built.stream().forEach(x -> {
             ///Fuse checks for fall-throughs.
-            fuse(x, pivot, rest);
+            if(fuse(x, pivot, rest)){
+                return;
+            };
         });
+        ///If we could not ever fuse, register independently.
         built.add(BucketGroup.from_insert(pivot, rest));
     }
 
     /** Places the, if newfound, Buckets in the BucketGroup. */
-    public static void fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
+    public static boolean fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
         ///Find repivot.
         Optional<Integer> repivot_idx = Optional.absent();
         if(!fuse.generally_contains(pivot)){
             for(var i = 0; i < rest.size(); i++){
                 if(fuse.generally_contains(rest.get(i))){
                     repivot_idx = Optional.of(i);
+                    break;
                 }
             }
-            return;
+            if(!repivot_idx.isPresent()){
+                return false;
+            }
         }
 
         ///Perform the repivot minifuse if needed.
@@ -70,6 +76,8 @@ public class OppositeArchetypes {
             ///Report the minifuse.
             fuse.minifuse(pivot, enchantment);
         }
+
+        return true;
     }
 
     

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.text.Text;
+import net.nosam08.enchantmaxxing.menu.OppositeArchetypes;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 
@@ -14,59 +15,86 @@ public class Tests {
     public static void testing(){
         Enchantify.LOGGER.info("Starting Tests...");
         // test_subsets();
-        test_minifuse();
+        // test_minifuse();
+        // test_fuse();
+        test_merge();
     }
 
-    public static Enchantment test_enchantment(String name){
+    public static Enchantment enchantment(String name){
         return new Enchantment(Text.of(name), null, null, null);
     }
 
-    public static Bucket test_bucket(String contents){
+    public static Bucket bucket(String contents){
         var a = new Bucket();
-        contents.chars().forEach(c -> a.inner.add(test_enchantment(Character.toString(c))));
+        contents.chars().forEach(c -> a.inner.add(enchantment(Character.toString(c))));
         return a;
     }
 
-    //TODO error with this
-    public static BucketGroup test_bucketgroup(String contents){
+    public static BucketGroup bucketgroup(String contents){
         var a = new BucketGroup();
         var str = new StringBuilder();
         contents.chars().forEach(c -> {
             if(c == '|'){
-                a.inner.add(test_bucket(str.toString()));
-                Enchantify.LOGGER.info(str.toString());
+                a.inner.add(bucket(str.toString()));
                 str.delete(0, str.length());
             } else{
                 str.append(Character.toString(c));
             }
         });
-        a.inner.add(test_bucket(str.toString()));
+        a.inner.add(bucket(str.toString()));
         return a;
     }
 
     public static void test_merge(){
-        //TODO
+        var bucket_groups = new ArrayList<BucketGroup>(Arrays.asList(bucketgroup("A|BCD|G")));
+
+        var pivot = enchantment("F");
+        var rest = Arrays.asList(enchantment("G"), enchantment("B"));
+        
+        var p2 = enchantment("Z");
+
+        var p3 = enchantment("X");
+        var r3 = Arrays.asList(enchantment("Y"));
+
+        OppositeArchetypes.merge(bucket_groups, pivot, new ArrayList<>(rest));
+        Enchantify.LOGGER.info(Arrays.deepToString(bucket_groups.toArray()));
+
+        OppositeArchetypes.merge(bucket_groups, p2, new ArrayList<>());
+        Enchantify.LOGGER.info(bucket_groups.toString());
+
+        OppositeArchetypes.merge(bucket_groups, p3, new ArrayList<>(r3));
+        Enchantify.LOGGER.info(bucket_groups.toString());
     }
 
     public static void test_fuse(){
-        //TODO
+        var bucket_group = bucketgroup("A|BCD|G");
+        var pivot = enchantment("F");
+        var rest = Arrays.asList(enchantment("G"), enchantment("B"));
+
+        var p3 = enchantment("X");
+        var r3 = Arrays.asList(enchantment("Y"));
+
+        OppositeArchetypes.fuse(bucket_group, pivot, new ArrayList<>(rest));
+        Enchantify.LOGGER.info(bucket_group.display());
+
+        OppositeArchetypes.fuse(bucket_group, p3, new ArrayList<>(r3));
+        Enchantify.LOGGER.info(bucket_group.display());
     }
 
     public static void test_minifuse(){
-        var bucket_group = test_bucketgroup("A|BC");
+        var bucket_group = bucketgroup("A|BC");
         Enchantify.LOGGER.info(bucket_group.display());
         Enchantify.LOGGER.info("1");
 
-        bucket_group.minifuse(test_enchantment("B"), test_enchantment("A"));
+        bucket_group.minifuse(enchantment("B"), enchantment("A"));
         Enchantify.LOGGER.info(bucket_group.display());
         Enchantify.LOGGER.info("2");
 
-        bucket_group.minifuse(test_enchantment("B"), test_enchantment("D"));
+        bucket_group.minifuse(enchantment("B"), enchantment("D"));
         Enchantify.LOGGER.info(bucket_group.display());
         Enchantify.LOGGER.info("3");
 
-        //stuck in infinite loop
-        bucket_group.minifuse(test_enchantment("B"), test_enchantment("C"));
+        bucket_group.minifuse(enchantment("B"), enchantment("C"));
         Enchantify.LOGGER.info(bucket_group.display());
         Enchantify.LOGGER.info("4");
     }
@@ -74,8 +102,8 @@ public class Tests {
 
 
     public static void test_subsets(){
-        var list_a = new ArrayList<>(Arrays.asList(test_bucket("ABC"), test_bucket("BC"), test_bucket("GH")));
-        var list_b = new ArrayList<>(Arrays.asList(test_bucket("AB"), test_bucket("BCDGH"), test_bucket("EF")));
+        var list_a = new ArrayList<>(Arrays.asList(bucket("ABC"), bucket("BC"), bucket("GH")));
+        var list_b = new ArrayList<>(Arrays.asList(bucket("AB"), bucket("BCDGH"), bucket("EF")));
         // an edge case where ABC A / AB AB .. is not possible because A is subset of ABC (subset of subset is subset)
 
         BucketGroup.check_elim_subsets(list_a, list_b);

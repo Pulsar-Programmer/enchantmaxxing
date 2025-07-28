@@ -58,7 +58,6 @@ public class BucketGroup {
         }
         
         var contains_secondary = generally_contains(b);
-        Enchantify.LOGGER.info("I1");
         ///Do not do OA if B is present across the buckets. If it is present, it means it has already been roped in and considered. You only OA if it is a new secondary.
         if(!contains_secondary){
             ///OPPOSITE ARCHETYPES
@@ -80,7 +79,6 @@ public class BucketGroup {
                 var clone = bucket.clone();
                 clone.replace(a, b);
                 new_archetypes.add(clone);
-                Enchantify.LOGGER.info("I2.1");
             }
             
             ///Drive always happens if the secondary is in the same bucket as the primary.
@@ -91,16 +89,13 @@ public class BucketGroup {
                 var clone = bucket.clone();
                 clone.replace(a, b);
                 new_archetypes.add(clone);
-                Enchantify.LOGGER.info("I2.2");
             }
-            Enchantify.LOGGER.info("I2");
         }
 
         ///For subsets, you only need to check the new archetypes against the opposite archetypes.
         ///This is due to the structure of the way they are created - opposite archetypes won't be self-contained since they were already validated and just may have an attached secondary. The same goes mostly for the like archetypes.
         ///In order to sustain less checks, it is better for new_archetypes to be first due to the order of the double for loop.
         check_elim_subsets(new_archetypes, opposite_archetypes);
-        // Enchantify.LOGGER.info("I3");
 
         inner.addAll(new_archetypes);
     }
@@ -114,6 +109,7 @@ public class BucketGroup {
                 if(elem_j.is_superset_of(elem_i)){
                     first.remove(i);
                     i--;
+                    break;
                 }
                 if(elem_i.is_superset_of(elem_j)){
                     second.remove(j);
