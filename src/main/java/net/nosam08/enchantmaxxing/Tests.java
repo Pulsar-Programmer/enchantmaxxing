@@ -12,6 +12,7 @@ import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 public class Tests {
 
     public static void testing(){
+        Enchantify.LOGGER.info("Starting Tests...");
         // test_subsets();
         test_minifuse();
     }
@@ -33,11 +34,13 @@ public class Tests {
         contents.chars().forEach(c -> {
             if(c == '|'){
                 a.inner.add(test_bucket(str.toString()));
+                Enchantify.LOGGER.info(str.toString());
                 str.delete(0, str.length());
             } else{
-                str.append(c);
+                str.append(Character.toString(c));
             }
         });
+        a.inner.add(test_bucket(str.toString()));
         return a;
     }
 
@@ -52,15 +55,20 @@ public class Tests {
     public static void test_minifuse(){
         var bucket_group = test_bucketgroup("A|BC");
         Enchantify.LOGGER.info(bucket_group.display());
+        Enchantify.LOGGER.info("1");
 
         bucket_group.minifuse(test_enchantment("B"), test_enchantment("A"));
         Enchantify.LOGGER.info(bucket_group.display());
+        Enchantify.LOGGER.info("2");
 
         bucket_group.minifuse(test_enchantment("B"), test_enchantment("D"));
         Enchantify.LOGGER.info(bucket_group.display());
+        Enchantify.LOGGER.info("3");
 
+        //stuck in infinite loop
         bucket_group.minifuse(test_enchantment("B"), test_enchantment("C"));
         Enchantify.LOGGER.info(bucket_group.display());
+        Enchantify.LOGGER.info("4");
     }
 
 

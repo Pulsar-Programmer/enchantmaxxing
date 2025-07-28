@@ -3,6 +3,7 @@ package net.nosam08.enchantmaxxing.menu.ds;
 import java.util.ArrayList;
 
 import net.minecraft.enchantment.Enchantment;
+import net.nosam08.enchantmaxxing.Enchantify;
 
 public class BucketGroup {
     public ArrayList<Bucket> inner;
@@ -55,9 +56,9 @@ public class BucketGroup {
                 opposite_archetypes.add(bucket);
             }
         }
-
+        
         var contains_secondary = generally_contains(b);
-
+        Enchantify.LOGGER.info("I1");
         ///Do not do OA if B is present across the buckets. If it is present, it means it has already been roped in and considered. You only OA if it is a new secondary.
         if(!contains_secondary){
             ///OPPOSITE ARCHETYPES
@@ -66,8 +67,10 @@ public class BucketGroup {
             }
         }
         
-        for (var i = 0; i < archetypes.size(); i++) {
-            Bucket bucket = archetypes.get(i);
+        ///We create a new list of like archetypes to house the newly created elements, later adding them to the Group.
+        ArrayList<Bucket> new_archetypes = new ArrayList<>();
+
+        for (Bucket bucket : archetypes) {
             ///Substitution and the Drive Mechanic are technically the same, but they happen in different circumstances.
             
             ///Just like OA, you do not want to do substitution or LA (like-archetypes) for risk of contaminating the already-considered, delicate pool.
@@ -76,7 +79,8 @@ public class BucketGroup {
                 ///SUBSTITUTION
                 var clone = bucket.clone();
                 clone.replace(a, b);
-                inner.add(clone);
+                new_archetypes.add(clone);
+                Enchantify.LOGGER.info("I2.1");
             }
             
             ///Drive always happens if the secondary is in the same bucket as the primary.
@@ -86,13 +90,19 @@ public class BucketGroup {
                 ///DRIVE MECHANIC
                 var clone = bucket.clone();
                 clone.replace(a, b);
-                archetypes.add(clone);
+                new_archetypes.add(clone);
+                Enchantify.LOGGER.info("I2.2");
             }
+            Enchantify.LOGGER.info("I2");
         }
 
         ///For subsets, you only need to check the new archetypes against the opposite archetypes.
         ///This is due to the structure of the way they are created - opposite archetypes won't be self-contained since they were already validated and just may have an attached secondary. The same goes mostly for the like archetypes.
-        check_elim_subsets(opposite_archetypes, archetypes);
+        ///In order to sustain less checks, it is better for new_archetypes to be first due to the order of the double for loop.
+        check_elim_subsets(new_archetypes, opposite_archetypes);
+        // Enchantify.LOGGER.info("I3");
+
+        inner.addAll(new_archetypes);
     }
 
     /** Checks the subsets and eliminates them from the two lists. */
@@ -101,13 +111,13 @@ public class BucketGroup {
             var elem_i = first.get(i);
             for(var j = 0; j < second.size(); j++){
                 var elem_j = second.get(j);
-                if(elem_i.is_superset_of(elem_j)){
-                    second.remove(j);
-                    j--;
-                }
                 if(elem_j.is_superset_of(elem_i)){
                     first.remove(i);
                     i--;
+                }
+                if(elem_i.is_superset_of(elem_j)){
+                    second.remove(j);
+                    j--;
                 }
             }
         }
