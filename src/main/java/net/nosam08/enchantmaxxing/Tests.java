@@ -3,7 +3,6 @@ package net.nosam08.enchantmaxxing;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.text.Text;
 import net.nosam08.enchantmaxxing.menu.OppositeArchetypes;
@@ -13,11 +12,11 @@ import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 public class Tests {
 
     public static void testing(){
-        Enchantify.LOGGER.info("Starting Tests...");
+        // Enchantify.LOGGER.info("Starting Tests...");
         // test_subsets();
         // test_minifuse();
         // test_fuse();
-        test_merge();
+        // test_merge();
     }
 
     public static Enchantment enchantment(String name){
@@ -57,13 +56,13 @@ public class Tests {
         var r3 = Arrays.asList(enchantment("Y"));
 
         OppositeArchetypes.merge(bucket_groups, pivot, new ArrayList<>(rest));
-        Enchantify.LOGGER.info(Arrays.deepToString(bucket_groups.toArray()));
+        Enchantify.LOGGER.info(bucket_groups.get(0).display());
 
         OppositeArchetypes.merge(bucket_groups, p2, new ArrayList<>());
-        Enchantify.LOGGER.info(bucket_groups.toString());
+        Enchantify.LOGGER.info(bucket_groups.get(1).display());
 
         OppositeArchetypes.merge(bucket_groups, p3, new ArrayList<>(r3));
-        Enchantify.LOGGER.info(bucket_groups.toString());
+        Enchantify.LOGGER.info(bucket_groups.get(2).display());
     }
 
     public static void test_fuse(){

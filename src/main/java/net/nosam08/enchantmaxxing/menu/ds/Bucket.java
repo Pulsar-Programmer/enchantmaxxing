@@ -13,9 +13,9 @@ public class Bucket {
         //TODO maybe add some kind of Sorting Preservation after adding an element?
     }
 
-    public Bucket(ArrayList<Enchantment> inner){
+    public Bucket(ArrayList<Enchantment> add){
         this();
-        inner.addAll(inner);
+        inner.addAll(add);
     }
     
     /** Clones the bucket. */
@@ -48,7 +48,9 @@ public class Bucket {
             string.append(enchantment.toString());
             string.append(", ");
         }
-        string.delete(string.length()-2, string.length());
+        if(!string.isEmpty()){
+            string.delete(string.length()-2, string.length());
+        }
         return string.toString();
     }
 }

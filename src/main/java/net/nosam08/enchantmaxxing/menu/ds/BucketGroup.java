@@ -3,7 +3,6 @@ package net.nosam08.enchantmaxxing.menu.ds;
 import java.util.ArrayList;
 
 import net.minecraft.enchantment.Enchantment;
-import net.nosam08.enchantmaxxing.Enchantify;
 
 public class BucketGroup {
     public ArrayList<Bucket> inner;
@@ -26,7 +25,9 @@ public class BucketGroup {
 
         var result = new ArrayList<Bucket>();
         result.add(bucket1);
-        result.add(bucket2);
+        if(!rest.isEmpty()){
+            result.add(bucket2);
+        }
         
 
         return new BucketGroup(result);
@@ -126,7 +127,9 @@ public class BucketGroup {
             string.append(bucket.display());
             string.append(" | ");
         }
-        string.delete(string.length()-3, string.length());
+        if(!string.isEmpty()){
+            string.delete(string.length()-3, string.length());
+        }
         return string.toString();
     }
 }
