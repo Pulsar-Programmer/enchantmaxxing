@@ -10,7 +10,6 @@ public class Bucket {
 
     public Bucket(){
         inner = new HashSet<>();
-        //TODO maybe add some kind of Sorting Preservation after adding an element?
     }
 
     public Bucket(ArrayList<Enchantment> add){
@@ -50,6 +49,18 @@ public class Bucket {
         }
         if(!string.isEmpty()){
             string.delete(string.length()-2, string.length());
+        }
+        return string.toString();
+    }
+
+    /** Creates a Name for the Bucket with easier sorting. */
+    public String name(){
+        ///A typed order preservation is not required since the HashSet itself IS that sorting preservation, albeit in an unclear way.
+        var string = new StringBuilder();
+        for (Enchantment enchantment : inner) {
+            ///I would do ID here, but that would require the exact registry smart pointer, so I'm not doing that here.
+            string.append(enchantment.toString());
+            string.append(";");
         }
         return string.toString();
     }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.common.base.Optional;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
@@ -87,7 +88,28 @@ public class OppositeArchetypes {
 
     /** Uses the afterfuse mechanic to simplify/complexify the construction of the Menu. */
     public static MenuInstructions afterfuse(ArrayList<BucketGroup> instructions){
-        return null; //TODO
+        MenuInstructions built = new MenuInstructions();
+        for (BucketGroup bucketGroup : instructions) {
+            var len = bucketGroup.inner.size();
+
+            ArrayList<ArrayList<Pair<Enchantment, Integer>>> row = new ArrayList<>();
+            
+            ArrayList<Integer> indices = MenuInstructions.n_zeroes(len); //do we need this?
+
+            //while there still exist items in the flowing stacks (or like some sort of CMP Pool of Optionals)
+            //then increment the lowest one until the compare pool has a match between some of the options (only allowed lowest options)
+            //TODO
+
+            //maybe optionals > stacks so we can get the exact info and reload into the instructions after each while
+            
+
+        }
+
+
+
+
+
+        return built; //TODO
     }
 
 }
