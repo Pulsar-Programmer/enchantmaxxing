@@ -119,7 +119,7 @@ public class Tests {
 
         MenuInstructions menu_instructions = OppositeArchetypes.afterfuse(bucket_groups);
         Enchantify.LOGGER.info(menu_instructions.sample_display());
-
+        
     }
 
 }

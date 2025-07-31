@@ -13,13 +13,6 @@ public class MenuInstructions {
         rows = new ArrayList<>();
     }
 
-    /** Creates {@code n} zeroes as requested. */
-    public static ArrayList<Integer> n_zeroes(int n){
-        var build = new ArrayList<Integer>();
-        for(var _i = 0; _i < n; _i++) build.add(0);
-        return build;
-    }
-
     /** Yields a sample display of the instructions. */
     public String sample_display(){
         var string = new StringBuilder();
@@ -32,9 +25,9 @@ public class MenuInstructions {
                     string.append(pair.getRight());
                     string.append(" ");
                 }
-                string.append("\n***");
+                string.append("\n***\n");
             }
-            string.append("\n-----------------");
+            string.append("\n-----------------\n");
         }
         
         return string.toString();

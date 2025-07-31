@@ -99,8 +99,8 @@ public class OppositeArchetypes {
             
             var len = mutated_bucketgroup.size();
             
-            ArrayList<Integer> indices = MenuInstructions.n_zeroes(len);
-            ArrayList<ArrayList<Pair<Enchantment, Integer>>> row = new ArrayList<>();
+            ArrayList<Integer> indices = ensure_length(len, 0);
+            ArrayList<ArrayList<Pair<Enchantment, Integer>>> row = ensure_length_new(len);
             
 
 
@@ -123,6 +123,7 @@ public class OppositeArchetypes {
                 ///Reload the pool.
                 cmp_pool.load(indices, mutated_bucketgroup);
             }
+            built.rows.add(row);
         }
 
         return built;
@@ -143,30 +144,37 @@ public class OppositeArchetypes {
         for(Integer idx : smallest){
 
             ///A fuse has undergone!
-            var fuse_is_ready = 
-                prev.isPresent() 
-                && prev.get() == idx - 1;
+            var break_present = !prev.isPresent() || prev.get() != idx - 1;
 
-            if(!fuse_is_ready){
+            if(break_present){
                 ///Successfully push the letter.
-                if(prev.isPresent()){
+                if(!prev.isPresent()){
+                    ///We push the formation to the proper entry.
                     var pair = new Pair<Enchantment,Integer>(letter, idx - (original_idx.isPresent() ? original_idx.get() : idx - 1));
-                    try {
-                        ///We push the formation to the proper entry.
-                        registry.get(original_idx.get()).add(pair);
-                    } catch (Exception _e) {
-                        ///If this failed, we instead create one up to this idx default.
-                        var list = new ArrayList<Pair<Enchantment, Integer>>();
-                        list.add(pair);
-                        registry.add(original_idx.get(), list);
-                    }
+                    registry.get(original_idx.isPresent() ? original_idx.get() : idx).add(pair);
                 }
+
                 ///Update the original idx and prev.
                 original_idx = Optional.of(idx);
             }
             ///Update the previous element.
             prev = Optional.of(idx);
         }
+    }
+
+
+    /** Creates n of a default item. */
+    public static <T> ArrayList<T> ensure_length(int len, T def){
+        var build = new ArrayList<T>();
+        for(var _i = 0; _i < len; _i++) build.add(def);
+        return build;
+    }
+
+    /** Creates n of a default item, cloned. */
+    public static <T> ArrayList<ArrayList<T>> ensure_length_new(int len){
+        var build = new ArrayList<ArrayList<T>>();
+        for(var _i = 0; _i < len; _i++) build.add(new ArrayList<T>());
+        return build;
     }
 
     
