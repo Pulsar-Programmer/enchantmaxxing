@@ -15,8 +15,18 @@ public class ComparePool {
         cmp_pool = new ArrayList<>();
     }
 
+    /** Determines whether there are non-optional entries in the set. */
+    public boolean is_empty(){
+
+        for (var elem : cmp_pool) {
+            if(elem.isPresent()) return false;
+        }
+
+        return true;
+    }
+
     /** Restocks the ComparePool with elements from the modified BucketGroup and a set of indices. */
-    public void restock(ArrayList<Integer> indices, ArrayList<ArrayList<Enchantment>> bucketg){
+    public void load(ArrayList<Integer> indices, ArrayList<ArrayList<Enchantment>> bucketg){
         //god JAVA you are killing me - why can't you just be more like Rust and have type aliases?
         cmp_pool = new ArrayList<>();
         for(var i = 0; i < bucketg.size(); i++){

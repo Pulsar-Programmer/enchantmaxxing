@@ -3,11 +3,14 @@ package net.nosam08.enchantmaxxing.menu;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import net.minecraft.block.FurnaceBlock;
+import net.minecraft.block.entity.FurnaceBlockEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.menu.ds.ComparePool;
 
 public class OppositeArchetypes {
     
@@ -89,28 +92,53 @@ public class OppositeArchetypes {
     public static MenuInstructions afterfuse(ArrayList<BucketGroup> instructions){
         MenuInstructions built = new MenuInstructions();
         for (BucketGroup bucketGroup : instructions) {
-            var len = bucketGroup.inner.size();
-
             var mutated_bucketgroup = bucketGroup.to_vec();
-
+            
+            var len = mutated_bucketgroup.size();
+            
+            ArrayList<Integer> indices = MenuInstructions.n_zeroes(len);
             ArrayList<ArrayList<Pair<Enchantment, Integer>>> row = new ArrayList<>();
             
-            ArrayList<Integer> indices = MenuInstructions.n_zeroes(len); //do we need this?
 
-            //while there still exist items in the flowing stacks (or like some sort of CMP Pool of Optionals)
-            //then increment the lowest one until the compare pool has a match between some of the options (only allowed lowest options)
-            //TODO
 
-            //maybe optionals > stacks so we can get the exact info and reload into the instructions after each while
+
             
+            var cmp_pool = new ComparePool();
+            cmp_pool.load(indices, mutated_bucketgroup);
 
+            while(!cmp_pool.is_empty()){
+                var lowest = cmp_pool.get_smallest();
+                var bucket_idx = lowest.get(0);
+                Enchantment letter = mutated_bucketgroup.get(bucket_idx).get(indices.get(bucket_idx));
+                for (Integer index : lowest) {
+                    ///Increment the lowest indices. (Move past the smaller items and onto the next.)
+                    indices.set(index, indices.get(index) + 1);
+                }
+                ///Register the items that we've moved past (if multiple, we fuse them.)
+                afterfuse_register(lowest, letter, row);
+                
+                ///Reload the pool.
+                cmp_pool.load(indices, mutated_bucketgroup);
+            }
         }
 
-
-
-
-
-        return built; //TODO
+        return built;
     }
+
+
+
+    /** Register the items that we've moved past (if multiple, we fuse them.) */
+    public static void afterfuse_register(
+        ArrayList<Integer> smallest, 
+        Enchantment letter, 
+        ArrayList<ArrayList<Pair<Enchantment, Integer>>> registry
+    ){
+        //..
+        //TODO
+
+
+    }
+
+    
 
 }

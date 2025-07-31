@@ -7,6 +7,7 @@ import net.minecraft.util.Pair;
 
 public class MenuInstructions {
     public ArrayList<ArrayList<ArrayList<Pair<Enchantment, Integer>>>> rows;
+    //im going horizontal
 
     public MenuInstructions() {
         rows = new ArrayList<>();
