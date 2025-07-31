@@ -138,27 +138,25 @@ public class OppositeArchetypes {
         ArrayList<ArrayList<Pair<Enchantment, Integer>>> registry
     ){
 
-        Optional<Integer> prev = Optional.empty();
         Optional<Integer> original_idx = Optional.empty();
+        int chain = 0;
 
         for(Integer idx : smallest){
-
-            ///A fuse has undergone!
-            var break_present = !prev.isPresent() || prev.get() != idx - 1;
-
-            if(break_present){
-                ///Successfully push the letter.
-                if(!prev.isPresent()){
-                    ///We push the formation to the proper entry.
-                    var pair = new Pair<Enchantment,Integer>(letter, idx - (original_idx.isPresent() ? original_idx.get() : idx - 1));
-                    registry.get(original_idx.isPresent() ? original_idx.get() : idx).add(pair);
-                }
-
-                ///Update the original idx and prev.
+            if(chain == 0){
                 original_idx = Optional.of(idx);
             }
-            ///Update the previous element.
-            prev = Optional.of(idx);
+
+            ///If the distance equals the chain, you are good to go.
+            if(idx - original_idx.get() == chain){
+                ///Then all is good and we can go to the next.
+                chain++;
+            } else{
+                ///We push the formation to the proper entry.
+                var pair = new Pair<Enchantment,Integer>(letter, chain);
+                registry.get(original_idx.get()).add(pair);
+                ///Reset the chain.
+                chain = 0;
+            }
         }
     }
 
