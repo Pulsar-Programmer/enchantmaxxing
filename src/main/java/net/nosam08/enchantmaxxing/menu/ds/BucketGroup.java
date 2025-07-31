@@ -132,4 +132,9 @@ public class BucketGroup {
         }
         return string.toString();
     }
+
+    public ArrayList<ArrayList<Enchantment>> to_vec(){
+        //TODO
+        return null;
+    }
 }

@@ -1,8 +1,7 @@
 package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
-
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Pair;
@@ -46,7 +45,7 @@ public class OppositeArchetypes {
     /** Places the, if newfound, Buckets in the BucketGroup. */
     public static boolean fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
         ///Find repivot.
-        Optional<Integer> repivot_idx = Optional.absent();
+        Optional<Integer> repivot_idx = Optional.empty();
         if(!fuse.generally_contains(pivot)){
             for(var i = 0; i < rest.size(); i++){
                 if(fuse.generally_contains(rest.get(i))){
@@ -91,6 +90,8 @@ public class OppositeArchetypes {
         MenuInstructions built = new MenuInstructions();
         for (BucketGroup bucketGroup : instructions) {
             var len = bucketGroup.inner.size();
+
+            var mutated_bucketgroup = bucketGroup.to_vec();
 
             ArrayList<ArrayList<Pair<Enchantment, Integer>>> row = new ArrayList<>();
             
