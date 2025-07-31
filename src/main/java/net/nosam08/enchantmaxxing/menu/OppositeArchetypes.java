@@ -83,7 +83,10 @@ public class OppositeArchetypes {
 
 
 
-
+    /** Builds the MenuInstructions directly from the original instructions without performing the algorithm. */
+    public static MenuInstructions direct(ArrayList<BucketGroup> instructions){
+        return null; //TODO
+    }
 
 
 
@@ -102,7 +105,7 @@ public class OppositeArchetypes {
 
 
 
-            
+
             var cmp_pool = new ComparePool();
             cmp_pool.load(indices, mutated_bucketgroup);
 
@@ -133,10 +136,37 @@ public class OppositeArchetypes {
         Enchantment letter, 
         ArrayList<ArrayList<Pair<Enchantment, Integer>>> registry
     ){
-        //..
-        //TODO
 
+        Optional<Integer> prev = Optional.empty();
+        Optional<Integer> original_idx = Optional.empty();
 
+        for(Integer idx : smallest){
+
+            ///A fuse has undergone!
+            var fuse_is_ready = 
+                prev.isPresent() 
+                && prev.get() == idx - 1;
+
+            if(!fuse_is_ready){
+                ///Successfully push the letter.
+                if(prev.isPresent()){
+                    var pair = new Pair<Enchantment,Integer>(letter, idx - (original_idx.isPresent() ? original_idx.get() : idx - 1));
+                    try {
+                        ///We push the formation to the proper entry.
+                        registry.get(original_idx.get()).add(pair);
+                    } catch (Exception _e) {
+                        ///If this failed, we instead create one up to this idx default.
+                        var list = new ArrayList<Pair<Enchantment, Integer>>();
+                        list.add(pair);
+                        registry.add(original_idx.get(), list);
+                    }
+                }
+                ///Update the original idx and prev.
+                original_idx = Optional.of(idx);
+            }
+            ///Update the previous element.
+            prev = Optional.of(idx);
+        }
     }
 
     
