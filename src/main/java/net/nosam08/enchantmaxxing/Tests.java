@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import net.nosam08.enchantmaxxing.menu.OppositeArchetypes;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 
 public class Tests {
 
@@ -17,6 +18,7 @@ public class Tests {
         // test_minifuse();
         // test_fuse();
         // test_merge();
+        test_afterfuse();
     }
 
     public static Enchantment enchantment(String name){
@@ -109,6 +111,15 @@ public class Tests {
         
         list_a.forEach(x -> Enchantify.LOGGER.info(x.display()));
         list_b.forEach(x -> Enchantify.LOGGER.info(x.display()));
+    }
+
+
+    public static void test_afterfuse(){
+        var bucket_groups = new ArrayList<BucketGroup>(Arrays.asList(bucketgroup("ABC|BD|GHI")));
+
+        MenuInstructions menu_instructions = OppositeArchetypes.afterfuse(bucket_groups);
+        Enchantify.LOGGER.info(menu_instructions.sample_display());
+
     }
 
 }
