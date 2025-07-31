@@ -1,42 +1,66 @@
 package net.nosam08.enchantmaxxing.menu.ds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
+
+import net.minecraft.enchantment.Enchantment;
 
 
 /** CMP Pool of items. */
 public class ComparePool {
-    ArrayList<Optional<Bucket>> cmp_pool;
-
-    
+    ArrayList<Optional<Enchantment>> cmp_pool;
 
     public ComparePool() {
         cmp_pool = new ArrayList<>();
     }
 
-
-    public void restock(ArrayList<Integer> indices, BucketGroup bucketg){
+    /** Restocks the ComparePool with elements from the modified BucketGroup and a set of indices. */
+    public void restock(ArrayList<Integer> indices, ArrayList<ArrayList<Enchantment>> bucketg){
+        //god JAVA you are killing me - why can't you just be more like Rust and have type aliases?
         cmp_pool = new ArrayList<>();
-        for (Bucket bucket : bucketg.inner) {
-            // cmp_pool.add(bucket.inner.)
-        }
-        //TODO - you cannot do .get() at a position for bucket... yikes
+        for(var i = 0; i < bucketg.size(); i++){
+            var bucket = bucketg.get(i);
+            var index = indices.get(i);
 
+            cmp_pool.add(try_get(bucket, index));
+        }
+    }
+
+    /** Attempts to get an element from a vec, otherwise returning empty. */
+    public static <T> Optional<T> try_get(ArrayList<T> from, Integer idx){
+        try {
+            return Optional.of(from.get(idx));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
     
-    
+    /** Gets the smallest(s) of the items and returns the idices of them in the pool. */
     public ArrayList<Integer> get_smallest(){
         var indices = new ArrayList<Integer>();
-        var n = Optional.empty();
+        Optional<Integer> n = Optional.empty();
 
         for(var i = 0; i < cmp_pool.size(); i++) {
-            
+            var elem = cmp_pool.get(i);
+
+            if(!elem.isPresent()) continue;
+            var id = id(elem.get());
+
+            if(!n.isPresent() || id < n.get()){
+                n = Optional.of(id);
+                indices = new ArrayList<>(Arrays.asList(i));
+            } else if(id == n.get()){
+                indices.add(i);
+            }
         }
 
-        //TODO
-
-
         return indices;
+    }
+
+    /** Returns the ID of the Enchantment used for comparing. */
+    public static int id(Enchantment enchantment){
+        return enchantment.hashCode();
     }
 
     

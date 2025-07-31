@@ -133,8 +133,18 @@ public class BucketGroup {
         return string.toString();
     }
 
+    /** Turns the BucketGroup directly into a vec, even removing the HashSet<...> inside Bucket. */
     public ArrayList<ArrayList<Enchantment>> to_vec(){
-        //TODO
-        return null;
+        
+        ArrayList<ArrayList<Enchantment>> output = new ArrayList<>();
+        for (Bucket bucket : inner) {
+            var out = new ArrayList<Enchantment>();
+            for (Enchantment enchantment : bucket.inner) {
+                out.add(enchantment);
+            }
+            output.add(out);
+        }
+
+        return output;
     }
 }
