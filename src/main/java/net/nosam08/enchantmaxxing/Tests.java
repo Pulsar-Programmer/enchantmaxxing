@@ -13,12 +13,12 @@ import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 public class Tests {
 
     public static void testing(){
-        // Enchantify.LOGGER.info("Starting Tests...");
+        Enchantify.LOGGER.info("Starting Tests...");
         // test_subsets();
         // test_minifuse();
         // test_fuse();
         // test_merge();
-        test_afterfuse();
+        // test_afterfuse();
     }
 
     public static Enchantment enchantment(String name){
@@ -119,7 +119,7 @@ public class Tests {
 
         MenuInstructions menu_instructions = OppositeArchetypes.afterfuse(bucket_groups);
         Enchantify.LOGGER.info(menu_instructions.sample_display());
-        
+
     }
 
 }

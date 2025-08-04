@@ -59,7 +59,8 @@ public class ComparePool {
 
             if(!n.isPresent() || id < n.get()){
                 n = Optional.of(id);
-                indices = new ArrayList<>(Arrays.asList(i));
+                indices.clear();
+                indices.add(i);
             } else if(id == n.get()){
                 indices.add(i);
             }
@@ -73,6 +74,5 @@ public class ComparePool {
         return enchantment.hashCode();
     }
 
-    
-    //find index of lowest elem
+    //return enchantment.toString().compareTo("");
 }

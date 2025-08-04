@@ -3,10 +3,9 @@ package net.nosam08.enchantmaxxing.menu;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import net.minecraft.block.FurnaceBlock;
-import net.minecraft.block.entity.FurnaceBlockEntity;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Pair;
+import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
@@ -116,8 +115,7 @@ public class OppositeArchetypes {
                 for (Integer index : lowest) {
                     ///Increment the lowest indices. (Move past the smaller items and onto the next.)
                     indices.set(index, indices.get(index) + 1);
-                }
-                ///Register the items that we've moved past (if multiple, we fuse them.)
+                } //TODO small error with what is fed to afterfuse
                 afterfuse_register(lowest, letter, row);
                 
                 ///Reload the pool.
@@ -137,7 +135,6 @@ public class OppositeArchetypes {
         Enchantment letter, 
         ArrayList<ArrayList<Pair<Enchantment, Integer>>> registry
     ){
-
         Optional<Integer> original_idx = Optional.empty();
         int chain = 0;
 
@@ -158,6 +155,11 @@ public class OppositeArchetypes {
                 chain = 0;
             }
         }
+        ///We push the formation to the proper entry.
+        var pair = new Pair<Enchantment,Integer>(letter, chain);
+        registry.get(original_idx.get()).add(pair);
+
+
     }
 
 
