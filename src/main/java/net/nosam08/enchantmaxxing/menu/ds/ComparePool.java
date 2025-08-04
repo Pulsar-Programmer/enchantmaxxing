@@ -1,7 +1,6 @@
 package net.nosam08.enchantmaxxing.menu.ds;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 import net.minecraft.enchantment.Enchantment;

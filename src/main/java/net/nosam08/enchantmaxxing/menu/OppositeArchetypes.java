@@ -84,6 +84,16 @@ public class OppositeArchetypes {
 
     /** Builds the MenuInstructions directly from the original instructions without performing the algorithm. */
     public static MenuInstructions direct(ArrayList<BucketGroup> instructions){
+        MenuInstructions built = new MenuInstructions();
+        for(BucketGroup bucketGroup : instructions){
+            //TODO
+            
+
+
+
+        }
+
+
         return null; //TODO
     }
 
