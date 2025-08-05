@@ -8,9 +8,11 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.texture.TextureStitcher.Slot;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
+import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
+import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
+import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
 
 public class EnchantifyClient implements ClientModInitializer {
 
@@ -19,31 +21,59 @@ public class EnchantifyClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         
-        // openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        //     "key.enchantify.opengui", 
-        //     InputUtil.Type.KEYSYM, 
-        //     GLFW.GLFW_KEY_X, 
-        //     "category.enchantify"
-        // ));
+        openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.enchantify.opengui",
+            InputUtil.Type.KEYSYM, 
+            GLFW.GLFW_KEY_X, 
+            "category.enchantify.general"
+        ));
 
-        // ClientTickEvents.END_CLIENT_TICK.register(client -> {
-        //     while (openGuiKey.wasPressed()) {
-        //         client.setScreen(null); //not sure what to put here
-        //     }
-        // });
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (openGuiKey.wasPressed()) {
+                on_emenu_open(client);
+            }
+        });
+
+
+
+
         
     }
 
+    /** This is called when the Enchantmaxxing Menu Key is pressed. */
+    public void on_emenu_open(MinecraftClient client){
+        var item = detect_hovered_item(client);
 
-    // public ItemStack detect_hovered_item(MinecraftClient client){
+        var instructions = EnchantmaxBuilder.build_direct(item);
+        if(instructions.isEmpty()){
+            return;
+        }
 
-    //     if(client.currentScreen == null){
-    //         return ItemStack.EMPTY;
-    //     }
+        // client.setScreen(EnchantmaxMenu.direct(instructions)); //not sure what to put here
+    }
 
-    //     if(client.currentScreen instanceof HandledScreen<?> handledScreen){
+    /** Detects the item that is hovered. */
+    public ItemStack detect_hovered_item(MinecraftClient client){
+
+        if(client.currentScreen != null && client.currentScreen instanceof HandledScreen<?> handledScreen){
+            var cursor = handledScreen.getScreenHandler().getCursorStack();
             
-    //     }
-    // }
+            if(cursor != null){
+                return cursor;
+            }
+
+            var mixin = ((HandledScreenAccessor)handledScreen);
+            var item = mixin.getFocusedSlot();
+            
+            if(item != null){
+                var stack = item.getStack();
+                if(stack != null){
+                    return stack;
+                }
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
     
 }

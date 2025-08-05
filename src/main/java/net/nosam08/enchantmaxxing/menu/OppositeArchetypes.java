@@ -20,8 +20,9 @@ public class OppositeArchetypes {
         var stream = insert.inner.entrySet().stream();
 
         var firstElement = stream.findFirst();
-        var first = firstElement.get();
         if(firstElement.isEmpty()) return new ArrayList<>();
+        
+        var first = firstElement.get();
         built.add(BucketGroup.from_insert(first.getKey(), first.getValue()));
 
         stream.skip(1);
@@ -78,26 +79,13 @@ public class OppositeArchetypes {
         return true;
     }
 
+
+
+
+
+
+
     
-
-
-
-    /** Builds the MenuInstructions directly from the original instructions without performing the algorithm. */
-    public static MenuInstructions direct(ArrayList<BucketGroup> instructions){
-        MenuInstructions built = new MenuInstructions();
-        for(BucketGroup bucketGroup : instructions){
-            //TODO
-            
-
-
-
-        }
-
-
-        return null; //TODO
-    }
-
-
 
 
     /** Uses the afterfuse mechanic to simplify/complexify the construction of the Menu. */

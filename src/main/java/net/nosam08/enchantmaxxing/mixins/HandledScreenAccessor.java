@@ -1,0 +1,13 @@
+package net.nosam08.enchantmaxxing.mixins;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.screen.slot.Slot;
+
+@Mixin(HandledScreen.class)
+public interface HandledScreenAccessor {
+    @Accessor("focusedSlot")
+    Slot getFocusedSlot();
+}

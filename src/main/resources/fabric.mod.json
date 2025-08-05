@@ -28,6 +28,9 @@
 			"net.nosam08.enchantmaxxing.config.EnchantifyModMenu"
 		]
 	},
+	"mixins": [
+		"enchantify.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "${minecraft_version}",

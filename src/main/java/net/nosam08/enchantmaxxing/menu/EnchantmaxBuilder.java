@@ -20,6 +20,10 @@ public class EnchantmaxBuilder {
         var enchantments = all_enchantments();
         Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter((Enchantment x) -> x.isSupportedItem(item));
 
+        stream = stream.filter(ench_i -> ench_i.isAcceptableItem(item));
+        //actually - this is fine for dynamic/static whatever because isAcceptableItem only checks item not enchantment
+        // item.canBeEnchantedWith() >> this is PERFECT!!!
+
         var insert = build_from_start(stream);
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
