@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
@@ -33,6 +34,8 @@ public class EnchantifyClient implements ClientModInitializer {
             }
         });
 
+        
+
 
 
 
@@ -40,10 +43,10 @@ public class EnchantifyClient implements ClientModInitializer {
     }
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */
-    public void on_emenu_open(MinecraftClient client){
+    public static void on_emenu_open(MinecraftClient client){
         var item = detect_hovered_item(client);
 
-        // Enchantify.LOGGER.info("" + item);
+        Enchantify.LOGGER.info("" + item);
 
         var instructions = EnchantmaxBuilder.build_direct(item);
         if(instructions.isEmpty()){
@@ -59,7 +62,7 @@ public class EnchantifyClient implements ClientModInitializer {
     }
 
     /** Detects the item that is hovered. */
-    public ItemStack detect_hovered_item(MinecraftClient client){
+    public static ItemStack detect_hovered_item(MinecraftClient client){
         if(client.currentScreen != null && client.currentScreen instanceof HandledScreen<?> handledScreen){
             var cursor = handledScreen.getScreenHandler().getCursorStack();
             
@@ -78,7 +81,10 @@ public class EnchantifyClient implements ClientModInitializer {
             }
         }
 
+        if(client.player == null){
+            return ItemStack.EMPTY;
+        }
+
         return client.player.getMainHandStack();
     }
-    
 }

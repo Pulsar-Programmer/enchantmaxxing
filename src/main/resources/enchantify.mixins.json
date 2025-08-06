@@ -1,7 +1,8 @@
 {
   "package": "net.nosam08.enchantmaxxing.mixins",
   "client": [
-    "HandledScreenAccessor"
+    "HandledScreenAccessor",
+    "ScreenInjector"
   ],
   "injectors": {
     "defaultRequire": 1
