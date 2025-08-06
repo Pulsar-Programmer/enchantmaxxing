@@ -59,6 +59,14 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
+        general.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.is_static"), Enchantify.CONFIG.is_static)
+            .setDefaultValue(def.is_static)
+            .setTooltip(Text.translatable("option.enchantify.is_static.tooltip"))
+            .setSaveConsumer(newBool -> Enchantify.CONFIG.is_static = newBool)
+            .build()
+        );
+
         builder.setSavingRunnable(() -> {
             save(Enchantify.CONFIG);
         });

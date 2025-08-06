@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
+import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -20,7 +21,9 @@ public class EnchantmaxBuilder {
         var enchantments = all_enchantments();
         Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter((Enchantment x) -> x.isSupportedItem(item));
 
-        stream = stream.filter(ench_i -> ench_i.isAcceptableItem(item));
+        stream = Enchantify.CONFIG.is_static
+        ? stream.filter(ench_i -> ench_i.isAcceptableItem(item))
+        : stream.filter(ench_i ->  ench_i.isAcceptableItem(item));
         //actually - this is fine for dynamic/static whatever because isAcceptableItem only checks item not enchantment
         // item.canBeEnchantedWith() >> this is PERFECT!!!
 

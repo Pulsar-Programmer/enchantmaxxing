@@ -6,5 +6,7 @@ public class EnchantifyConfig {
     
     /** Skips the `X` button press required to start maxing out an item. */
     public boolean defaultX = true;
-    
+
+    /** Determines whether to enchantmax enchantments that are already applied. */
+    public boolean is_static = false;
 }
