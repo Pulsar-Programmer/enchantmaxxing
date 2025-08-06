@@ -7,10 +7,8 @@ import java.util.stream.StreamSupport;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
-import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -21,13 +19,22 @@ public class EnchantmaxBuilder {
     /** Builds the core and direct menu instructions given the item to Enchantmax. */
     public static ArrayList<BucketGroup> build_direct(ItemStack item){
         var enchantments = all_enchantments();
-        Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isAcceptableItem(item));
+        // for (var ench : enchantments) {
+        //     Enchantify.LOGGER.info(ench.toString());
+        //     System.out.println("Test!");
+        // }
+        // Enchantify.LOGGER.info(enchantments.toString());
+        Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
 
         var insert = build_from_start(stream);
 
-        if(Enchantify.CONFIG.is_static){
-            stream = stream.filter(ench_i ->  is_compatible(item, ench_i));
-        }
+        // Enchantify.LOGGER.info(insert.inner.isEmpty() + ":35");
+
+        // if(!Enchantify.CONFIG.is_static){
+        //     stream = stream.filter(ench_i -> is_compatible(item, ench_i));
+        // }
+
+        // System.out.println(insert.display());
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
         return instructions;

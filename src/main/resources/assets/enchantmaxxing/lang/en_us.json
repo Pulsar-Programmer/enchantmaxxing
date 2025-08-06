@@ -8,7 +8,5 @@
     "option.enchantify.is_static": "Static Enchantmax Notes",
     "option.enchantify.is_static.tooltip": "Determines whether to enchantmax enchantments that are already applied.",
 
-
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu"
-    
 }

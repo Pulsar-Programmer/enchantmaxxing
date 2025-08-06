@@ -22,7 +22,24 @@ public class ArchetypesInsert {
 
     /** Inserts into the Archetype Portal. Only insert when A is incompatible with B. */
     public void oa_insert(Enchantment a, Enchantment b){
-        inner.getOrDefault(a, new ArrayList<>()).add(b);
+        var val = inner.getOrDefault(a, new ArrayList<>());
+        val.add(b);
+        inner.put(a, val);
+    }
+
+    public String display(){
+        var string = new StringBuilder();
+        for (var inner_x : inner.entrySet()) {
+            string.append(inner_x.getKey());
+            string.append(" | ");
+            for (var inner_x_v_x : inner_x.getValue()) {
+                string.append(inner_x_v_x.toString());
+                string.append(", ");
+            }
+
+            string.append("\n");
+        }
+        return string.toString();
     }
 
 }

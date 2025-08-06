@@ -11,7 +11,6 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
-import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
 
 public class EnchantifyClient implements ClientModInitializer {
@@ -25,7 +24,7 @@ public class EnchantifyClient implements ClientModInitializer {
             "key.enchantify.opengui",
             InputUtil.Type.KEYSYM, 
             GLFW.GLFW_KEY_X, 
-            "category.enchantify.general"
+            "title.enchantify.config"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -42,7 +41,6 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */
     public void on_emenu_open(MinecraftClient client){
-        // Tests.acceptable_or_primary();
         var item = detect_hovered_item(client);
 
         // Enchantify.LOGGER.info("" + item);
@@ -52,12 +50,16 @@ public class EnchantifyClient implements ClientModInitializer {
             return;
         }
 
+
+        // for (var bucketGroup : instructions) {
+        //     Enchantify.LOGGER.info(bucketGroup.display());
+        // }
+
         // client.setScreen(EnchantmaxMenu.direct(instructions)); //not sure what to put here
     }
 
     /** Detects the item that is hovered. */
     public ItemStack detect_hovered_item(MinecraftClient client){
-        //TODO check for their current selected hot bar item if all else fails
         if(client.currentScreen != null && client.currentScreen instanceof HandledScreen<?> handledScreen){
             var cursor = handledScreen.getScreenHandler().getCursorStack();
             
@@ -76,7 +78,7 @@ public class EnchantifyClient implements ClientModInitializer {
             }
         }
 
-        return ItemStack.EMPTY;
+        return client.player.getMainHandStack();
     }
     
 }

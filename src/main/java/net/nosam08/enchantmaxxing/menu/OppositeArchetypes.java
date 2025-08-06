@@ -1,11 +1,11 @@
 package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Pair;
-import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
@@ -17,22 +17,24 @@ public class OppositeArchetypes {
     public static ArrayList<BucketGroup> opposite_archetypes(ArchetypesInsert insert){
         ArrayList<BucketGroup> built = new ArrayList<>();
 
-        var stream = insert.inner.entrySet().stream();
+        var iter = insert.inner.entrySet().iterator();
 
-        var firstElement = stream.findFirst();
-        if(firstElement.isEmpty()) return new ArrayList<>();
+        Entry<Enchantment, ArrayList<Enchantment>> first;
+        try {
+            first = iter.next();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
         
-        var first = firstElement.get();
         built.add(BucketGroup.from_insert(first.getKey(), first.getValue()));
 
-        stream.skip(1);
-
-        stream.forEach(pair -> {
+        while (iter.hasNext()) {
+            var pair = iter.next();
             var pivot = pair.getKey();
             var rest = pair.getValue();
 
             merge(built, pivot, rest);
-        });
+        }
         
         return built;
     }
