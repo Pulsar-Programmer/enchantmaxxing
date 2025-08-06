@@ -42,7 +42,10 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */
     public void on_emenu_open(MinecraftClient client){
+        // Tests.acceptable_or_primary();
         var item = detect_hovered_item(client);
+
+        // Enchantify.LOGGER.info("" + item);
 
         var instructions = EnchantmaxBuilder.build_direct(item);
         if(instructions.isEmpty()){
@@ -54,7 +57,7 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** Detects the item that is hovered. */
     public ItemStack detect_hovered_item(MinecraftClient client){
-
+        //TODO check for their current selected hot bar item if all else fails
         if(client.currentScreen != null && client.currentScreen instanceof HandledScreen<?> handledScreen){
             var cursor = handledScreen.getScreenHandler().getCursorStack();
             

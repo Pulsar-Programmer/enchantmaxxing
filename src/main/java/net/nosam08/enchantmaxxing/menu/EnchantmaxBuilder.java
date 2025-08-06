@@ -7,6 +7,8 @@ import java.util.stream.StreamSupport;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
@@ -19,18 +21,39 @@ public class EnchantmaxBuilder {
     /** Builds the core and direct menu instructions given the item to Enchantmax. */
     public static ArrayList<BucketGroup> build_direct(ItemStack item){
         var enchantments = all_enchantments();
-        Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter((Enchantment x) -> x.isSupportedItem(item));
-
-        stream = Enchantify.CONFIG.is_static
-        ? stream.filter(ench_i -> ench_i.isAcceptableItem(item))
-        : stream.filter(ench_i ->  ench_i.isAcceptableItem(item));
-        //actually - this is fine for dynamic/static whatever because isAcceptableItem only checks item not enchantment
-        // item.canBeEnchantedWith() >> this is PERFECT!!!
+        Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isAcceptableItem(item));
 
         var insert = build_from_start(stream);
+
+        if(Enchantify.CONFIG.is_static){
+            stream = stream.filter(ench_i ->  is_compatible(item, ench_i));
+        }
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
         return instructions;
+    }
+
+    /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
+    public static boolean is_compatible(ItemStack item, Enchantment enchantment){
+        var reg = all_enchantments();
+
+        for (var ench_x : item.getEnchantments().getEnchantments()) {
+            var ench_x_val = ench_x.value();
+            var id_ench_x = reg.getId(ench_x_val);
+            if(id_ench_x.equals(reg.getId(enchantment))){
+                return false;
+            }
+
+            for (var ench_y : ench_x_val.exclusiveSet()) {
+                var ench_y_val = ench_y.value();
+                var id_ench_y = reg.getId(ench_y_val);
+                if(id_ench_y.equals(reg.getId(enchantment))){
+                        return false;
+                }
+            }
+        }
+
+        return true;
     }
     
     /** Builds the menu appearance given the item to Enchantmax. */
@@ -43,7 +66,7 @@ public class EnchantmaxBuilder {
     
 
     /** Returns all enchantments. */
-    public static Iterable<Enchantment> all_enchantments(){
+    public static Registry<Enchantment> all_enchantments(){
         return MinecraftClient.getInstance()
             .getNetworkHandler()
             .getRegistryManager()

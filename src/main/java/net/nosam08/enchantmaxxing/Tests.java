@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.menu.OppositeArchetypes;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
@@ -120,6 +124,26 @@ public class Tests {
         MenuInstructions menu_instructions = OppositeArchetypes.afterfuse(bucket_groups);
         Enchantify.LOGGER.info(menu_instructions.sample_display());
 
+    }
+
+
+    public static void acceptable_or_primary(){
+        var reg = EnchantmaxBuilder.all_enchantments();
+        // Sharpness and Smite are mutually incompatible
+        var sharpness = reg.getOrThrow(Enchantments.SHARPNESS);
+        var smite = reg.getOrThrow(Enchantments.SMITE);
+
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.addEnchantment(sharpness, 1);
+
+        var r1 = smite.value().isAcceptableItem(sword);
+        Enchantify.LOGGER.info(r1+"");
+
+        var r2 = smite.value().isPrimaryItem(sword);
+        Enchantify.LOGGER.info(r2+"");
+
+        var r3 = smite.value().isSupportedItem(sword);
+        Enchantify.LOGGER.info(r3+"");
     }
 
 }
