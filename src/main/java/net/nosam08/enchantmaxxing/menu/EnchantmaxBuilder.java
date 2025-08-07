@@ -41,6 +41,7 @@ public class EnchantmaxBuilder {
         return instructions;
     }
 
+    //TODO deprecated - we are now gonna use a method known as "Archetypes Advancement" for each one (oh my god)
     /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
     public static boolean is_compatible(ItemStack item, Enchantment enchantment){
         var reg = all_enchantments();
@@ -86,9 +87,15 @@ public class EnchantmaxBuilder {
         var built = new ArchetypesInsert();
 
         all.forEach(ench -> {
+            built.prepare(ench);
             ench.exclusiveSet().forEach(x -> built.oa_insert(ench, x.value()));
         });
 
         return built;
+    }
+
+    /** This filters the archetypes so that only the relevant ones come through. */
+    public void filter_archetypes(ItemStack item){
+        //TODO
     }
 }

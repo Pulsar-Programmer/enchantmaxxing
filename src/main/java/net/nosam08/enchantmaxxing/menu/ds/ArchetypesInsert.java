@@ -22,9 +22,14 @@ public class ArchetypesInsert {
 
     /** Inserts into the Archetype Portal. Only insert when A is incompatible with B. */
     public void oa_insert(Enchantment a, Enchantment b){
-        var val = inner.getOrDefault(a, new ArrayList<>());
+        var val = inner.get(a);
         val.add(b);
         inner.put(a, val);
+    }
+
+    /** Prepares the pool by inserting an empty vec in the relevant spot. */
+    public void prepare(Enchantment a){
+        inner.put(a, new ArrayList<>());
     }
 
     public String display(){
