@@ -1,7 +1,5 @@
 package net.nosam08.enchantmaxxing;
 
-import java.util.ArrayList;
-
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -78,7 +76,7 @@ public class EnchantifyClient implements ClientModInitializer {
         if(client.currentScreen != null && client.currentScreen instanceof HandledScreen<?> handledScreen){
             var cursor = handledScreen.getScreenHandler().getCursorStack();
             
-            if(cursor != null){
+            if(!cursor.isEmpty()){
                 return cursor;
             }
 

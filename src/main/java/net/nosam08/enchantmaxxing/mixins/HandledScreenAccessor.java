@@ -10,4 +10,7 @@ import net.minecraft.screen.slot.Slot;
 public interface HandledScreenAccessor {
     @Accessor("focusedSlot")
     Slot getFocusedSlot();
+
+    // @Invoker("getSlotAt")
+    // Slot invokeGetSlotAt(double x, double y);
 }
