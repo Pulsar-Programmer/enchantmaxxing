@@ -30,6 +30,7 @@ import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     ArrayList<Component> buttons = new ArrayList<>();
+    ArrayList<Integer> selected_bg_idx = new ArrayList<>();
     //var output
 
     public EnchantmaxMenu(ArrayList<Component> buttons){
@@ -93,7 +94,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             System.out.println("apply");
         }).verticalSizing(Sizing.fixed(20));
 
-        var box = button_box(20);
+        var box = button_box(20, 0);
 
         return Containers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(back)
@@ -124,9 +125,9 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }).margins(Insets.of(0, 6, 3, 3)).verticalSizing(Sizing.fixed(20));
     }
 
-    public static Component button_box(int px_size){
+    public static Component button_box(int px_size, int btm_margin){
         var box = new BoxComponent(Sizing.fixed(1), Sizing.fixed(px_size))
-        .color(Color.ofRgb(0xDDDDDD)).margins(Insets.horizontal(5));
+        .color(Color.ofRgb(0xDDDDDD)).margins(Insets.of(0, btm_margin, 5, 5));
         return box;
     }
 
@@ -158,7 +159,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         ArrayList<Component> children_lines = new ArrayList<>();
         for (Component component : children) {
             children_lines.add(component);
-            children_lines.add(button_box(size)); 
+            children_lines.add(button_box(size, 6)); 
         }
         children_lines.removeLast();
 
