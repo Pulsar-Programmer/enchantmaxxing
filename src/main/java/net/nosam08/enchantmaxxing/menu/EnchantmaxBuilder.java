@@ -29,13 +29,13 @@ public class EnchantmaxBuilder {
 
         Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
 
+        if(!Enchantify.CONFIG.is_static){
+            stream = stream.filter(ench_i -> is_compatible(item, ench_i));
+        }
+
         var insert = build_from_start(stream);
 
-        // if(!Enchantify.CONFIG.is_static){
-        //     stream = stream.filter(ench_i -> is_compatible(item, ench_i));
-        // }
-
-        // System.out.println(insert.display());
+        System.out.println(insert.display());
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
         return instructions;

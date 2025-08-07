@@ -3,6 +3,8 @@ package net.nosam08.enchantmaxxing;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
@@ -51,23 +53,23 @@ public class Tests {
     }
 
     public static void test_merge(){
-        var bucket_groups = new ArrayList<BucketGroup>(Arrays.asList(bucketgroup("A|BCD|G")));
+        var bucket_groups = Lists.newArrayList(bucketgroup("A|BCD|G"));
 
         var pivot = enchantment("F");
-        var rest = Arrays.asList(enchantment("G"), enchantment("B"));
+        var rest = Lists.newArrayList(enchantment("G"), enchantment("B"));
         
         var p2 = enchantment("Z");
 
         var p3 = enchantment("X");
-        var r3 = Arrays.asList(enchantment("Y"));
+        var r3 = Lists.newArrayList(enchantment("Y"));
 
-        OppositeArchetypes.merge(bucket_groups, pivot, new ArrayList<>(rest));
+        OppositeArchetypes.merge(bucket_groups, pivot, rest);
         Enchantify.LOGGER.info(bucket_groups.get(0).display());
 
         OppositeArchetypes.merge(bucket_groups, p2, new ArrayList<>());
         Enchantify.LOGGER.info(bucket_groups.get(1).display());
 
-        OppositeArchetypes.merge(bucket_groups, p3, new ArrayList<>(r3));
+        OppositeArchetypes.merge(bucket_groups, p3, r3);
         Enchantify.LOGGER.info(bucket_groups.get(2).display());
     }
 

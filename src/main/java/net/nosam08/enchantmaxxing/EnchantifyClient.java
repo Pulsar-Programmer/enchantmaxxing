@@ -1,10 +1,13 @@
 package net.nosam08.enchantmaxxing;
 
+import java.util.ArrayList;
+
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -16,20 +19,29 @@ import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
 
 public class EnchantifyClient implements ClientModInitializer {
 
-    public static KeyBinding openGuiKey; //does OWO Lib have something to make this better?
+    public static KeyBinding MAXXING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "key.enchantify.opengui",
+        InputUtil.Type.KEYSYM, 
+        GLFW.GLFW_KEY_X, 
+        "title.enchantify.config"
+    )); //does OWO Lib have something to make this better?
 
     @Override
     public void onInitializeClient() {
-        
-        openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.enchantify.opengui",
-            InputUtil.Type.KEYSYM, 
-            GLFW.GLFW_KEY_X, 
-            "title.enchantify.config"
-        ));
+
+
+        ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
+			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, key, scancode, modifiers) -> {
+                if (MAXXING.matchesKey(key, scancode)) {
+                    on_emenu_open(client);
+                }
+            });
+        });
+
+        // LOGGER.debug("Starting request: %s".formatted(request));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (openGuiKey.wasPressed()) {
+            while (MAXXING.wasPressed()) {
                 on_emenu_open(client);
             }
         });
@@ -87,4 +99,11 @@ public class EnchantifyClient implements ClientModInitializer {
 
         return client.player.getMainHandStack();
     }
+
+
+
+
+
+    
+    
 }
