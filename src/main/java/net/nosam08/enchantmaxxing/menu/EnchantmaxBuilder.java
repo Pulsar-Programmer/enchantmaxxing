@@ -33,7 +33,7 @@ public class EnchantmaxBuilder {
             stream = stream.filter(ench_i -> is_compatible(item, ench_i));
         }
 
-        var insert = build_from_start(stream);
+        var insert = build_from_start(stream, item);
 
         // System.out.println(insert.display());
         
@@ -83,19 +83,25 @@ public class EnchantmaxBuilder {
     }
 
     /** Builds the ArchetypesInsert from a stream. */
-    public static ArchetypesInsert build_from_start(Stream<Enchantment> all){
+    public static ArchetypesInsert build_from_start(Stream<Enchantment> all, ItemStack item){
         var built = new ArchetypesInsert();
+        var reg = all_enchantments();
 
         all.forEach(ench -> {
             built.prepare(ench);
-            ench.exclusiveSet().forEach(x -> built.oa_insert(ench, x.value()));
+            ench.exclusiveSet().forEach(x -> {
+
+                var val = x.value();
+                
+                ///This filters the archetypes so that only the relevant ones come through.
+                if(reg.getId(ench).equals(reg.getId(val)) || !val.isSupportedItem(item)){
+                    return;
+                }
+
+                built.oa_insert(ench, val);
+            });
         });
 
         return built;
-    }
-
-    /** This filters the archetypes so that only the relevant ones come through. */
-    public void filter_archetypes(ItemStack item){
-        //TODO
     }
 }

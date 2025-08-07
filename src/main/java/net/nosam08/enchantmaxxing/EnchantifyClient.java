@@ -64,6 +64,10 @@ public class EnchantifyClient implements ClientModInitializer {
                 return;
             }
 
+            // for (var bucketGroup : instructions) {
+            //     Enchantify.LOGGER.info(bucketGroup.display());
+            // }
+
             // client.setScreen(EnchantmaxMenu.direct(instructions)); //not sure what to put here
         } else {
             var instructions = EnchantmaxBuilder.build_afterfuse(item);
@@ -74,9 +78,7 @@ public class EnchantifyClient implements ClientModInitializer {
             //build screen based on config option for autofuse
         }
 
-        // for (var bucketGroup : instructions) {
-        //     Enchantify.LOGGER.info(bucketGroup.display());
-        // }
+        
     }
 
     /** Detects the item that is hovered. */
