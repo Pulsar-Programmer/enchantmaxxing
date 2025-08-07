@@ -9,4 +9,7 @@ public class EnchantifyConfig {
 
     /** Determines whether to enchantmax enchantments that are already applied. */
     public boolean is_static = false;
+
+    /** Determines whether to use the Autofuse menu or not. */
+    public boolean do_afterfuse = false; //should be turned on in later versions of the Autofuse Update
 }

@@ -67,6 +67,14 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
+        general.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.do_autofuse"), Enchantify.CONFIG.do_afterfuse)
+            .setDefaultValue(def.do_afterfuse)
+            .setTooltip(Text.translatable("option.enchantify.do_autofuse.tooltip"))
+            .setSaveConsumer(newBool -> Enchantify.CONFIG.do_afterfuse = newBool)
+            .build()
+        );
+
         builder.setSavingRunnable(() -> {
             save(Enchantify.CONFIG);
         });

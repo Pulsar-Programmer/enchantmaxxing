@@ -35,7 +35,7 @@ public class EnchantmaxBuilder {
 
         var insert = build_from_start(stream);
 
-        System.out.println(insert.display());
+        // System.out.println(insert.display());
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
         return instructions;
@@ -65,7 +65,7 @@ public class EnchantmaxBuilder {
     }
     
     /** Builds the menu appearance given the item to Enchantmax. */
-    public static MenuInstructions build(ItemStack item){
+    public static MenuInstructions build_afterfuse(ItemStack item){
         var instructions = build_direct(item);
         return OppositeArchetypes.afterfuse(instructions);
     }

@@ -56,19 +56,27 @@ public class EnchantifyClient implements ClientModInitializer {
     public static void on_emenu_open(MinecraftClient client){
         var item = detect_hovered_item(client);
 
-        Enchantify.LOGGER.info("" + item);
+        // Enchantify.LOGGER.info(item.toString());
 
-        var instructions = EnchantmaxBuilder.build_direct(item);
-        if(instructions.isEmpty()){
-            return;
+        if(!Enchantify.CONFIG.do_afterfuse){
+            var instructions = EnchantmaxBuilder.build_direct(item);
+            if(instructions.isEmpty()){
+                return;
+            }
+
+            // client.setScreen(EnchantmaxMenu.direct(instructions)); //not sure what to put here
+        } else {
+            var instructions = EnchantmaxBuilder.build_afterfuse(item);
+            if(instructions.rows.isEmpty()){
+                return;
+            }
+            
+            //build screen based on config option for autofuse
         }
-
 
         // for (var bucketGroup : instructions) {
         //     Enchantify.LOGGER.info(bucketGroup.display());
         // }
-
-        // client.setScreen(EnchantmaxMenu.direct(instructions)); //not sure what to put here
     }
 
     /** Detects the item that is hovered. */

@@ -7,6 +7,8 @@
     "option.enchantify.hoverColor.tooltip": "The color of needed enchantments that appear under the item.",
     "option.enchantify.is_static": "Static Enchantmax Notes",
     "option.enchantify.is_static.tooltip": "Determines whether to enchantmax enchantments that are already applied.",
+    "option.enchantify.do_autofuse": "Do Afterfuse in Menu",
+    "option.enchantify.do_autofuse.tooltip": "Determines whether to perform the Afterfuse Enchantment Modification Menu enhancement.",
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu"
 }
