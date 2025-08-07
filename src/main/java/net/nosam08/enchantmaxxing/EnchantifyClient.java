@@ -13,6 +13,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
+import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
 
 public class EnchantifyClient implements ClientModInitializer {
@@ -68,7 +69,7 @@ public class EnchantifyClient implements ClientModInitializer {
             //     Enchantify.LOGGER.info(bucketGroup.display());
             // }
 
-            // client.setScreen(EnchantmaxMenu.direct(instructions)); //not sure what to put here
+            client.setScreen(new EnchantmaxMenu()); //not sure what to put here
         } else {
             var instructions = EnchantmaxBuilder.build_afterfuse(item);
             if(instructions.rows.isEmpty()){
