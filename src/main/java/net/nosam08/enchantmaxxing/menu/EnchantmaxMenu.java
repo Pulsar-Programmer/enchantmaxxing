@@ -1,6 +1,7 @@
 package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -156,14 +157,29 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         ///TODO generate these
         ArrayList<Component> levels = Lists.newArrayList(level_button(Text.literal("I"), EnchantmaxMenu::basic_click), level_button(Text.literal("II"), EnchantmaxMenu::basic_click), level_button(Text.literal("III"), EnchantmaxMenu::basic_click));
 
-        var horizontal = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        boolean[] isOpen = {false};
+
+        var horizontal = Containers.horizontalFlow(Sizing.fixed(0), Sizing.content())
         .children(levels)
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
 
-        var head = Containers.collapsible(Sizing.content(), Sizing.content(), name, false)
+        
+        var btn = Components.button(name, b -> {
+            isOpen[0] = !isOpen[0];
+            b.active = false;
+            if(!isOpen[0]){
+                horizontal.horizontalSizing(Sizing.fixed(0));
+            } else{
+                horizontal.horizontalSizing(Sizing.content());
+            }
+        }).margins(Insets.of(0, 6, 3, 3));
+
+        var head = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        .child(btn)
         .child(horizontal)
-        .margins(Insets.of(0, 6, 3, 3));
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER);
 
         return head;
     }
