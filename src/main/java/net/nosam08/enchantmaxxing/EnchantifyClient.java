@@ -69,7 +69,7 @@ public class EnchantifyClient implements ClientModInitializer {
             //     Enchantify.LOGGER.info(bucketGroup.display());
             // }
 
-            client.setScreen(EnchantmaxMenu.direct(instructions));
+            client.setScreen(EnchantmaxMenu.direct(item, instructions));
         } else {
             var instructions = EnchantmaxBuilder.build_afterfuse(item);
             if(instructions.rows.isEmpty()){

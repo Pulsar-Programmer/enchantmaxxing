@@ -26,6 +26,7 @@ import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -40,13 +41,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     ArrayList<Component> buttons = new ArrayList<>();
 
     ArrayList<BucketGroup> original = new ArrayList<>();
+    ItemStack item;
     ArrayList<Integer> selected_bg_idx = new ArrayList<>();
 
     static ButtonComponent level_selection; //not sure how to fix it and make it not static
     static Component level_horizontal; //not sure how to fix it and make it not static
     //var output
 
-    public EnchantmaxMenu(ArrayList<BucketGroup> original, ArrayList<Component> buttons){
+    public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original, ArrayList<Component> buttons){
+        this.item = item;
         this.original = original;
         this.buttons = buttons;
     }
@@ -120,8 +123,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
         var box = button_box(20);
 
+        var item = Components.item(this.item)
+        .margins(Insets.bottom(2));
+
         return Containers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(back)
+            .child(box)
+            .child(item)
             .child(box)
             .child(apply)
             .padding(Insets.of(5))
@@ -287,11 +295,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
 
     /** Where all the UI happens based on the direct build. */
-    public static Screen direct(ArrayList<BucketGroup> instructions){
+    public static Screen direct(ItemStack item, ArrayList<BucketGroup> instructions){
         ArrayList<Component> bucket_groups = new ArrayList<>();
         instructions.forEach(x -> bucket_groups.add(bucket_group(x)));
 
-        return new EnchantmaxMenu(instructions, bucket_groups);
+        return new EnchantmaxMenu(item, instructions, bucket_groups);
     }
 
 
