@@ -13,7 +13,6 @@ import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.DropdownComponent;
-import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
@@ -41,6 +40,9 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     ArrayList<BucketGroup> original = new ArrayList<>();
     ArrayList<Integer> selected_bg_idx = new ArrayList<>();
+
+    static ButtonComponent level_selection; //not sure how to fix it and make it not static
+    static Component level_horizontal; //not sure how to fix it and make it not static
     //var output
 
     public EnchantmaxMenu(ArrayList<BucketGroup> original, ArrayList<Component> buttons){
@@ -157,22 +159,21 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         ///TODO generate these
         ArrayList<Component> levels = Lists.newArrayList(level_button(Text.literal("I"), EnchantmaxMenu::basic_click), level_button(Text.literal("II"), EnchantmaxMenu::basic_click), level_button(Text.literal("III"), EnchantmaxMenu::basic_click));
 
-        boolean[] isOpen = {false};
-
         var horizontal = Containers.horizontalFlow(Sizing.fixed(0), Sizing.content())
         .children(levels)
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
-
         
         var btn = Components.button(name, b -> {
-            isOpen[0] = !isOpen[0];
-            b.active = false;
-            if(!isOpen[0]){
-                horizontal.horizontalSizing(Sizing.fixed(0));
-            } else{
-                horizontal.horizontalSizing(Sizing.content());
+            if(level_selection != null){
+                level_selection.active = true;
+                level_horizontal.horizontalSizing(Sizing.fixed(0));
+                // level_selection.horizontal 
             }
+            level_selection = b;
+            level_horizontal = horizontal;
+            b.active = false;
+            horizontal.horizontalSizing(Sizing.content());
         }).margins(Insets.of(0, 6, 3, 3));
 
         var head = Containers.horizontalFlow(Sizing.content(), Sizing.content())
