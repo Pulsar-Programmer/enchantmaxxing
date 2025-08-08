@@ -1,6 +1,7 @@
 package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,7 @@ import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.DropdownComponent;
+import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
@@ -92,6 +94,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     }
 
+    /** Builds the bottom menu. */
     public Component bottom_menu(){
         var back = Components.button(Text.translatable("option.enchantify.enchantmax.back"), button -> {
             client.setScreen(null);
@@ -116,17 +119,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             .margins(Insets.bottom(2));
     }
 
-    public static ArrayList<Component> test_buttons(ArrayList<String> names){
-        ArrayList<Component> array = new ArrayList<>();
-        names.forEach(x -> {
-            array.add(enchant_button(Text.literal(x)));
-        });
-        return array;
-    }
 
-    public static Component enchant_button(Text name){
-        return Components.button(name, EnchantmaxMenu::on_enchant_click).margins(Insets.of(0, 6, 3, 3)).verticalSizing(Sizing.fixed(20));
-    }
+
+
+
+
+
 
     public static void on_enchant_click(ButtonComponent button){
         //TODO
@@ -144,18 +142,47 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
 
-    public static Component enchant_dropdown(Text name){
-        var dropdown = Components.dropdown(Sizing.content())
-            .button(name, EnchantmaxMenu::on_enchant_click_dropdown)
-            .button(name, EnchantmaxMenu::on_enchant_click_dropdown)
-            .button(name, EnchantmaxMenu::on_enchant_click_dropdown)
-            .closeWhenNotHovered(false)
-            .margins(Insets.of(0, 6, 3, 3));
-        var head = Containers.collapsible(Sizing.content(), Sizing.content(), Text.literal("Collapsible Section"), false)
-        .child(dropdown)
+
+    public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
+        return Components.button(name, fn).margins(Insets.of(0, 6, 3, 3)).verticalSizing(Sizing.fixed(20));
+    }
+
+    public static Component level_button(Text name, Consumer<ButtonComponent> fn){
+        return Components.button(name, fn).margins(Insets.bottom(6)).verticalSizing(Sizing.fixed(20));
+    }
+
+    public static Component enchant_level_select(Text name){
+
+        ///TODO generate these
+        ArrayList<Component> levels = Lists.newArrayList(level_button(Text.literal("I"), EnchantmaxMenu::basic_click), level_button(Text.literal("II"), EnchantmaxMenu::basic_click), level_button(Text.literal("III"), EnchantmaxMenu::basic_click));
+
+        var horizontal = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        .children(levels)
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER);
+
+        var head = Containers.collapsible(Sizing.content(), Sizing.content(), name, false)
+        .child(horizontal)
         .margins(Insets.of(0, 6, 3, 3));
+
         return head;
     }
+
+
+
+
+    public static void basic_click(ButtonComponent button){
+        System.out.println("Click!");
+    }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -173,7 +200,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         bucket.inner.forEach(x -> {
             var str = Enchantment.getName(reg.getEntry(x), x.getMaxLevel());
             var text = reg.getEntry(x).isIn(EnchantmentTags.CURSE) ? str : Text.translatable(str.getString());
-            var button = enchant_dropdown(text);
+            var button = enchant_level_select(text);
             children.add(button);
         });
         return Containers.verticalFlow(Sizing.content(), Sizing.content())
@@ -181,6 +208,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER);
     }
+
 
     public static Component bucket_group(BucketGroup bucketGroup){
         ArrayList<Component> children = new ArrayList<>();
@@ -214,6 +242,18 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     /** Where all the UI happens based on the direct build. */
     public static Screen direct(ArrayList<BucketGroup> instructions){
         ArrayList<Component> bucket_groups = new ArrayList<>();
@@ -221,6 +261,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
         return new EnchantmaxMenu(instructions, bucket_groups);
     }
+
+
+
+
+
+
 
 
     
