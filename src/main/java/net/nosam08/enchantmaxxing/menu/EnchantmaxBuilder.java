@@ -41,7 +41,7 @@ public class EnchantmaxBuilder {
         return instructions;
     }
 
-    //TODO deprecated - we are now gonna use a method known as "Archetypes Advancement" for each one (oh my god)
+    //TODO deprecated - we are now gonna use a method known as "Archetypes Advancement" for each one (oh my god) (or is there another way to filter by level)
     /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
     public static boolean is_compatible(ItemStack item, Enchantment enchantment){
         var reg = all_enchantments();

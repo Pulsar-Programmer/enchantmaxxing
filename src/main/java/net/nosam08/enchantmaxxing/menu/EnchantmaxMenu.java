@@ -8,7 +8,9 @@ import com.google.common.collect.Lists;
 
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.BoxComponent;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.DropdownComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
@@ -22,18 +24,24 @@ import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.registry.tag.EnchantmentTags;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
+import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 
 public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     ArrayList<Component> buttons = new ArrayList<>();
+
+    ArrayList<BucketGroup> original = new ArrayList<>();
     ArrayList<Integer> selected_bg_idx = new ArrayList<>();
     //var output
 
-    public EnchantmaxMenu(ArrayList<Component> buttons){
+    public EnchantmaxMenu(ArrayList<BucketGroup> original, ArrayList<Component> buttons){
+        this.original = original;
         this.buttons = buttons;
     }
 
@@ -89,9 +97,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             client.setScreen(null);
         }).verticalSizing(Sizing.fixed(20));
 
-        //TODO - apply function
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
-            System.out.println("apply");
+            client.player.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+            client.setScreen(null);
+            Enchantips.start_tooltips();
         }).verticalSizing(Sizing.fixed(20));
 
         var box = button_box(20, 0);
@@ -116,14 +125,39 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     public static Component enchant_button(Text name){
-        return Components.button(name, button -> {
-            //button function
-            // button.active = false;
-            //TODO
-            button.active = !button.active;
-            System.out.println("click");
-        }).margins(Insets.of(0, 6, 3, 3)).verticalSizing(Sizing.fixed(20));
+        return Components.button(name, EnchantmaxMenu::on_enchant_click).margins(Insets.of(0, 6, 3, 3)).verticalSizing(Sizing.fixed(20));
     }
+
+    public static void on_enchant_click(ButtonComponent button){
+        //TODO
+        //button function
+        button.active = !button.active;
+        System.out.println("click");
+    }
+
+    public static void on_enchant_click_dropdown(DropdownComponent dropdown){
+        //TODO
+        //button function
+        // button.active = !button.active;
+        
+        System.out.println("click");
+    }
+
+
+    public static Component enchant_dropdown(Text name){
+        var dropdown = Components.dropdown(Sizing.content())
+            .button(name, EnchantmaxMenu::on_enchant_click_dropdown)
+            .button(name, EnchantmaxMenu::on_enchant_click_dropdown)
+            .button(name, EnchantmaxMenu::on_enchant_click_dropdown)
+            .closeWhenNotHovered(false)
+            .margins(Insets.of(0, 6, 3, 3));
+        var head = Containers.collapsible(Sizing.content(), Sizing.content(), Text.literal("Collapsible Section"), false)
+        .child(dropdown)
+        .margins(Insets.of(0, 6, 3, 3));
+        return head;
+    }
+
+
 
     public static Component button_box(int px_size, int btm_margin){
         var box = new BoxComponent(Sizing.fixed(1), Sizing.fixed(px_size))
@@ -138,7 +172,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
         bucket.inner.forEach(x -> {
             var str = Enchantment.getName(reg.getEntry(x), x.getMaxLevel());
-            var button = enchant_button(Text.translatable(str.getString()));
+            var text = reg.getEntry(x).isIn(EnchantmentTags.CURSE) ? str : Text.translatable(str.getString());
+            var button = enchant_dropdown(text);
             children.add(button);
         });
         return Containers.verticalFlow(Sizing.content(), Sizing.content())
@@ -184,7 +219,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         ArrayList<Component> bucket_groups = new ArrayList<>();
         instructions.forEach(x -> bucket_groups.add(bucket_group(x)));
 
-        return new EnchantmaxMenu(bucket_groups);
+        return new EnchantmaxMenu(instructions, bucket_groups);
     }
 
 
