@@ -80,6 +80,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
 
+        // var h_scroller = Containers.horizontalScroll(Sizing.fill(50), Sizing.content(), 
+        //     scroller
+        // )
+        // .scrollbarThiccness(0)
+        // .verticalAlignment(VerticalAlignment.CENTER)
+        // .horizontalAlignment(HorizontalAlignment.CENTER)
+        // .margins(Insets.bottom(5));
+
         var padder = Containers.verticalFlow(Sizing.content(), Sizing.fill(85))
             .child(scroller)
             .padding(Insets.of(5))
@@ -226,7 +234,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             .children(children)
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER);
-        
+
         return new Pair<Component, Integer>(vertical, children.size());
     }
 
@@ -253,15 +261,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.bottom(6));
 
-        var scroller = Containers.horizontalScroll(Sizing.fill(50), Sizing.content(), 
-            container
-        )
-        .verticalAlignment(VerticalAlignment.CENTER)
-        .horizontalAlignment(HorizontalAlignment.CENTER);
-
-        
-
-        return scroller;
+        return container;
     }
 
 
