@@ -29,6 +29,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -109,7 +110,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             Enchantips.start_tooltips();
         }).verticalSizing(Sizing.fixed(20));
 
-        var box = button_box(20, 0);
+        var box = button_box(20);
 
         return Containers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(back)
@@ -203,15 +204,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
 
 
-    public static Component button_box(int px_size, int btm_margin){
+    public static Component button_box(int px_size){
         var box = new BoxComponent(Sizing.fixed(1), Sizing.fixed(px_size))
-        .color(Color.ofRgb(0xDDDDDD)).margins(Insets.of(0, btm_margin, 5, 5));
+        .color(Color.ofRgb(0xDDDDDD)).margins(Insets.horizontal(5));
         return box;
     }
 
 
-
-    public static Component bucket(Bucket bucket){
+    /** Creates the Component and also its proposed size. */
+    public static Pair<Component, Integer> bucket(Bucket bucket){
         ArrayList<Component> children = new ArrayList<>();
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
         bucket.inner.forEach(x -> {
@@ -220,10 +221,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             var button = enchant_level_select(text);
             children.add(button);
         });
-        return Containers.verticalFlow(Sizing.content(), Sizing.content())
+
+        var vertical = Containers.verticalFlow(Sizing.content(), Sizing.content())
             .children(children)
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER);
+        
+        return new Pair<Component, Integer>(vertical, children.size());
     }
 
 
@@ -232,21 +236,32 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         Integer size = 20;
         for (Bucket bucket : bucketGroup.inner) {
             var component = bucket(bucket);
-            size = Math.max(component.height(), size);
-            children.add(component);  
+            size = Math.max(component.getRight() * 26, size);
+            children.add(component.getLeft());  
         }
 
         ArrayList<Component> children_lines = new ArrayList<>();
         for (Component component : children) {
             children_lines.add(component);
-            children_lines.add(button_box(size, 6)); 
+            children_lines.add(button_box(size));
         }
         children_lines.removeLast();
 
-        return Containers.horizontalFlow(Sizing.content(), Sizing.content())
-            .children(children_lines)
-            .verticalAlignment(VerticalAlignment.CENTER)
-            .horizontalAlignment(HorizontalAlignment.CENTER);
+        var container = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        .children(children_lines)
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER)
+        .margins(Insets.bottom(6));
+
+        var scroller = Containers.horizontalScroll(Sizing.fill(50), Sizing.content(), 
+            container
+        )
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER);
+
+        
+
+        return scroller;
     }
 
 
