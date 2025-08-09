@@ -113,17 +113,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             client.setScreen(null);
             Enchantips.start_tooltips();
         }).verticalSizing(Sizing.fixed(20));
-        
-        var box = button_box(20);
 
         var item = Components.item(this.item)
-        .margins(Insets.bottom(2));
+        .margins(Insets.both(10, 2));
 
         return Containers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(back)
-            .child(box)
+            // .child(button_box(20))
             .child(item)
-            .child(box)
+            // .child(button_box(20))
             .child(apply)
             .padding(Insets.of(5))
             .surface(Surface.DARK_PANEL)
@@ -157,11 +155,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
 
     public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
-        return Components.button(name, fn).margins(Insets.of(0, 6, 3, 3)).verticalSizing(Sizing.fixed(20));
+        return Components.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
     }
 
     public static Component level_button(Text name, Consumer<ButtonComponent> fn){
-        return Components.button(name, fn).margins(Insets.bottom(6)).verticalSizing(Sizing.fixed(20));
+        return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
     public static Component enchant_level_select(Text name){
@@ -184,7 +182,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             level_horizontal = horizontal;
             b.active = false;
             horizontal.horizontalSizing(Sizing.content());
-        }).margins(Insets.of(0, 6, 3, 3));
+        }).margins(Insets.horizontal(3));
 
         var head = Containers.horizontalFlow(Sizing.content(), Sizing.content())
         .child(btn)
@@ -258,6 +256,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
         var container = Containers.horizontalFlow(Sizing.content(), Sizing.content())
         .children(children_lines)
+        // .padding(Insets.both(0, 2))
+        // .surface(Surface.PANEL_INSET) //WELLS effect 
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.bottom(6));
@@ -272,9 +272,9 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        System.out.println("A: " + horizontalAmount);
-        System.out.println("B: " + verticalAmount);
-        System.out.println("C: " + Screen.hasShiftDown());
+        // System.out.println("A: " + horizontalAmount);
+        // System.out.println("B: " + verticalAmount);
+        // System.out.println("C: " + Screen.hasShiftDown());
         if (Screen.hasShiftDown()) {
             // Use verticalAmount because that's what the wheel actually gives us
             // scroller.scrollBy(verticalAmount * 20); // treat it as horizontal scroll

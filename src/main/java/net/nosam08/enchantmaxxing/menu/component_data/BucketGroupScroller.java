@@ -4,6 +4,7 @@ import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
+import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.gui.screen.Screen;
@@ -29,7 +30,7 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
 
         // comp.mouseScroll();
 
-        return h_scroller;
+        return comp;
     }
 
     @Override
@@ -40,5 +41,19 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
         return super.onMouseScroll(mouseX, mouseY, amount);
     }
 
-    
+    @Override
+    public void layout(Size space) {
+        super.layout(space);
+
+        // childSize = space.width();
+
+        // child.x
+
+        // if (this.child.fullSize().width() < this.width()) {
+        //     this.child.positioning(Positioning.relative(((this.width() - this.child.fullSize().width()) / 2), this.child.baseY()));
+        // } else {
+        //     this.child.positioning(Positioning.relative(0, this.child.baseY()));
+        // }
+    }
+
 }
