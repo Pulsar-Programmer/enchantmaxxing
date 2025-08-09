@@ -130,27 +130,20 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             .margins(Insets.bottom(2));
     }
 
-
-
-
-
-
-
-
-    public static void on_enchant_click(ButtonComponent button){
-        //TODO
-        //button function
-        button.active = !button.active;
-        System.out.println("click");
+    public static Component button_box(int px_size){
+        var box = new BoxComponent(Sizing.fixed(1), Sizing.fixed(px_size))
+        .color(Color.ofRgb(0xDDDDDD)).margins(Insets.horizontal(5));
+        return box;
     }
 
-    public static void on_enchant_click_dropdown(DropdownComponent dropdown){
-        //TODO
-        //button function
-        // button.active = !button.active;
-        
-        System.out.println("click");
-    }
+
+
+    
+
+
+
+
+    
 
 
 
@@ -200,22 +193,31 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         System.out.println("Click!");
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    public static Component button_box(int px_size){
-        var box = new BoxComponent(Sizing.fixed(1), Sizing.fixed(px_size))
-        .color(Color.ofRgb(0xDDDDDD)).margins(Insets.horizontal(5));
-        return box;
+    public static void on_enchant_click(ButtonComponent button){
+        //TODO
+        //button function
+        button.active = !button.active;
+        System.out.println("click");
     }
+
+    public static void on_enchant_click_dropdown(DropdownComponent dropdown){
+        //TODO
+        //button function
+        // button.active = !button.active;
+        
+        System.out.println("click");
+    }
+
+
+
+
+
+
+
+
+
+
+    
 
 
     /** Creates the Component and also its proposed size. */
@@ -243,7 +245,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         Integer size = 20;
         for (Bucket bucket : bucketGroup.inner) {
             var component = bucket(bucket);
-            size = Math.max(component.getRight() * 26, size);
+            size = Math.max(component.getRight() * 26, size); //does the removed 6 of margin ruin it?
             children.add(component.getLeft());  
         }
 
@@ -261,6 +263,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.bottom(6));
+
+        // container.baseX()
+        // Sizing
+
+        // var scroller_size = Math.min(85, container.fullSize());
 
         var h_scroll = BucketGroupScroller.bucket_group_scroller(container);
 
@@ -287,7 +294,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
 
-
+    public static Sizing scroll_sizing(){
+        
+        return null;
+        //TODO
+    }
 
 
 
