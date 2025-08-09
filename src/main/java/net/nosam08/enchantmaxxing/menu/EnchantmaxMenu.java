@@ -1,7 +1,6 @@
 package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +30,7 @@ import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
+import net.nosam08.enchantmaxxing.menu.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -46,6 +46,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     static ButtonComponent level_selection; //not sure how to fix it and make it not static
     static Component level_horizontal; //not sure how to fix it and make it not static
+    static ArrayList<Component> scrollers = new ArrayList<>();
     //var output
 
     public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original, ArrayList<Component> buttons){
@@ -83,14 +84,6 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
 
-        // var h_scroller = Containers.horizontalScroll(Sizing.fill(50), Sizing.content(), 
-        //     scroller
-        // )
-        // .scrollbarThiccness(0)
-        // .verticalAlignment(VerticalAlignment.CENTER)
-        // .horizontalAlignment(HorizontalAlignment.CENTER)
-        // .margins(Insets.bottom(5));
-
         var padder = Containers.verticalFlow(Sizing.content(), Sizing.fill(85))
             .child(scroller)
             .padding(Insets.of(5))
@@ -120,7 +113,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             client.setScreen(null);
             Enchantips.start_tooltips();
         }).verticalSizing(Sizing.fixed(20));
-
+        
         var box = button_box(20);
 
         var item = Components.item(this.item)
@@ -269,8 +262,30 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.bottom(6));
 
-        return container;
+        var h_scroll = BucketGroupScroller.bucket_group_scroller(container);
+
+        scrollers.add(h_scroll);
+
+        return h_scroll;
     }
+
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        System.out.println("A: " + horizontalAmount);
+        System.out.println("B: " + verticalAmount);
+        System.out.println("C: " + Screen.hasShiftDown());
+        if (Screen.hasShiftDown()) {
+            // Use verticalAmount because that's what the wheel actually gives us
+            // scroller.scrollBy(verticalAmount * 20); // treat it as horizontal scroll
+            scrollers.forEach(x -> {
+                x.onMouseScroll(mouseX, mouseY, horizontalAmount);
+            });
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+    }
+
 
 
 
