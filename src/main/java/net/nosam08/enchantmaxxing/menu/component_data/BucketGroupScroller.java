@@ -13,8 +13,6 @@ import net.minecraft.client.gui.screen.Screen;
 
 public class BucketGroupScroller<C extends Component> extends ScrollContainer<C> {
 
-    
-
     protected BucketGroupScroller(ScrollDirection direction, Sizing horizontalSizing, Sizing verticalSizing, C child) {
         super(direction, horizontalSizing, verticalSizing, child);
     }
@@ -26,10 +24,6 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
         return h_scroller;
     }
 
-    
-
-    
-
     @Override
     public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
         if (!Screen.hasShiftDown()) {
@@ -37,32 +31,6 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
         }
         return super.onMouseScroll(mouseX, mouseY, amount);
     }
-
-
-
-    @Override
-    public void layout(Size space) {
-        // System.out.println(width);
-        // width = child.fullSize().width();
-        // width = 80;
-        // horizontalSizing.animate(1, Easing.LINEAR, Sizing.fixed(child.fullSize().width()));
-
-        System.out.println(width);
-        super.layout(space);
-
-
-        // childSize = space.width();
-
-        // child.x
-
-        // if (this.child.fullSize().width() < this.width()) {
-        //     this.child.positioning(Positioning.relative(((this.width() - this.child.fullSize().width()) / 2), this.child.baseY()));
-        // } else {
-        //     this.child.positioning(Positioning.relative(0, this.child.baseY()));
-        // }
-    }
-
-    // private boolean firstLayoutDone = false;
 
     /** Updates the sizing for the child. */
     public void tick(int width){

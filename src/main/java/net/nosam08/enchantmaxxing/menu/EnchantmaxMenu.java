@@ -46,7 +46,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     static ButtonComponent level_selection; //not sure how to fix it and make it not static
     static Component level_horizontal; //not sure how to fix it and make it not static
-    static ArrayList<BucketGroupScroller<Component>> scrollers = new ArrayList<>();
+    static ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
+    // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
     //var output
 
     public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original, ArrayList<Component> buttons){
@@ -58,7 +59,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (Screen.hasShiftDown()) {
-            scrollers.forEach(x -> {
+            horizontal_scrollers.forEach(x -> {
                 x.onMouseScroll(mouseX, mouseY, horizontalAmount);
             });
         }
@@ -93,6 +94,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .scrollbar(ScrollContainer.Scrollbar.vanilla())
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
+
+        // vertical_scroller.add(scroller);
 
         var padder = Containers.verticalFlow(Sizing.content(), Sizing.fill(85))
             .child(scroller)
@@ -158,7 +161,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     public void tick() {
         super.tick();
 
-        scrollers.forEach(x->x.tick(width));
+        horizontal_scrollers.forEach(x->x.tick(width));
+        // vertical_scroller.forEach(x -> {
+        //     var size = Math.min(x.child().fullSize().height() + 5, (int)(0.85 * height));
+        //     x.verticalSizing(Sizing.fixed(size));
+        // });
     }
 
 
@@ -295,18 +302,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.bottom(6));
 
-        // container.baseX()
-        // Sizing
-
-        // var scroller_size = Math.min(85, container.fullSize());
         var h_scroll = BucketGroupScroller.bucket_group_scroller(container);
 
-        scrollers.add(h_scroll);
+        horizontal_scrollers.add(h_scroll);
 
         return h_scroll
         .scrollbarThiccness(0)
-        // .padding(Insets.of(2))
-        // .surface(Surface.PANEL_INSET)
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.bottom(5));
