@@ -1,7 +1,9 @@
 package net.nosam08.enchantmaxxing.menu.component_data;
 
 import io.wispforest.owo.ui.container.ScrollContainer;
+import io.wispforest.owo.ui.core.AnimatableProperty;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Easing;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Size;
@@ -17,21 +19,16 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
         super(direction, horizontalSizing, verticalSizing, child);
     }
 
-    public static <C extends Component> Component bucket_group_scroller(C child){
+    public static <C extends Component> BucketGroupScroller<C> bucket_group_scroller(C child){
 
         BucketGroupScroller<C> h_scroller = new BucketGroupScroller<C>(ScrollDirection.HORIZONTAL, Sizing.fill(50), Sizing.content(), child) ;
         
-        
-        var comp = h_scroller
-        .scrollbarThiccness(0)
-        .verticalAlignment(VerticalAlignment.CENTER)
-        .horizontalAlignment(HorizontalAlignment.CENTER)
-        .margins(Insets.bottom(5));
-
-        // comp.mouseScroll();
-
-        return comp;
+        return h_scroller;
     }
+
+    
+
+    
 
     @Override
     public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
@@ -41,9 +38,18 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
         return super.onMouseScroll(mouseX, mouseY, amount);
     }
 
+
+
     @Override
     public void layout(Size space) {
+        // System.out.println(width);
+        // width = child.fullSize().width();
+        // width = 80;
+        // horizontalSizing.animate(1, Easing.LINEAR, Sizing.fixed(child.fullSize().width()));
+
+        System.out.println(width);
         super.layout(space);
+
 
         // childSize = space.width();
 
@@ -54,6 +60,14 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
         // } else {
         //     this.child.positioning(Positioning.relative(0, this.child.baseY()));
         // }
+    }
+
+    // private boolean firstLayoutDone = false;
+
+    /** Updates the sizing for the child. */
+    public void tick(int width){
+        var size = Math.min(child.fullSize().width() + 5, (int)(0.85 * width));
+        horizontalSizing(Sizing.fixed(size));
     }
 
 }

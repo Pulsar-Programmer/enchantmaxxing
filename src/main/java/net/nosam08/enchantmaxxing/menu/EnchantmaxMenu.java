@@ -46,13 +46,23 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     static ButtonComponent level_selection; //not sure how to fix it and make it not static
     static Component level_horizontal; //not sure how to fix it and make it not static
-    static ArrayList<Component> scrollers = new ArrayList<>();
+    static ArrayList<BucketGroupScroller<Component>> scrollers = new ArrayList<>();
     //var output
 
     public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original, ArrayList<Component> buttons){
+        this.buttons = buttons;
         this.item = item;
         this.original = original;
-        this.buttons = buttons;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (Screen.hasShiftDown()) {
+            scrollers.forEach(x -> {
+                x.onMouseScroll(mouseX, mouseY, horizontalAmount);
+            });
+        }
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override
@@ -139,6 +149,27 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
 
     
+
+
+
+
+    /** Handles updates for the Screen. */
+    @Override
+    public void tick() {
+        super.tick();
+
+        scrollers.forEach(x->x.tick(width));
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -268,37 +299,20 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         // Sizing
 
         // var scroller_size = Math.min(85, container.fullSize());
-
         var h_scroll = BucketGroupScroller.bucket_group_scroller(container);
 
         scrollers.add(h_scroll);
 
-        return h_scroll;
+        return h_scroll
+        .scrollbarThiccness(0)
+        // .padding(Insets.of(2))
+        // .surface(Surface.PANEL_INSET)
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER)
+        .margins(Insets.bottom(5));
     }
 
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        // System.out.println("A: " + horizontalAmount);
-        // System.out.println("B: " + verticalAmount);
-        // System.out.println("C: " + Screen.hasShiftDown());
-        if (Screen.hasShiftDown()) {
-            // Use verticalAmount because that's what the wheel actually gives us
-            // scroller.scrollBy(verticalAmount * 20); // treat it as horizontal scroll
-            scrollers.forEach(x -> {
-                x.onMouseScroll(mouseX, mouseY, horizontalAmount);
-            });
-        }
-
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-
-
-    public static Sizing scroll_sizing(){
-        
-        return null;
-        //TODO
-    }
+    
 
 
 
