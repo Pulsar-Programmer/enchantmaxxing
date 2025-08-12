@@ -27,9 +27,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.menu.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
@@ -181,10 +183,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     public Pair<Component, Integer> bucket(Bucket bucket){
         ArrayList<Component> children = new ArrayList<>();
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
+        var levels = EnchantmaxBuilder.levels_map(item);
         bucket.inner.forEach(x -> {
-            var str = Enchantment.getName(reg.getEntry(x), x.getMaxLevel());
-            var text = reg.getEntry(x).isIn(EnchantmentTags.CURSE) ? str : Text.translatable(str.getString());
-            var button = enchant_level_select(text);
+            var level = levels.getOrDefault(reg.getId(x), Integer.valueOf(0));
+            var text = enchantment_text(reg.getEntry(x), level);
+            var button = enchant_level_select(text, level, x.getMaxLevel());
             children.add(button);
         });
 
@@ -231,10 +234,27 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .margins(Insets.bottom(5));
     }
 
-    public Component enchant_level_select(Text name){
+    public static ArrayList<Component> generate_levels(int level, int max_level){
+        var list = new ArrayList<Component>();
+        for(var i = level; i <= max_level; i++){
+            var integer = Integer.valueOf(i);
+            list.add(level_button(Text.translatable("enchantment.level." + Integer.toString(i)), x -> {
+                var lvl = integer;
+                //TODO
+            }));
+        }
+        return list;
+    }
 
-        ///TODO generate these
-        ArrayList<Component> levels = Lists.newArrayList(level_button(Text.literal("I"), EnchantmaxMenu::basic_click), level_button(Text.literal("II"), EnchantmaxMenu::basic_click), level_button(Text.literal("III"), EnchantmaxMenu::basic_click));
+    public static Text enchantment_text(RegistryEntry<Enchantment> e, int level){
+        var str = level == 0 ? e.value().description() : Enchantment.getName(e, e.value().getMaxLevel());
+        var text = e.isIn(EnchantmentTags.CURSE) ? Text.translatable(str.getString()).withColor(0xAA0000) : Text.translatable(str.getString());
+        return text;
+    }
+
+    public Component enchant_level_select(Text name, int level, int max_level){
+
+        ArrayList<Component> levels = generate_levels(level, max_level);
 
         var horizontal = Containers.horizontalFlow(Sizing.fixed(0), Sizing.content())
         .children(levels)
@@ -261,15 +281,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return head;
     }
 
-    public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
-        return Components.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
-    }
+    
 
     public static Component level_button(Text name, Consumer<ButtonComponent> fn){
         return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
-    
+    public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
+        return Components.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
+    }
 
 
 
@@ -278,7 +298,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         System.out.println("Click!");
     }
 
-    public static void on_enchant_click(ButtonComponent button){
+    public void on_enchant_click(ButtonComponent button){
         //TODO
         //button function
         button.active = !button.active;
@@ -286,9 +306,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     public static void on_level_select(ButtonComponent button){
-        //TODO
-        //button function
-        // button.active = !button.active;
+        //register level
+        //close button menu
+        button.parent().horizontalSizing(Sizing.fixed(0));
+        //make button fancy
+        button.parent().parent().padding(Insets.of(2)).surface(Surface.PANEL_INSET); //Surface.outline(0x1AD4FF)
+        //add the other buttons like the ø button
         
         System.out.println("click");
     }

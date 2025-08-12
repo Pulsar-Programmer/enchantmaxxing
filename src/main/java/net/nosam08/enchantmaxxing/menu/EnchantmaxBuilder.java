@@ -1,6 +1,7 @@
 package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -9,6 +10,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
@@ -103,5 +106,17 @@ public class EnchantmaxBuilder {
         });
 
         return built;
+    }
+
+    public static HashMap<Identifier, Integer> levels_map(ItemStack item){
+        var reg = all_enchantments();
+        var map = new HashMap<Identifier, Integer>();
+        var enchs = item.getEnchantments();
+        for (var ench : enchs.getEnchantments()) {
+            var id = reg.getId(ench.value());
+            var lvl = enchs.getLevel(ench);
+            map.put(id, lvl);
+        }
+        return map;
     }
 }
