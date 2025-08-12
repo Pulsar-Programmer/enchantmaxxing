@@ -108,6 +108,11 @@ public class EnchantmaxBuilder {
         return built;
     }
 
+    public static boolean is_supported(Enchantment val, ItemStack item){
+        System.out.println(item.getItem().getTranslationKey());
+        return item.getItem().getTranslationKey().equals("item.minecraft.book") || val.isSupportedItem(item);
+    }
+
     public static HashMap<Identifier, Integer> levels_map(ItemStack item){
         var reg = all_enchantments();
         var map = new HashMap<Identifier, Integer>();

@@ -20,6 +20,7 @@ import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
+import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
@@ -234,12 +235,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .margins(Insets.bottom(5));
     }
 
-    public static ArrayList<Component> generate_levels(int level, int max_level){
+    public ArrayList<Component> generate_levels(int level, int max_level){
         var list = new ArrayList<Component>();
         for(var i = level; i <= max_level; i++){
+            var text = i == 0 ? Text.literal("Ø") : Text.translatable("enchantment.level." + Integer.toString(i));
             var integer = Integer.valueOf(i);
-            list.add(level_button(Text.translatable("enchantment.level." + Integer.toString(i)), x -> {
+            list.add(level_button(text, x -> {
                 var lvl = integer;
+                on_level_select(x);
                 //TODO
             }));
         }
@@ -247,8 +250,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     public static Text enchantment_text(RegistryEntry<Enchantment> e, int level){
-        var str = level == 0 ? e.value().description() : Enchantment.getName(e, e.value().getMaxLevel());
-        var text = e.isIn(EnchantmentTags.CURSE) ? Text.translatable(str.getString()).withColor(0xAA0000) : Text.translatable(str.getString());
+        var str = level == 0 ? e.value().description() : Enchantment.getName(e, level);
+        var text = e.isIn(EnchantmentTags.CURSE) ? Text.translatable(str.getString()).withColor(0xFA655D) : Text.translatable(str.getString());
         return text;
     }
 
@@ -305,13 +308,16 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         System.out.println("click");
     }
 
-    public static void on_level_select(ButtonComponent button){
+    public void on_level_select(ButtonComponent button){
         //register level
         //close button menu
         button.parent().horizontalSizing(Sizing.fixed(0));
+        // button.parent().children().get(0).active(true);
+        selected_level_button.active(true);
         //make button fancy
-        button.parent().parent().padding(Insets.of(2)).surface(Surface.PANEL_INSET); //Surface.outline(0x1AD4FF)
-        //add the other buttons like the ø button
+        button.parent().parent().padding(Insets.of(2)).surface(Surface.PANEL_INSET.and(Surface.outline(0x1AD4FF) )); //Surface.outline(0x1AD4FF)
+
+        // selected_level_button
         
         System.out.println("click");
     }
