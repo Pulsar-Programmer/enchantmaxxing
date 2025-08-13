@@ -17,9 +17,10 @@ import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class EnchantmentButton extends ButtonComponent {
+
+    public boolean enchanted = false;
 
     public EnchantmentButton(Text message, Consumer<ButtonComponent> onPress) {
         super(message, onPress);
@@ -41,8 +42,9 @@ public class EnchantmentButton extends ButtonComponent {
     @Override
     public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
         super.draw(context, mouseX, mouseY, partialTicks, delta);
-
-        drawEnchantmentGlint(context);
+        if(enchanted){
+            drawEnchantmentGlint(context);
+        }
     }
 
     /** Creates the associated enchantment glint. */
@@ -59,14 +61,13 @@ public class EnchantmentButton extends ButtonComponent {
         
         // This renders the enchantment glint texture
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            (_id) -> RenderLayer.getGlint(),
             ItemRenderer.ITEM_ENCHANTMENT_GLINT,
-            // Identifier.of("textures/misc/enchanted_item_glint.png"),
             x, y,           // x, y position
             0.0f, 0.0f,     // u, v texture coordinates (float)
             width, height,  // width, height to draw
-            16, 16,         // texture width, height
-            0xFFFFFFFF      // color (white with full alpha)
+            1, 1,         // texture width, height
+            0x1AD4FFFF      // color (white with full alpha)
         );
         
         RenderSystem.disableBlend();

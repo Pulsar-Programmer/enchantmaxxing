@@ -145,7 +145,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }).verticalSizing(Sizing.fixed(20));
 
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
-            client.player.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+            client.player.playSound(true ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
             // Enchantips.start_tooltips(); TODO
         }).verticalSizing(Sizing.fixed(20));
@@ -263,7 +263,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
         
-        var btn = Components.button(name, b -> {
+        var btn = new EnchantmentButton(name, b -> {
             if(selected_level_button != null){
                 selected_level_button.active = true;
                 var selected_level_horizontal = selected_level_button.parent().children().get(1);
@@ -287,8 +287,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     
 
     public static Component level_button(Text name, Consumer<ButtonComponent> fn){
-        // return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
-        return new EnchantmentButton(name, fn).verticalSizing(Sizing.fixed(20));
+        return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
+        // return new EnchantmentButton(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
     public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
@@ -318,22 +318,21 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         selected_level_button.setMessage(enchantment_text(ench, level));
 
         if(level == 0){
-            unanimate_button(button);
+            unanimate_button(selected_level_button);
         } else {
-            animate_button(button);
+            animate_button(selected_level_button);
         }
     }
 
     /** Makes the button fancy. */
     public void animate_button(ButtonComponent button){
-        button.parent().parent().padding(Insets.of(2)).surface(Surface.PANEL_INSET.and(Surface.outline(0x1AD4FF) )); //Surface.outline(0x1AD4FF)
-        //TODO
+        client.player.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+        ((EnchantmentButton)button).enchanted = true;
     }
 
     /** Makes the button unfancy. */
     public void unanimate_button(ButtonComponent button){
-        button.parent().parent().padding(Insets.of(0)).surface(Surface.BLANK);
-        //TODO
+        ((EnchantmentButton)button).enchanted = false;
     }
 
 
