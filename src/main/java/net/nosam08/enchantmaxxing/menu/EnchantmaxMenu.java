@@ -49,7 +49,6 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     ///Associated data with the Menu instance.
     ButtonComponent selected_level_button;
-    Component selected_level_horizontal;
     ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
     
     // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
@@ -187,8 +186,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var levels = EnchantmaxBuilder.levels_map(item);
         bucket.inner.forEach(x -> {
             var level = levels.getOrDefault(reg.getId(x), Integer.valueOf(0));
-            var text = enchantment_text(reg.getEntry(x), level);
-            var button = enchant_level_select(text, level, x.getMaxLevel());
+            var button = enchant_level_select(level, reg.getEntry(x));
             children.add(button);
         });
 
@@ -235,14 +233,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .margins(Insets.bottom(5));
     }
 
-    public ArrayList<Component> generate_levels(int level, int max_level){
+    public ArrayList<Component> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
         var list = new ArrayList<Component>();
-        for(var i = level; i <= max_level; i++){
-            var text = i == 0 ? Text.literal("Ø") : Text.translatable("enchantment.level." + Integer.toString(i));
-            var integer = Integer.valueOf(i);
+        for(var i = level; i <= enchantment.value().getMaxLevel(); i++){
+            var text = Text.translatable("enchantment.level." + Integer.toString(i));
+            var lvl = Integer.valueOf(i);
             list.add(level_button(text, x -> {
-                var lvl = integer;
-                on_level_select(x);
+                on_level_select(x, lvl, enchantment);
                 //TODO
             }));
         }
@@ -255,9 +252,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return text;
     }
 
-    public Component enchant_level_select(Text name, int level, int max_level){
+    public Component enchant_level_select(int level, RegistryEntry<Enchantment> enchantment){
 
-        ArrayList<Component> levels = generate_levels(level, max_level);
+        var name = enchantment_text(enchantment, level);
+        ArrayList<Component> levels = generate_levels(level, enchantment);
 
         var horizontal = Containers.horizontalFlow(Sizing.fixed(0), Sizing.content())
         .children(levels)
@@ -267,10 +265,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var btn = Components.button(name, b -> {
             if(selected_level_button != null){
                 selected_level_button.active = true;
+                var selected_level_horizontal = selected_level_button.parent().children().get(1);
                 selected_level_horizontal.horizontalSizing(Sizing.fixed(0));
             }
             selected_level_button = b;
-            selected_level_horizontal = horizontal;
+            // selected_level_horizontal = horizontal;
             b.active = false;
             horizontal.horizontalSizing(Sizing.content());
         }).margins(Insets.horizontal(3));
@@ -308,23 +307,32 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         System.out.println("click");
     }
 
-    public void on_level_select(ButtonComponent button){
-        //register level
-        //close button menu
+    public void on_level_select(ButtonComponent button, int level, RegistryEntry<Enchantment> ench){
         button.parent().horizontalSizing(Sizing.fixed(0));
-        // button.parent().children().get(0).active(true);
         selected_level_button.active(true);
-        //make button fancy
-        button.parent().parent().padding(Insets.of(2)).surface(Surface.PANEL_INSET.and(Surface.outline(0x1AD4FF) )); //Surface.outline(0x1AD4FF)
 
-        // selected_level_button
-        
-        System.out.println("click");
+        //register level in output map
+
+        selected_level_button.setMessage(enchantment_text(ench, level));
+
+        if(level == 0){
+            unanimate_button(button);
+        } else {
+            animate_button(button);
+        }
     }
 
+    /** Makes the button fancy. */
+    public void animate_button(ButtonComponent button){
+        button.parent().parent().padding(Insets.of(2)).surface(Surface.PANEL_INSET.and(Surface.outline(0x1AD4FF) )); //Surface.outline(0x1AD4FF)
+        //TODO
+    }
 
-
-
+    /** Makes the button unfancy. */
+    public void unanimate_button(ButtonComponent button){
+        button.parent().parent().padding(Insets.of(0)).surface(Surface.BLANK);
+        //TODO
+    }
 
 
 
