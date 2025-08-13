@@ -35,6 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.menu.component_data.BucketGroupScroller;
+import net.nosam08.enchantmaxxing.menu.component_data.EnchantmentButton;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -286,7 +287,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     
 
     public static Component level_button(Text name, Consumer<ButtonComponent> fn){
-        return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
+        // return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
+        return new EnchantmentButton(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
     public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
