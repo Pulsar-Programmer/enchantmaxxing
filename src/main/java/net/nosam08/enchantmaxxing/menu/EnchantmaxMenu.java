@@ -21,6 +21,7 @@ import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
@@ -316,6 +317,16 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         //register level in output map
 
         selected_level_button.setMessage(enchantment_text(ench, level));
+        var space = Size.of(selected_level_button.width(), selected_level_button.height());
+        // selected_level_button.parent().layout(space);
+        // selected_level_button.parent().parent().layout(space);
+        // selected_level_button.parent().parent().parent().layout(space);
+        // selected_level_button.parent().parent().parent().parent().layout(space);
+        var tracer = selected_level_button.parent();
+        while(tracer.hasParent()){
+            tracer = tracer.parent();
+            tracer.layout(space);
+        }
 
         if(level == 0){
             unanimate_button(selected_level_button);
