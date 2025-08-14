@@ -241,7 +241,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             var text = Text.translatable("enchantment.level." + Integer.toString(i));
             var lvl = Integer.valueOf(i);
             list.add(level_button(text, x -> {
-                on_level_select(x, lvl, enchantment);
+                on_level_select(x, lvl, level, enchantment);
                 //TODO
             }));
         }
@@ -310,7 +310,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         System.out.println("click");
     }
 
-    public void on_level_select(ButtonComponent button, int level, RegistryEntry<Enchantment> ench){
+    public void on_level_select(ButtonComponent button, int level, int reg_level, RegistryEntry<Enchantment> ench){
         button.parent().horizontalSizing(Sizing.fixed(0));
         selected_level_button.active(true);
 
@@ -328,7 +328,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             tracer.layout(space);
         }
 
-        if(level == 0){
+        if(level == reg_level){
             unanimate_button(selected_level_button);
         } else {
             animate_button(selected_level_button);
