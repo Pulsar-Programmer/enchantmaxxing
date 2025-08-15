@@ -67,11 +67,21 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
-        general.addEntry(entryBuilder
+        ConfigCategory menu = builder.getOrCreateCategory(Text.translatable("category.enchantify.menu"));
+
+        menu.addEntry(entryBuilder
             .startBooleanToggle(Text.translatable("option.enchantify.do_autofuse"), Enchantify.CONFIG.do_afterfuse)
             .setDefaultValue(def.do_afterfuse)
             .setTooltip(Text.translatable("option.enchantify.do_autofuse.tooltip"))
             .setSaveConsumer(newBool -> Enchantify.CONFIG.do_afterfuse = newBool)
+            .build()
+        );
+
+        menu.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.anvil_apply_sound"), Enchantify.CONFIG.anvil_apply_sound)
+            .setDefaultValue(def.anvil_apply_sound)
+            .setTooltip(Text.translatable("option.enchantify.anvil_apply_sound.tooltip"))
+            .setSaveConsumer(newBool -> Enchantify.CONFIG.anvil_apply_sound = newBool)
             .build()
         );
 

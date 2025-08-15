@@ -36,6 +36,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.nosam08.enchantmaxxing.Enchantify;
 import net.nosam08.enchantmaxxing.menu.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.menu.component_data.EnchantmentButton;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
@@ -144,7 +145,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }).verticalSizing(Sizing.fixed(20));
 
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
-            client.player.playSound(true ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+            client.player.playSound(Enchantify.CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
             Enchantips.start_tooltips(item, selected_enchantments);
         }).verticalSizing(Sizing.fixed(20));

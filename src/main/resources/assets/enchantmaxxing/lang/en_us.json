@@ -1,5 +1,6 @@
 {   
     "title.enchantify.config": "FTT Configuration",
+
     "category.enchantify.general": "General",
     "option.enchantify.defaultX": "Max Out Items by Default",
     "option.enchantify.defaultX.tooltip": "Skips the `X` button press required to start maxing out an item.",
@@ -7,8 +8,12 @@
     "option.enchantify.hoverColor.tooltip": "The color of needed enchantments that appear under the item.",
     "option.enchantify.is_static": "Static Enchantmax Notes",
     "option.enchantify.is_static.tooltip": "Determines whether to enchantmax enchantments that are already applied.",
+
+    "category.enchantify.menu": "Menu",
     "option.enchantify.do_autofuse": "Do Afterfuse in Menu",
     "option.enchantify.do_autofuse.tooltip": "Determines whether to perform the Afterfuse Enchantment Modification Menu enhancement.",
+    "option.enchantify.anvil_apply_sound": "Anvil Apply Sound",
+    "option.enchantify.anvil_apply_sound.tooltip": "Determines whether to use the Anvil sound when clicking apply to your item.",
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
 
