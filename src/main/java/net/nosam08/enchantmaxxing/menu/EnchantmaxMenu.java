@@ -150,7 +150,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             Enchantips.start_tooltips(item, selected_enchantments);
         }).verticalSizing(Sizing.fixed(20));
 
-        var item = Components.item(this.item)
+        var item = Components.item(this.item.copy())
         .margins(Insets.both(10, 2));
 
         return Containers.horizontalFlow(Sizing.content(), Sizing.content())
