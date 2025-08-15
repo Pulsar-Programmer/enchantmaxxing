@@ -52,11 +52,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     ///Associated data with the Menu instance.
     ButtonComponent selected_level_button;
     ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
-    
     // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
-    //var output
-    // ArrayList<EnchantmentLevelEntry> selected_enchantments; //output?
-    // HashMap<String, Integer> selected_enchantments; > potentially stronger?
+    HashMap<Integer, Pair<Integer, ArrayList<EnchantmentLevelEntry>>> selected_enchantments;
 
     public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original){
         this.item = item;
@@ -148,7 +145,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
             client.player.playSound(true ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
-            // Enchantips.start_tooltips(); TODO
+            // Enchantips.start_tooltips(item, ); TODO
         }).verticalSizing(Sizing.fixed(20));
 
         var item = Components.item(this.item)
@@ -177,18 +174,20 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     /** Creates the buttons for the main part of the menu. */
     public ArrayList<Component> buttons(){
         ArrayList<Component> bucket_groups = new ArrayList<>();
-        original.forEach(x -> bucket_groups.add(bucket_group(x)));
+        for(var i = 0; i < original.size(); i++){
+            bucket_groups.add(bucket_group(original.get(i), i));
+        }
         return bucket_groups;
     }
 
     /** Creates the Component and also its proposed size. */
-    public Pair<Component, Integer> bucket(Bucket bucket){
+    public Pair<Component, Integer> bucket(Bucket bucket, int b_index, int bg_index){
         ArrayList<Component> children = new ArrayList<>();
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
         var levels = EnchantmaxBuilder.levels_map(item);
         bucket.inner.forEach(x -> {
             var level = levels.getOrDefault(reg.getId(x), Integer.valueOf(0));
-            var button = enchant_level_select(level, reg.getEntry(x));
+            var button = enchant_level_select(level, reg.getEntry(x), b_index, bg_index);
             children.add(button);
         });
 
@@ -200,13 +199,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return new Pair<Component, Integer>(vertical, children.size());
     }
 
-    public Component bucket_group(BucketGroup bucketGroup){
+    public Component bucket_group(BucketGroup bucketGroup, int bg_index){
         ArrayList<Component> children = new ArrayList<>();
         Integer size = 20;
-        for (Bucket bucket : bucketGroup.inner) {
-            var component = bucket(bucket);
+        for(var i = 0; i < bucketGroup.inner.size(); i++){
+            Bucket bucket = bucketGroup.inner.get(i);
+            var component = bucket(bucket, i, bg_index);
             size = Math.max(component.getRight() * 26, size); //does the removed 6 of margin ruin it?
-            children.add(component.getLeft());  
+            children.add(component.getLeft());
         }
 
         ArrayList<Component> children_lines = new ArrayList<>();
@@ -242,7 +242,6 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             var lvl = Integer.valueOf(i);
             list.add(level_button(text, x -> {
                 on_level_select(x, lvl, level, enchantment);
-                //TODO
             }));
         }
         return list;
@@ -254,7 +253,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return text;
     }
 
-    public Component enchant_level_select(int level, RegistryEntry<Enchantment> enchantment){
+    public Component enchant_level_select(int level, RegistryEntry<Enchantment> enchantment, int b_index, int bg_index){
 
         var name = enchantment_text(enchantment, level);
         ArrayList<Component> levels = generate_levels(level, enchantment);
@@ -265,16 +264,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .horizontalAlignment(HorizontalAlignment.CENTER);
         
         var btn = new EnchantmentButton(name, b -> {
-            if(selected_level_button != null){
-                selected_level_button.active = true;
-                var selected_level_horizontal = selected_level_button.parent().children().get(1);
-                selected_level_horizontal.horizontalSizing(Sizing.fixed(0));
-            }
-            selected_level_button = b;
-            // selected_level_horizontal = horizontal;
-            b.active = false;
-            horizontal.horizontalSizing(Sizing.content());
-        }).margins(Insets.horizontal(3));
+            on_enchant_click(b, horizontal);
+        }, b_index, bg_index).margins(Insets.horizontal(3));
 
         var head = Containers.horizontalFlow(Sizing.content(), Sizing.content())
         .child(btn)
@@ -289,39 +280,43 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     public static Component level_button(Text name, Consumer<ButtonComponent> fn){
         return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
-        // return new EnchantmentButton(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
-    public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
-        return Components.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
-    }
+    // public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
+    //     return Components.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
+    // }
 
-
-
-
-    public static void basic_click(ButtonComponent button){
-        System.out.println("Click!");
-    }
-
-    public void on_enchant_click(ButtonComponent button){
-        //TODO
-        //button function
-        button.active = !button.active;
-        System.out.println("click");
+    public void on_enchant_click(ButtonComponent b, Component horizontal){
+        if(selected_level_button != null){
+            selected_level_button.active = true;
+            var selected_level_horizontal = selected_level_button.parent().children().get(1);
+            selected_level_horizontal.horizontalSizing(Sizing.fixed(0));
+        }
+        selected_level_button = b;
+        // selected_level_horizontal = horizontal;
+        b.active = false;
+        horizontal.horizontalSizing(Sizing.content());
     }
 
     public void on_level_select(ButtonComponent button, int level, int reg_level, RegistryEntry<Enchantment> ench){
         button.parent().horizontalSizing(Sizing.fixed(0));
         selected_level_button.active(true);
 
-        //register level in output map
+        ///Register level in output map.
+        var btn = ((EnchantmentButton)selected_level_button);
+        var entry = new EnchantmentLevelEntry(ench, level);
+        var present = selected_enchantments.getOrDefault(btn.bg_index, new Pair<>(btn.b_index, new ArrayList<>()));
+        if(present.getLeft() == btn.b_index){
+            present.getRight().add(entry);
+        } else {
+            present.setLeft(btn.b_index);
+            present.setRight(Lists.newArrayList(entry));
+        }
+
+
 
         selected_level_button.setMessage(enchantment_text(ench, level));
         var space = Size.of(selected_level_button.width(), selected_level_button.height());
-        // selected_level_button.parent().layout(space);
-        // selected_level_button.parent().parent().layout(space);
-        // selected_level_button.parent().parent().parent().layout(space);
-        // selected_level_button.parent().parent().parent().parent().layout(space);
         var tracer = selected_level_button.parent();
         while(tracer.hasParent()){
             tracer = tracer.parent();

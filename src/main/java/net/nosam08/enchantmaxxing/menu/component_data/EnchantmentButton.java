@@ -1,19 +1,11 @@
 package net.nosam08.enchantmaxxing.menu.component_data;
 
-import java.util.List;
 import java.util.function.Consumer;
-
-import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
-import io.wispforest.owo.ui.core.Surface;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.text.Text;
@@ -21,23 +13,29 @@ import net.minecraft.text.Text;
 public class EnchantmentButton extends ButtonComponent {
 
     public boolean enchanted = false;
+    /** Tracks the index of the bucket. */
+    public int b_index;
+    /** Tracks the index of the bucketgroup. */
+    public int bg_index;
 
-    public EnchantmentButton(Text message, Consumer<ButtonComponent> onPress) {
+    public EnchantmentButton(Text message, Consumer<ButtonComponent> onPress, int b_index, int bg_index) {
         super(message, onPress);
+        this.b_index = b_index;
+        this.bg_index = bg_index;
     }
 
-    @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    // @Override
+    // public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         
-        // TODO Auto-generated method stub
-        super.renderWidget(context, mouseX, mouseY, delta);
-    }
+    //     // Auto-generated method stub
+    //     super.renderWidget(context, mouseX, mouseY, delta);
+    // }
 
-    @Override
-    public ButtonComponent renderer(Renderer renderer) {
-        // TODO Auto-generated method stub
-        return super.renderer(renderer);
-    }
+    // @Override
+    // public ButtonComponent renderer(Renderer renderer) {
+    //     // Auto-generated method stub
+    //     return super.renderer(renderer);
+    // }
 
     @Override
     public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
@@ -67,49 +65,9 @@ public class EnchantmentButton extends ButtonComponent {
             0.0f, 0.0f,     // u, v texture coordinates (float)
             width, height,  // width, height to draw
             1, 1,         // texture width, height
-            0x1AD4FFFF      // color (white with full alpha)
+            0x1AD4FFFF      // color (not sure this does much lol)
         );
         
         RenderSystem.disableBlend();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-    @Override
-    public void setTooltip(Tooltip tooltip) {
-        // TODO Auto-generated method stub
-        super.setTooltip(tooltip);
-    }
-
-    
-
-    @Override
-    public Component tooltip(List<TooltipComponent> tooltip) {
-        // TODO Auto-generated method stub
-        return super.tooltip(tooltip);
-    }
-
-    @Override
-    public void drawTooltip(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        // TODO Auto-generated method stub
-        super.drawTooltip(context, mouseX, mouseY, partialTicks, delta);
-    }
-
-    @Override
-    public Component tooltip(@NotNull Text tooltip) {
-        // TODO Auto-generated method stub
-        return super.tooltip(tooltip);
-    }
-
-    
-    
 }
