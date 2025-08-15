@@ -21,6 +21,7 @@ import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.ParentComponent;
 import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
@@ -53,7 +54,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     EnchantmentButton selected_level_button;
     ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
     // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
-    HashMap<Integer, Pair<Integer, ArrayList<Pair<EnchantmentLevelEntry, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
+    HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
 
     public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original){
         this.item = item;
@@ -145,7 +146,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
             client.player.playSound(true ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
-            // Enchantips.start_tooltips(item, ); TODO
+            Enchantips.start_tooltips(item, selected_enchantments);
         }).verticalSizing(Sizing.fixed(20));
 
         var item = Components.item(this.item)
@@ -301,30 +302,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     public void on_level_select(ButtonComponent lvl_btn, int level, int reg_level, RegistryEntry<Enchantment> ench){
         lvl_btn.parent().horizontalSizing(Sizing.fixed(0));
         selected_level_button.active(true);
-    
-        ///Register level in output map.
-        var entry = new EnchantmentLevelEntry(ench, level);
-        var pair = new Pair<>(entry, selected_level_button);
-        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new ArrayList<>()));
-        if(present.getLeft() == selected_level_button.b_index){
-            System.out.println("Left: " + present.getLeft() + " Right: " + selected_level_button.b_index);
-            System.out.println("Adding!");
-            present.getRight().add(pair);
-            selected_enchantments.put(selected_level_button.bg_index, present);
-        } else {
-            System.out.println("Resetting!");
-            present.setLeft(selected_level_button.b_index);
-            ///Free all the buttons!!
-            for (var btn_pair : present.getRight()) {
-                var btn = btn_pair.getRight();
-                unanimate_button(btn);
-            }
-            ///Add new selection.
-            present.setRight(Lists.newArrayList(pair));
-        }
-
-
-
+        
         selected_level_button.setMessage(enchantment_text(ench, level));
         var space = Size.of(selected_level_button.width(), selected_level_button.height());
         var tracer = selected_level_button.parent();
@@ -336,8 +314,37 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         if(level == reg_level){
             unanimate_button(selected_level_button);
         } else {
+            //if an enchantment level is already reported, replace it
+            ///-> Do not pick up on zero events.
+            var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new HashMap<>()));
+            if(present.getLeft() == selected_level_button.b_index){
+                present.getRight().put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
+                selected_enchantments.put(selected_level_button.bg_index, present);
+            } else {
+                present.setLeft(selected_level_button.b_index);
+                ///Free all the buttons!!
+                for (var btn_pair : present.getRight().entrySet()) {
+                    EnchantmentButton btn = btn_pair.getValue().getRight();
+                    ///Press the first level button to reset!
+                    var temp_select_btn = selected_level_button;
+                    selected_level_button = btn;
+                    var first_lvl_btn = ((ButtonComponent)((ParentComponent)btn.parent().children().get(1)).children().get(0));
+                    first_lvl_btn.onPress();
+                    selected_level_button = temp_select_btn;
+                }
+                ///Add new selection.
+                HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>> hm = new HashMap<>();
+                hm.put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
+                present.setRight(hm);
+            }
+
             animate_button(selected_level_button);
         }
+    }
+
+    /** Register level in output map. */
+    public void register_enchantment(){
+
     }
 
     /** Makes the button fancy. */
