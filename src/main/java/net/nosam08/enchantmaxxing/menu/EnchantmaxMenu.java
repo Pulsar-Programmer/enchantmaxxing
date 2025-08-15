@@ -43,6 +43,7 @@ import net.nosam08.enchantmaxxing.menu.ds.Bucket;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
+import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 
 public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
@@ -147,7 +148,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
             client.player.playSound(Enchantify.CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
-            Enchantips.start_tooltips(item, selected_enchantments);
+            var profile = new EnchantmaxProfile(selected_enchantments);
+            Enchantips.start_tooltips(item, profile);
         }).verticalSizing(Sizing.fixed(20));
 
         var item = Components.item(this.item.copy())

@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
@@ -15,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
+import net.nosam08.enchantmaxxing.tooltips.Enchantips;
+import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class EnchantifyClient implements ClientModInitializer {
 
@@ -42,6 +45,13 @@ public class EnchantifyClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (MAXXING.wasPressed()) {
                 on_emenu_open(client);
+            }
+        });
+
+        ItemTooltipCallback.EVENT.register((stack, _context, _type, lines) -> {
+            var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(stack));
+            if(profile != null){
+                Enchantips.generate_tooltips(lines, profile);
             }
         });
 
