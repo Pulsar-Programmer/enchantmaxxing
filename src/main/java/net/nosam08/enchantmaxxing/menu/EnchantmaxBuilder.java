@@ -11,8 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.nosam08.enchantmaxxing.Enchantify;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -32,7 +31,7 @@ public class EnchantmaxBuilder {
 
         Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
 
-        if(!Enchantify.CONFIG.is_static){
+        if(!EnchantifyClient.CONFIG.is_static){
             stream = stream.filter(ench_i -> is_compatible(item, ench_i));
         }
 

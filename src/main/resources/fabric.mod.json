@@ -16,13 +16,9 @@
 	"icon": "assets/enchantmaxxing/icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"net.nosam08.enchantmaxxing.Enchantify"
-		],
 		"client": [
 			"net.nosam08.enchantmaxxing.EnchantifyClient"
 		],
-
 
 		"modmenu": [
 			"net.nosam08.enchantmaxxing.config.EnchantifyModMenu"

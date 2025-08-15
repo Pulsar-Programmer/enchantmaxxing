@@ -1,14 +1,12 @@
 package net.nosam08.enchantmaxxing.tooltips;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.nosam08.enchantmaxxing.Enchantify;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
@@ -26,7 +24,7 @@ public class Enchantips {
     public static void generate_tooltips(List<Text> lines, EnchantmaxProfile selected_enchantments){
         for (var ench_level : selected_enchantments.profile) {
             var name = Enchantment.getName(ench_level.enchantment, ench_level.level);
-            lines.add(Text.translatable(name.getString()).withColor(Enchantify.CONFIG.hoverColor));
+            lines.add(Text.translatable(name.getString()).withColor(EnchantifyClient.CONFIG.hoverColor));
         }
     }
 }

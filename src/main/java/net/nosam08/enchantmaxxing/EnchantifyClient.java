@@ -1,6 +1,8 @@
 package net.nosam08.enchantmaxxing;
 
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -13,6 +15,8 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
+import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
+import net.nosam08.enchantmaxxing.config.EnchantifyModMenu;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
@@ -20,6 +24,11 @@ import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class EnchantifyClient implements ClientModInitializer {
+
+    public static final String MOD_ID = "enchantify";
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    public static EnchantifyConfig CONFIG = EnchantifyModMenu.load();
 
     public static KeyBinding MAXXING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.enchantify.opengui",
@@ -30,7 +39,7 @@ public class EnchantifyClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
+        Tests.testing();
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
 			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, key, scancode, modifiers) -> {
@@ -69,7 +78,7 @@ public class EnchantifyClient implements ClientModInitializer {
 
         // Enchantify.LOGGER.info(item.toString());
 
-        if(!Enchantify.CONFIG.do_afterfuse){
+        if(!CONFIG.do_afterfuse){
             var instructions = EnchantmaxBuilder.build_direct(item);
             if(instructions.isEmpty()){
                 return;

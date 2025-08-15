@@ -12,7 +12,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
-import net.nosam08.enchantmaxxing.Enchantify;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,50 +43,50 @@ public class EnchantifyModMenu implements ModMenuApi {
         ConfigCategory general = builder.getOrCreateCategory(Text.translatable("category.enchantify.general"));
 
         general.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.defaultX"), Enchantify.CONFIG.defaultX)
+            .startBooleanToggle(Text.translatable("option.enchantify.defaultX"), EnchantifyClient.CONFIG.defaultX)
             .setDefaultValue(def.defaultX)
             .setTooltip(Text.translatable("option.enchantify.defaultX.tooltip"))
-            .setSaveConsumer(newBool -> Enchantify.CONFIG.defaultX = newBool)
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.defaultX = newBool)
             .build()
         );
 
         general.addEntry(entryBuilder
-            .startColorField(Text.translatable("option.enchantify.hoverColor"), Enchantify.CONFIG.hoverColor)
+            .startColorField(Text.translatable("option.enchantify.hoverColor"), EnchantifyClient.CONFIG.hoverColor)
             // .setAlphaMode(true)
             .setDefaultValue(TextColor.fromRgb(def.hoverColor))
             .setTooltip(Text.translatable("option.enchantify.hoverColor.tooltip"))
-            .setSaveConsumer(newColor -> Enchantify.CONFIG.hoverColor = newColor)
+            .setSaveConsumer(newColor -> EnchantifyClient.CONFIG.hoverColor = newColor)
             .build()
         );
 
         general.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.is_static"), Enchantify.CONFIG.is_static)
+            .startBooleanToggle(Text.translatable("option.enchantify.is_static"), EnchantifyClient.CONFIG.is_static)
             .setDefaultValue(def.is_static)
             .setTooltip(Text.translatable("option.enchantify.is_static.tooltip"))
-            .setSaveConsumer(newBool -> Enchantify.CONFIG.is_static = newBool)
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.is_static = newBool)
             .build()
         );
 
         ConfigCategory menu = builder.getOrCreateCategory(Text.translatable("category.enchantify.menu"));
 
         menu.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.do_autofuse"), Enchantify.CONFIG.do_afterfuse)
+            .startBooleanToggle(Text.translatable("option.enchantify.do_autofuse"), EnchantifyClient.CONFIG.do_afterfuse)
             .setDefaultValue(def.do_afterfuse)
             .setTooltip(Text.translatable("option.enchantify.do_autofuse.tooltip"))
-            .setSaveConsumer(newBool -> Enchantify.CONFIG.do_afterfuse = newBool)
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_afterfuse = newBool)
             .build()
         );
 
         menu.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.anvil_apply_sound"), Enchantify.CONFIG.anvil_apply_sound)
+            .startBooleanToggle(Text.translatable("option.enchantify.anvil_apply_sound"), EnchantifyClient.CONFIG.anvil_apply_sound)
             .setDefaultValue(def.anvil_apply_sound)
             .setTooltip(Text.translatable("option.enchantify.anvil_apply_sound.tooltip"))
-            .setSaveConsumer(newBool -> Enchantify.CONFIG.anvil_apply_sound = newBool)
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.anvil_apply_sound = newBool)
             .build()
         );
 
         builder.setSavingRunnable(() -> {
-            save(Enchantify.CONFIG);
+            save(EnchantifyClient.CONFIG);
         });
 
         return builder.build();

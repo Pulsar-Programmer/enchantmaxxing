@@ -6,8 +6,6 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.collect.Lists;
-
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -20,7 +18,6 @@ import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.ParentComponent;
 import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
@@ -28,15 +25,13 @@ import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.nosam08.enchantmaxxing.Enchantify;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.menu.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.menu.component_data.EnchantmentButton;
 import net.nosam08.enchantmaxxing.menu.ds.Bucket;
@@ -146,7 +141,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }).verticalSizing(Sizing.fixed(20));
 
         var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
-            client.player.playSound(Enchantify.CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+            client.player.playSound(EnchantifyClient.CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
             var profile = new EnchantmaxProfile(selected_enchantments);
             Enchantips.start_tooltips(item, profile);

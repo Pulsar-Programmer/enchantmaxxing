@@ -19,7 +19,7 @@ import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
 public class Tests {
 
     public static void testing(){
-        Enchantify.LOGGER.info("Starting Tests...");
+        EnchantifyClient.LOGGER.info("Starting Tests...");
         // test_subsets();
         // test_minifuse();
         // test_fuse();
@@ -64,13 +64,13 @@ public class Tests {
         var r3 = Lists.newArrayList(enchantment("Y"));
 
         OppositeArchetypes.merge(bucket_groups, pivot, rest);
-        Enchantify.LOGGER.info(bucket_groups.get(0).display());
+        EnchantifyClient.LOGGER.info(bucket_groups.get(0).display());
 
         OppositeArchetypes.merge(bucket_groups, p2, new ArrayList<>());
-        Enchantify.LOGGER.info(bucket_groups.get(1).display());
+        EnchantifyClient.LOGGER.info(bucket_groups.get(1).display());
 
         OppositeArchetypes.merge(bucket_groups, p3, r3);
-        Enchantify.LOGGER.info(bucket_groups.get(2).display());
+        EnchantifyClient.LOGGER.info(bucket_groups.get(2).display());
     }
 
     public static void test_fuse(){
@@ -82,28 +82,28 @@ public class Tests {
         var r3 = Arrays.asList(enchantment("Y"));
 
         OppositeArchetypes.fuse(bucket_group, pivot, new ArrayList<>(rest));
-        Enchantify.LOGGER.info(bucket_group.display());
+        EnchantifyClient.LOGGER.info(bucket_group.display());
 
         OppositeArchetypes.fuse(bucket_group, p3, new ArrayList<>(r3));
-        Enchantify.LOGGER.info(bucket_group.display());
+        EnchantifyClient.LOGGER.info(bucket_group.display());
     }
 
     public static void test_minifuse(){
         var bucket_group = bucketgroup("A|BC");
-        Enchantify.LOGGER.info(bucket_group.display());
-        Enchantify.LOGGER.info("1");
+        EnchantifyClient.LOGGER.info(bucket_group.display());
+        EnchantifyClient.LOGGER.info("1");
 
         bucket_group.minifuse(enchantment("B"), enchantment("A"));
-        Enchantify.LOGGER.info(bucket_group.display());
-        Enchantify.LOGGER.info("2");
+        EnchantifyClient.LOGGER.info(bucket_group.display());
+        EnchantifyClient.LOGGER.info("2");
 
         bucket_group.minifuse(enchantment("B"), enchantment("D"));
-        Enchantify.LOGGER.info(bucket_group.display());
-        Enchantify.LOGGER.info("3");
+        EnchantifyClient.LOGGER.info(bucket_group.display());
+        EnchantifyClient.LOGGER.info("3");
 
         bucket_group.minifuse(enchantment("B"), enchantment("C"));
-        Enchantify.LOGGER.info(bucket_group.display());
-        Enchantify.LOGGER.info("4");
+        EnchantifyClient.LOGGER.info(bucket_group.display());
+        EnchantifyClient.LOGGER.info("4");
     }
 
 
@@ -115,8 +115,8 @@ public class Tests {
 
         BucketGroup.check_elim_subsets(list_a, list_b);
         
-        list_a.forEach(x -> Enchantify.LOGGER.info(x.display()));
-        list_b.forEach(x -> Enchantify.LOGGER.info(x.display()));
+        list_a.forEach(x -> EnchantifyClient.LOGGER.info(x.display()));
+        list_b.forEach(x -> EnchantifyClient.LOGGER.info(x.display()));
     }
 
 
@@ -124,7 +124,7 @@ public class Tests {
         var bucket_groups = new ArrayList<BucketGroup>(Arrays.asList(bucketgroup("ABC|BD|GHI")));
 
         MenuInstructions menu_instructions = OppositeArchetypes.afterfuse(bucket_groups);
-        Enchantify.LOGGER.info(menu_instructions.sample_display());
+        EnchantifyClient.LOGGER.info(menu_instructions.sample_display());
 
     }
 
@@ -139,13 +139,13 @@ public class Tests {
         sword.addEnchantment(sharpness, 1);
 
         var r1 = smite.value().isAcceptableItem(sword);
-        Enchantify.LOGGER.info(r1+"");
+        EnchantifyClient.LOGGER.info(r1+"");
 
         var r2 = smite.value().isPrimaryItem(sword);
-        Enchantify.LOGGER.info(r2+"");
+        EnchantifyClient.LOGGER.info(r2+"");
 
         var r3 = smite.value().isSupportedItem(sword);
-        Enchantify.LOGGER.info(r3+"");
+        EnchantifyClient.LOGGER.info(r3+"");
     }
 
 }
