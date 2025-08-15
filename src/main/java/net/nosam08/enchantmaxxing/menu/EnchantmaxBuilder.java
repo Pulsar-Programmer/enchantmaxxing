@@ -44,7 +44,6 @@ public class EnchantmaxBuilder {
         return instructions;
     }
 
-    //TODO deprecated - we are now gonna use a method known as "Archetypes Advancement" for each one (oh my god) (or is there another way to filter by level)
     /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
     public static boolean is_compatible(ItemStack item, Enchantment enchantment){
         var reg = all_enchantments();
@@ -53,6 +52,11 @@ public class EnchantmaxBuilder {
             var ench_x_val = ench_x.value();
             var id_ench_x = reg.getId(ench_x_val);
             if(id_ench_x.equals(reg.getId(enchantment))){
+                ///Add the leveling feature. You can't change your enchantments but you sure can level one of them up.
+                // TODO - what if there are two like the trident tho?
+                // if(item.getEnchantments().getLevel(ench_x) != ench_x_val.getMaxLevel()){
+                //     return true;
+                // }
                 return false;
             }
 

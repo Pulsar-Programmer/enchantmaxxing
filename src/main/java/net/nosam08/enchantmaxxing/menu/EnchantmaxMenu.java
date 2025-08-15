@@ -314,37 +314,36 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         if(level == reg_level){
             unanimate_button(selected_level_button);
         } else {
-            //if an enchantment level is already reported, replace it
             ///-> Do not pick up on zero events.
-            var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new HashMap<>()));
-            if(present.getLeft() == selected_level_button.b_index){
-                present.getRight().put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
-                selected_enchantments.put(selected_level_button.bg_index, present);
-            } else {
-                present.setLeft(selected_level_button.b_index);
-                ///Free all the buttons!!
-                for (var btn_pair : present.getRight().entrySet()) {
-                    EnchantmentButton btn = btn_pair.getValue().getRight();
-                    ///Press the first level button to reset!
-                    var temp_select_btn = selected_level_button;
-                    selected_level_button = btn;
-                    var first_lvl_btn = ((ButtonComponent)((ParentComponent)btn.parent().children().get(1)).children().get(0));
-                    first_lvl_btn.onPress();
-                    selected_level_button = temp_select_btn;
-                }
-                ///Add new selection.
-                HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>> hm = new HashMap<>();
-                hm.put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
-                present.setRight(hm);
-            }
+            register_enchantment(ench, level);
 
             animate_button(selected_level_button);
         }
     }
 
     /** Register level in output map. */
-    public void register_enchantment(){
-
+    public void register_enchantment(RegistryEntry<Enchantment> ench, int level){
+        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new HashMap<>()));
+        if(present.getLeft() == selected_level_button.b_index){
+            present.getRight().put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
+            selected_enchantments.put(selected_level_button.bg_index, present);
+        } else {
+            present.setLeft(selected_level_button.b_index);
+            ///Free all the buttons!!
+            for (var btn_pair : present.getRight().entrySet()) {
+                EnchantmentButton btn = btn_pair.getValue().getRight();
+                ///Press the first level button to reset!
+                var temp_select_btn = selected_level_button;
+                selected_level_button = btn;
+                var first_lvl_btn = ((ButtonComponent)((ParentComponent)btn.parent().children().get(1)).children().get(0));
+                first_lvl_btn.onPress();
+                selected_level_button = temp_select_btn;
+            }
+            ///Add new selection.
+            HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>> hm = new HashMap<>();
+            hm.put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
+            present.setRight(hm);
+        }
     }
 
     /** Makes the button fancy. */
