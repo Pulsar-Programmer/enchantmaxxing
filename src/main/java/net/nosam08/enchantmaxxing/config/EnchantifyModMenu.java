@@ -85,6 +85,14 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
+        menu.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.do_fancy_menu"), EnchantifyClient.CONFIG.do_fancy_menu)
+            .setDefaultValue(def.do_fancy_menu)
+            .setTooltip(Text.translatable("option.enchantify.do_fancy_menu.tooltip"))
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_fancy_menu = newBool)
+            .build()
+        );
+
         builder.setSavingRunnable(() -> {
             save(EnchantifyClient.CONFIG);
         });

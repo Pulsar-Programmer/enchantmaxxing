@@ -10,9 +10,16 @@ public class EnchantifyConfig {
     /** Determines whether to enchantmax enchantments that are already applied. */
     public boolean is_static = false;
 
+
+
+
+
     /** Determines whether to use the Autofuse menu or not. */
     public boolean do_afterfuse = false; //should be turned on in later versions of the Autofuse Update
 
     /** Determines whether to use the Anvil sound when clicking apply to your item. */
     public boolean anvil_apply_sound = true;
+
+    /** Determines whether to implement the fancy menu or the regular one. */
+    public boolean do_fancy_menu = false;
 }
