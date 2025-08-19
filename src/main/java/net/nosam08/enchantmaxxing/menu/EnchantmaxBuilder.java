@@ -48,7 +48,7 @@ public class EnchantmaxBuilder {
         }
 
         if(EnchantifyClient.CONFIG.curse_order.equals("OFF")){
-            entries = entries.filter(ench -> ench.isIn(EnchantmentTags.CURSE));
+            entries = entries.filter(ench -> !ench.isIn(EnchantmentTags.CURSE));
         }
 
         var insert = build_from_start(entries, item);
