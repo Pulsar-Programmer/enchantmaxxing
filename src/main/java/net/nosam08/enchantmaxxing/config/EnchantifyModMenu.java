@@ -93,6 +93,15 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
+        menu.addEntry(entryBuilder
+            .startStringDropdownMenu(Text.translatable("option.enchantify.curse_order"), EnchantifyClient.CONFIG.curse_order)
+            .setDefaultValue(def.curse_order)
+            .setSelections(def.curse_order_options)
+            .setTooltip(Text.translatable("option.enchantify.curse_order.tooltip"))
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.curse_order = newBool)
+            .build()
+        );
+
         builder.setSavingRunnable(() -> {
             save(EnchantifyClient.CONFIG);
         });

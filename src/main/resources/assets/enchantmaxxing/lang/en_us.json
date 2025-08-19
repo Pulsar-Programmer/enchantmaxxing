@@ -16,6 +16,8 @@
     "option.enchantify.anvil_apply_sound.tooltip": "Determines whether to use the Anvil sound when clicking apply to your item.",
     "option.enchantify.do_fancy_menu": "Fancy Menu",
     "option.enchantify.do_fancy_menu.tooltip": "Determines whether to implement the fancy menu or the regular one.",
+    "option.enchantify.curse_order": "Curse Order",
+    "option.enchantify.curse_order.tooltip": "Determines the order of the curses in the menu.",
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
 

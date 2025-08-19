@@ -1,5 +1,9 @@
 package net.nosam08.enchantmaxxing.config;
 
+import java.util.ArrayList;
+
+import com.google.common.collect.Lists;
+
 public class EnchantifyConfig {
     /**The color of enchantments that appear under the item. */
     public Integer hoverColor = 0xFFA500;
@@ -22,4 +26,9 @@ public class EnchantifyConfig {
 
     /** Determines whether to implement the fancy menu or the regular one. */
     public boolean do_fancy_menu = false;
+
+    /** Determines the order of the curses in the menu. */
+    public String curse_order = "BOTTOM";
+    public ArrayList<String> curse_order_options = Lists.newArrayList("TOP", "BOTTOM", "RANDOM", "OFF");
+
 }
