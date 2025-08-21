@@ -184,7 +184,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         ArrayList<Component> children = new ArrayList<>();
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
         var levels = EnchantmaxBuilder.levels_map(item);
-        bucket.inner.forEach(x -> {
+        bucket.to_vec_curses(reg).forEach(x -> {
             var level = levels.getOrDefault(reg.getId(x), Integer.valueOf(0));
             var button = enchant_level_select(level, reg.getEntry(x), b_index, bg_index);
             children.add(button);

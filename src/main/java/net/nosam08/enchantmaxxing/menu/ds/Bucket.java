@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.EnchantmentTags;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
+import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
 
 public class Bucket {
     public HashSet<Enchantment> inner;
@@ -63,5 +67,36 @@ public class Bucket {
             string.append(";");
         }
         return string.toString();
+    }
+
+    /** Transforms the Bucket into an iterable vec that considers the ordering of curses.*/
+    public ArrayList<Enchantment> to_vec_curses(Registry<Enchantment> reg){
+        var first = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(0)) ? 1 : 0;
+        var second = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(1)) ? 2 : 0;
+        var num = first + second;
+
+        var main = new ArrayList<Enchantment>();
+        if(num == 0){
+            main.addAll(inner);
+            return main;
+        }
+
+        var curses = new ArrayList<Enchantment>();
+        for (Enchantment enchantment : inner) {
+            var entry = reg.getEntry(enchantment);
+            if(entry.isIn(EnchantmentTags.CURSE)){
+                curses.add(enchantment);
+            } else {
+                main.add(enchantment);
+            }
+        }
+
+        if(num == 2){
+            main.addAll(curses);
+            return main;
+        } else {
+            curses.addAll(main);
+            return curses;
+        }
     }
 }
