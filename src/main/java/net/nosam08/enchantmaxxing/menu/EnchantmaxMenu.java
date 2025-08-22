@@ -173,6 +173,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     /** Creates the buttons for the main part of the menu. */
     public ArrayList<Component> buttons(){
         ArrayList<Component> bucket_groups = new ArrayList<>();
+        original = EnchantmaxBuilder.to_vec_curses(original, EnchantmaxBuilder.all_enchantments()); //TODO
         for(var i = 0; i < original.size(); i++){
             bucket_groups.add(bucket_group(original.get(i), i));
         }

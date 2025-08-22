@@ -136,18 +136,15 @@ public class EnchantmaxBuilder {
 
     /** Takes the ArrayList<BucketGroup> and sorts the ones containing curses to the bottom.*/
     public static ArrayList<BucketGroup> to_vec_curses(ArrayList<BucketGroup> bgs, Registry<Enchantment> reg){
-
-        
         var first = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(0)) ? 1 : 0;
         var second = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(1)) ? 2 : 0;
         var num = first + second;
 
-        var main = new ArrayList<BucketGroup>();
         if(num == 0){
-            main.addAll(bgs);
-            return main;
+            return bgs;
         }
-
+        
+        var main = new ArrayList<BucketGroup>();
         var curses = new ArrayList<BucketGroup>();
         var singleton_curses = new ArrayList<BucketGroup>();
         for (BucketGroup enchantment : bgs) {
@@ -162,14 +159,14 @@ public class EnchantmaxBuilder {
             }
         }
 
-        if(num == 1){
+        if(num == 2){
             main.addAll(curses);
             main.addAll(singleton_curses);
             return main;
         } else {
             singleton_curses.addAll(curses);
             singleton_curses.addAll(main);
-            return curses;
+            return singleton_curses;
         }
     }
 }
