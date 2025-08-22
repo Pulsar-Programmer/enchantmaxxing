@@ -134,38 +134,42 @@ public class EnchantmaxBuilder {
         return map;
     }
 
-    // /** Takes the ArrayList<BucketGroup> and sorts the ones containing curses to the bottom.*/
-    // public static ArrayList<Enchantment> to_vec_curses(ArrayList<BucketGroup> bgs, Registry<Enchantment> reg){
+    /** Takes the ArrayList<BucketGroup> and sorts the ones containing curses to the bottom.*/
+    public static ArrayList<BucketGroup> to_vec_curses(ArrayList<BucketGroup> bgs, Registry<Enchantment> reg){
 
+        
+        var first = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(0)) ? 1 : 0;
+        var second = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(1)) ? 2 : 0;
+        var num = first + second;
 
-    //     var first = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(0)) ? 1 : 0;
-    //     var second = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(1)) ? 2 : 0;
-    //     var num = first + second;
+        var main = new ArrayList<BucketGroup>();
+        if(num == 0){
+            main.addAll(bgs);
+            return main;
+        }
 
-    //     var main = new ArrayList<Enchantment>();
-    //     if(num == 0){
-    //         main.addAll(inner);
-    //         return main;
-    //     }
+        var curses = new ArrayList<BucketGroup>();
+        var singleton_curses = new ArrayList<BucketGroup>();
+        for (BucketGroup enchantment : bgs) {
+            if(enchantment.generally_contains_curse(reg)){
+                if(enchantment.inner.size() == 1){
+                    singleton_curses.add(enchantment);
+                } else {
+                    curses.add(enchantment);
+                }
+            } else {
+                main.add(enchantment);
+            }
+        }
 
-    //     var curses = new ArrayList<Enchantment>();
-    //     for (Enchantment enchantment : inner) {
-    //         var entry = reg.getEntry(enchantment);
-    //         if(entry.isIn(EnchantmentTags.CURSE)){
-    //             curses.add(enchantment);
-    //         } else {
-    //             main.add(enchantment);
-    //         }
-    //     }
-
-    //     if(num == 1){
-    //         main.addAll(curses);
-    //         return main;
-    //     } else {
-    //         curses.addAll(main);
-    //         return curses;
-    //     }
-
-
-    // }
+        if(num == 1){
+            main.addAll(curses);
+            main.addAll(singleton_curses);
+            return main;
+        } else {
+            singleton_curses.addAll(curses);
+            singleton_curses.addAll(main);
+            return curses;
+        }
+    }
 }

@@ -3,6 +3,8 @@ package net.nosam08.enchantmaxxing.menu.ds;
 import java.util.ArrayList;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.EnchantmentTags;
 
 public class BucketGroup {
     public ArrayList<Bucket> inner;
@@ -38,6 +40,16 @@ public class BucketGroup {
         for(var x: inner){
             if(x.inner.contains(e)){
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /** Checks across all the buckets whether a curse is contained. */
+    public boolean generally_contains_curse(Registry<Enchantment> reg){
+        for(var x: inner){
+            for(var y: x.inner){
+                if(reg.getEntry(y).isIn(EnchantmentTags.CURSE)) return true;
             }
         }
         return false;
