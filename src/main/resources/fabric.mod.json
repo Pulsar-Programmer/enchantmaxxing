@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "enchantify",
 	"version": "${version}",
-	"name": "Final Tinted Touch",
+	"name": "Final Tinted Touch (FTT)",
 	"description": "Mod that helps max out enchants on items.",
 	"authors": [
 		"Nosam08",
@@ -28,7 +28,7 @@
 		"enchantify.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=${loader_version}",
+		"fabricloader": ">=0.16.14",
 		"minecraft": "${minecraft_version}",
 		"java": ">=21",
 
@@ -37,6 +37,7 @@
 		"owo": "${owo_version}"
 	},
 	"suggests": {
+		"fabricloader": ">=${loader_version}",
 		"modmenu": "${mod_menu}"
 	}
 }

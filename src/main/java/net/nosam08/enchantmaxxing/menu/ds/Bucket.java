@@ -7,6 +7,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
+import net.nosam08.enchantmaxxing.config.CurseOrderOptions;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
 
 public class Bucket {
@@ -71,8 +72,8 @@ public class Bucket {
 
     /** Transforms the Bucket into an iterable vec that considers the ordering of curses.*/
     public ArrayList<Enchantment> to_vec_curses(Registry<Enchantment> reg){
-        var first = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(0)) ? 1 : 0;
-        var second = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(1)) ? 2 : 0;
+        var first = EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.TOP) ? 1 : 0;
+        var second = EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.BOTTOM) ? 2 : 0;
         var num = first + second;
 
         var main = new ArrayList<Enchantment>();

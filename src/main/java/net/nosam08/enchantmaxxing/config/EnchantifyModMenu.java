@@ -94,9 +94,9 @@ public class EnchantifyModMenu implements ModMenuApi {
         );
 
         menu.addEntry(entryBuilder
-            .startStringDropdownMenu(Text.translatable("option.enchantify.curse_order"), EnchantifyClient.CONFIG.curse_order)
+            .startEnumSelector(Text.translatable("option.enchantify.curse_order"), CurseOrderOptions.class, EnchantifyClient.CONFIG.curse_order)
             .setDefaultValue(def.curse_order)
-            .setSelections(def.curse_order_options)
+            .setEnumNameProvider(option -> Text.translatable(option.toString()).withColor(((CurseOrderOptions)option).getColor()))
             .setTooltip(Text.translatable("option.enchantify.curse_order.tooltip"))
             .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.curse_order = newBool)
             .build()

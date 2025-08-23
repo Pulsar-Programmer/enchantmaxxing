@@ -28,7 +28,5 @@ public class EnchantifyConfig {
     public boolean do_fancy_menu = false;
 
     /** Determines the order of the curses in the menu. */
-    public String curse_order = "BOTTOM";
-    public ArrayList<String> curse_order_options = Lists.newArrayList("TOP", "BOTTOM", "RANDOM", "OFF");
-
+    public CurseOrderOptions curse_order = CurseOrderOptions.BOTTOM;
 }

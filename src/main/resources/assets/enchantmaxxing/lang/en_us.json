@@ -18,6 +18,10 @@
     "option.enchantify.do_fancy_menu.tooltip": "Determines whether to implement the fancy menu or the regular one.",
     "option.enchantify.curse_order": "Curse Order",
     "option.enchantify.curse_order.tooltip": "Determines the order of the curses in the menu.",
+    "option.enchantify.top": "TOP",
+    "option.enchantify.bottom": "BOTTOM",
+    "option.enchantify.off": "OFF",
+    "option.enchantify.random": "RANDOM",
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
 

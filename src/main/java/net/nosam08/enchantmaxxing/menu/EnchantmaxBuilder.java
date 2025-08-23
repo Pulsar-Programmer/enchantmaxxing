@@ -14,6 +14,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Identifier;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
+import net.nosam08.enchantmaxxing.config.CurseOrderOptions;
 import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
@@ -47,7 +48,7 @@ public class EnchantmaxBuilder {
             entries = entries.filter(ench_i -> is_compatible(item, ench_i));
         }
 
-        if(EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(3))){
+        if(EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.OFF)){
             entries = entries.filter(ench -> !ench.isIn(EnchantmentTags.CURSE));
         }
 
@@ -136,8 +137,8 @@ public class EnchantmaxBuilder {
 
     /** Takes the ArrayList<BucketGroup> and sorts the ones containing curses to the bottom.*/
     public static ArrayList<BucketGroup> to_vec_curses(ArrayList<BucketGroup> bgs, Registry<Enchantment> reg){
-        var first = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(0)) ? 1 : 0;
-        var second = EnchantifyClient.CONFIG.curse_order.equals(EnchantifyClient.CONFIG.curse_order_options.get(1)) ? 2 : 0;
+        var first = EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.TOP) ? 1 : 0;
+        var second = EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.BOTTOM) ? 2 : 0;
         var num = first + second;
 
         if(num == 0){
