@@ -14,6 +14,9 @@ public class EnchantifyConfig {
     /** Determines whether to enchantmax enchantments that are already applied. */
     public boolean is_static = false;
 
+    /** Determines whether to do anvil prioritization notes. */
+    public boolean do_anvil_notes = false;
+
 
 
 

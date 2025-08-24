@@ -67,6 +67,14 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
+        general.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.do_anvil_notes"), EnchantifyClient.CONFIG.do_anvil_notes)
+            .setDefaultValue(def.do_anvil_notes)
+            .setTooltip(Text.translatable("option.enchantify.do_anvil_notes.tooltip"))
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_anvil_notes = newBool)
+            .build()
+        );
+
         ConfigCategory menu = builder.getOrCreateCategory(Text.translatable("category.enchantify.menu"));
 
         menu.addEntry(entryBuilder
