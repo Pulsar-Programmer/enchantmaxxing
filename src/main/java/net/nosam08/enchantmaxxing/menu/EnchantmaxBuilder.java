@@ -2,12 +2,17 @@ package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -40,12 +45,28 @@ public class EnchantmaxBuilder {
             return new ArrayList<>();
         }
 
-        Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
+        Stream<RegistryEntry<Enchantment>> entries;
 
-        Stream<RegistryEntry<Enchantment>> entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+        if(is_book(item)){
+            Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false);
 
-        if(!EnchantifyClient.CONFIG.is_static){
-            entries = entries.filter(ench_i -> is_compatible(item, ench_i));
+            entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+
+            ItemEnchantmentsComponent stored_enchantments = item.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            
+            if(stored_enchantments != null && !EnchantifyClient.CONFIG.is_static){
+                entries = entries.filter(ench_i -> is_compatible(stored_enchantments.getEnchantments(), ench_i));
+            }
+        } else {
+            Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
+
+            entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+
+            var enchants = item.getEnchantments().getEnchantments();
+
+            if(!EnchantifyClient.CONFIG.is_static){
+                entries = entries.filter(ench_i -> is_compatible(enchants, ench_i));
+            }
         }
 
         if(EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.OFF)){
@@ -60,9 +81,14 @@ public class EnchantmaxBuilder {
         return instructions;
     }
 
+    /** Determines whether the <code>ItemStack</code> is a book or enchanted book. */
+    public static boolean is_book(ItemStack stack){
+        return stack.isOf(Items.BOOK) || stack.isOf(Items.ENCHANTED_BOOK);
+    }
+
     /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
-    public static boolean is_compatible(ItemStack item, RegistryEntry<Enchantment> enchantment){
-        for (var ench_x : item.getEnchantments().getEnchantments()) {
+    public static boolean is_compatible(Set<RegistryEntry<Enchantment>> enchants, RegistryEntry<Enchantment> enchantment){
+        for (var ench_x : enchants) {
             var ench_x_val = ench_x.value();
             var id_ench_x = ench_x.getIdAsString();
             if(id_ench_x.equals(enchantment.getIdAsString())){
@@ -124,7 +150,7 @@ public class EnchantmaxBuilder {
     // }
 
     public static HashMap<Identifier, Integer> levels_map(ItemStack item){
-        var reg = all_enchantments();
+        var reg = all_enchantments(); //TODO
         var map = new HashMap<Identifier, Integer>();
         var enchs = item.getEnchantments();
         for (var ench : enchs.getEnchantments()) {
