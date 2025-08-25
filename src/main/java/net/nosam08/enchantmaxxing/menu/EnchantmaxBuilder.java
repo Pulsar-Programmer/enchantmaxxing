@@ -2,6 +2,7 @@ package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -47,7 +48,8 @@ public class EnchantmaxBuilder {
 
         Stream<RegistryEntry<Enchantment>> entries;
 
-        if(is_book(item)){
+        var is_book = is_book(item);
+        if(is_book){
             Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false);
 
             entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
@@ -73,7 +75,7 @@ public class EnchantmaxBuilder {
             entries = entries.filter(ench -> !ench.isIn(EnchantmentTags.CURSE));
         }
 
-        var insert = build_from_start(entries, item);
+        var insert = build_from_start(entries, item, is_book);
 
         // System.out.println(insert.display());
         
@@ -118,7 +120,7 @@ public class EnchantmaxBuilder {
     }
 
     /** Builds the ArchetypesInsert from a stream. */
-    public static ArchetypesInsert build_from_start(Stream<RegistryEntry<Enchantment>> all, ItemStack item){
+    public static ArchetypesInsert build_from_start(Stream<RegistryEntry<Enchantment>> all, ItemStack item, boolean is_book){
         var built = new ArchetypesInsert();
 
         all.forEach(ench -> {
@@ -127,13 +129,18 @@ public class EnchantmaxBuilder {
 
                 var val = x.value();
                 
-                ///Only let supported and non-same archetypes through.
-                if(ench.getIdAsString().equals(x.getIdAsString()) || !val.isSupportedItem(item)){
+                ///Only let non-same archetypes through.
+                if(ench.getIdAsString().equals(x.getIdAsString())){
+                    return;
+                }
+
+                ///Only let supported archetypes through.
+                if(!(is_book || val.isSupportedItem(item))){
                     return;
                 }
 
                 ///Do not include if an enchantment is a curse and they are off.
-                if(EnchantifyClient.CONFIG.curse_order.equals("OFF") && x.isIn(EnchantmentTags.CURSE)){
+                if(EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.OFF) && x.isIn(EnchantmentTags.CURSE)){
                     return;
                 }
 
@@ -143,11 +150,6 @@ public class EnchantmaxBuilder {
 
         return built;
     }
-
-    // public static boolean is_supported(Enchantment val, ItemStack item){
-    //     System.out.println(item.getItem().getTranslationKey());
-    //     return item.getItem().getTranslationKey().equals("item.minecraft.book") || val.isSupportedItem(item);
-    // }
 
     public static HashMap<Identifier, Integer> levels_map(ItemStack item){
         var reg = all_enchantments(); //TODO
