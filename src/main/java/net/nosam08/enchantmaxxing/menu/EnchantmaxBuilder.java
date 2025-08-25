@@ -2,7 +2,6 @@ package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -11,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registry;
@@ -76,8 +74,6 @@ public class EnchantmaxBuilder {
         }
 
         var insert = build_from_start(entries, item, is_book);
-
-        // System.out.println(insert.display());
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
         return instructions;
@@ -154,12 +150,24 @@ public class EnchantmaxBuilder {
     public static HashMap<Identifier, Integer> levels_map(ItemStack item){
         var reg = all_enchantments(); //TODO
         var map = new HashMap<Identifier, Integer>();
-        var enchs = item.getEnchantments();
-        for (var ench : enchs.getEnchantments()) {
-            var id = reg.getId(ench.value());
-            var lvl = enchs.getLevel(ench);
-            map.put(id, lvl);
+
+        if(is_book(item)){
+            ItemEnchantmentsComponent stored_enchantments = item.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            if(stored_enchantments == null) return map;
+            for (var ench : stored_enchantments.getEnchantments()) {
+                var id = reg.getId(ench.value());
+                var lvl = stored_enchantments.getLevel(ench);
+                map.put(id, lvl);
+            }
+        } else {
+            var enchs = item.getEnchantments();
+            for (var ench : enchs.getEnchantments()) {
+                var id = reg.getId(ench.value());
+                var lvl = enchs.getLevel(ench);
+                map.put(id, lvl);
+            }
         }
+
         return map;
     }
 

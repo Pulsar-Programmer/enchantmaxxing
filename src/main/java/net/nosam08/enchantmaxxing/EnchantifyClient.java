@@ -1,5 +1,7 @@
 package net.nosam08.enchantmaxxing;
 
+import java.util.Optional;
+
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registry;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
 import net.nosam08.enchantmaxxing.config.EnchantifyModMenu;
 import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
@@ -36,6 +40,8 @@ public class EnchantifyClient implements ClientModInitializer {
         GLFW.GLFW_KEY_X, 
         "title.enchantify.config"
     )); //does OWO Lib have something to make this better?
+
+    // public static Optional<Registry<Enchantment>> ALL_ENCHANTMENTS = Optional.empty(); TODO
 
     @Override
     public void onInitializeClient() {

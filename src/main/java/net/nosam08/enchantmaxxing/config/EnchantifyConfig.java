@@ -1,9 +1,5 @@
 package net.nosam08.enchantmaxxing.config;
 
-import java.util.ArrayList;
-
-import com.google.common.collect.Lists;
-
 public class EnchantifyConfig {
     /**The color of enchantments that appear under the item. */
     public Integer hoverColor = 0xFFA500;
