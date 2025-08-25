@@ -88,6 +88,9 @@ public class BucketGroup {
             ///Just like OA, you do not want to do substitution or LA (like-archetypes) for risk of contaminating the already-considered, delicate pool.
             ///Substitution only happens if there are no present secondaries within the entire list.
             if(!contains_secondary){
+                ///Consider the first bucket part of new_archetypes.
+                inner.remove(bucket);
+                new_archetypes.add(bucket);
                 ///SUBSTITUTION
                 var clone = bucket.clone();
                 clone.replace(a, b);
@@ -96,6 +99,9 @@ public class BucketGroup {
             
             ///Drive always happens if the secondary is in the same bucket as the primary.
             if(bucket.inner.contains(b)){
+                ///Consider the first bucket part of new_archetypes.
+                inner.remove(bucket);
+                new_archetypes.add(bucket);
                 ///Clear
                 bucket.inner.remove(b);
                 ///DRIVE MECHANIC
@@ -108,7 +114,8 @@ public class BucketGroup {
         ///For subsets, you only need to check the new archetypes against the opposite archetypes.
         ///This is due to the structure of the way they are created - opposite archetypes won't be self-contained since they were already validated and just may have an attached secondary. The same goes mostly for the like archetypes.
         ///In order to sustain less checks, it is better for new_archetypes to be first due to the order of the double for loop.
-        check_elim_subsets(new_archetypes, opposite_archetypes);
+        // check_elim_subsets(new_archetypes, opposite_archetypes);
+        check_elim_subsets(new_archetypes, inner);
 
         inner.addAll(new_archetypes);
     }
