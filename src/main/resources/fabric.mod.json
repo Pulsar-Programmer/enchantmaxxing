@@ -34,7 +34,7 @@
 
 		"fabric-api": "${fabric_version}",
 		"cloth-config": "${cloth_config}",
-		"owo": ">=$0.12.19+1.21.4"
+		"owo": ">=0.12.19+1.21.4"
 	},
 	"suggests": {
 		"fabricloader": ">=${loader_version}",

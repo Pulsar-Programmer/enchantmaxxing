@@ -2,7 +2,7 @@ package net.nosam08.enchantmaxxing.menu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -45,6 +45,7 @@ public class EnchantmaxBuilder {
         }
 
         Stream<RegistryEntry<Enchantment>> entries;
+        ItemEnchantmentsComponent stored_enchants;
 
         var is_book = is_book(item);
         if(is_book){
@@ -52,20 +53,21 @@ public class EnchantmaxBuilder {
 
             entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
 
-            ItemEnchantmentsComponent stored_enchantments = item.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            stored_enchants = item.get(DataComponentTypes.STORED_ENCHANTMENTS);
             
-            if(stored_enchantments != null && !EnchantifyClient.CONFIG.is_static){
-                entries = entries.filter(ench_i -> is_compatible(stored_enchantments.getEnchantments(), ench_i));
+            if(stored_enchants != null && !EnchantifyClient.CONFIG.is_static){
+                entries = entries.filter(ench_i -> is_compatible(stored_enchants, ench_i));
             }
+
         } else {
             Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
 
             entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
 
-            var enchants = item.getEnchantments().getEnchantments();
+            stored_enchants = item.getEnchantments();
 
             if(!EnchantifyClient.CONFIG.is_static){
-                entries = entries.filter(ench_i -> is_compatible(enchants, ench_i));
+                entries = entries.filter(ench_i -> is_compatible(stored_enchants, ench_i));
             }
         }
 
@@ -73,7 +75,10 @@ public class EnchantmaxBuilder {
             entries = entries.filter(ench -> !ench.isIn(EnchantmentTags.CURSE));
         }
 
-        var insert = build_from_start(entries, item, is_book);
+        var insert = build_from_start(entries, item, is_book, (RegistryEntry<Enchantment> e) -> {
+            if(stored_enchants == null) return false;
+            return stored_enchants.getEnchantments().contains(e);
+        });
         
         var instructions = OppositeArchetypes.opposite_archetypes(insert);
         return instructions;
@@ -85,23 +90,25 @@ public class EnchantmaxBuilder {
     }
 
     /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
-    public static boolean is_compatible(Set<RegistryEntry<Enchantment>> enchants, RegistryEntry<Enchantment> enchantment){
-        for (var ench_x : enchants) {
+    public static boolean is_compatible(ItemEnchantmentsComponent enchants, RegistryEntry<Enchantment> enchantment){
+        for (var ench_x : enchants.getEnchantments()) {
             var ench_x_val = ench_x.value();
             var id_ench_x = ench_x.getIdAsString();
             if(id_ench_x.equals(enchantment.getIdAsString())){
                 ///Add the leveling feature. You can't change your enchantments but you sure can level one of them up.
-                // TODO - what if there are two like the trident tho?
-                // if(item.getEnchantments().getLevel(ench_x) != ench_x_val.getMaxLevel()){
-                //     return true;
-                // }
+                if(enchants.getLevel(ench_x) != ench_x_val.getMaxLevel()){
+                    return true;
+                }
                 return false;
             }
 
+            ///Do not display if it is blocked by one of the enchantments on the item.
+            //riptide is not properly displayed here because of the non-symmetry - you know what? lets just fix that. TODO
+            //note to self - this is a thing that messes up ALL our algorithms - we shouldn't be required to work double for it. It should be implemented in your `blocking` checker. But isn't this costly to do so, especially with our exclusive set impl? TODO
             for (var ench_y : ench_x_val.exclusiveSet()) {
                 var id_ench_y = ench_y.getIdAsString();
                 if(id_ench_y.equals(enchantment.getIdAsString())){
-                        return false;
+                    return false;
                 }
             }
         }
@@ -116,11 +123,17 @@ public class EnchantmaxBuilder {
     }
 
     /** Builds the ArchetypesInsert from a stream. */
-    public static ArchetypesInsert build_from_start(Stream<RegistryEntry<Enchantment>> all, ItemStack item, boolean is_book){
+    public static ArchetypesInsert build_from_start(Stream<RegistryEntry<Enchantment>> all, ItemStack item, boolean is_book, Function<RegistryEntry<Enchantment>, Boolean> is_leveled){
         var built = new ArchetypesInsert();
 
         all.forEach(ench -> {
             built.prepare(ench.value());
+            //TODO everything HERE is already filtered
+            ///Do not include in exclusive set if its head enchantment is leveled.
+            ///Do not enable exclusive sets if it is leveled.
+            if(is_leveled.apply(ench)){
+                return;
+            }
             ench.value().exclusiveSet().forEach(x -> {
 
                 var val = x.value();
@@ -147,6 +160,7 @@ public class EnchantmaxBuilder {
         return built;
     }
 
+    /** Returns the map of levels and enchantments from an item. */
     public static HashMap<Identifier, Integer> levels_map(ItemStack item){
         var reg = all_enchantments(); //TODO
         var map = new HashMap<Identifier, Integer>();

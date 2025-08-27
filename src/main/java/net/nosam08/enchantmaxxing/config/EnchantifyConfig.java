@@ -5,6 +5,7 @@ public class EnchantifyConfig {
     public Integer hoverColor = 0xFFA500;
     
     /** Skips the `X` button press required to start maxing out an item. */
+    //automatically applies the default profile of the item
     public boolean defaultX = true;
 
     /** Determines whether to enchantmax enchantments that are already applied. */
