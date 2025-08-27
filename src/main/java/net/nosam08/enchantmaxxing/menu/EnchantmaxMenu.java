@@ -48,7 +48,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     ArrayList<Integer> selected_bg_idx = new ArrayList<>();
 
     ///Associated data with the Menu instance.
-    EnchantmentButton selected_level_button;
+    protected EnchantmentButton selected_level_button;
     ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
     // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
     HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
