@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu;
+package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +19,9 @@ import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Identifier;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.config.CurseOrderOptions;
-import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
-import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
-import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
+import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
+import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
 
 /** Builds the list of enchantments that will be displayed on the EnchantmaxMenu */
 public class EnchantmaxBuilder {

@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu.ds;
+package net.nosam08.enchantmaxxing.emm.ds;
 
 import java.util.ArrayList;
 

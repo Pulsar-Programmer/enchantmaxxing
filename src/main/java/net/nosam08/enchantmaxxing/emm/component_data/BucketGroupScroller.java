@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu.component_data;
+package net.nosam08.enchantmaxxing.emm.component_data;
 
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Component;

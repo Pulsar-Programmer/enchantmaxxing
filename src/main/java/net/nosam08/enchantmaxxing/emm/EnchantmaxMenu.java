@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu;
+package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,11 +32,11 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
-import net.nosam08.enchantmaxxing.menu.component_data.BucketGroupScroller;
-import net.nosam08.enchantmaxxing.menu.component_data.EnchantmentButton;
-import net.nosam08.enchantmaxxing.menu.ds.Bucket;
-import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
-import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
+import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
+import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
+import net.nosam08.enchantmaxxing.emm.ds.Bucket;
+import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 

@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu.variants;
+package net.nosam08.enchantmaxxing.emm.variants;
 
 import java.util.ArrayList;
 
@@ -7,8 +7,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
-import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
-import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.emm.EnchantmaxMenu;
+import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 
 public class EnchantmaxMenuToggle extends EnchantmaxMenu {
 

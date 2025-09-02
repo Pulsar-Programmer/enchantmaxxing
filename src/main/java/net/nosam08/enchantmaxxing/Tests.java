@@ -10,11 +10,11 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
-import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
-import net.nosam08.enchantmaxxing.menu.OppositeArchetypes;
-import net.nosam08.enchantmaxxing.menu.ds.Bucket;
-import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
-import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
+import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
+import net.nosam08.enchantmaxxing.emm.OppositeArchetypes;
+import net.nosam08.enchantmaxxing.emm.ds.Bucket;
+import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
 
 public class Tests {
 

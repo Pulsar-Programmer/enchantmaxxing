@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu;
+package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -6,10 +6,10 @@ import java.util.Optional;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Pair;
-import net.nosam08.enchantmaxxing.menu.ds.ArchetypesInsert;
-import net.nosam08.enchantmaxxing.menu.ds.MenuInstructions;
-import net.nosam08.enchantmaxxing.menu.ds.BucketGroup;
-import net.nosam08.enchantmaxxing.menu.ds.ComparePool;
+import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
+import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
+import net.nosam08.enchantmaxxing.emm.ds.ComparePool;
+import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
 
 public class OppositeArchetypes {
     

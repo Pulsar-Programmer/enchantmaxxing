@@ -1,4 +1,4 @@
-package net.nosam08.enchantmaxxing.menu.ds;
+package net.nosam08.enchantmaxxing.emm.ds;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,7 +8,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.config.CurseOrderOptions;
-import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
+import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 
 public class Bucket {
     public HashSet<Enchantment> inner;

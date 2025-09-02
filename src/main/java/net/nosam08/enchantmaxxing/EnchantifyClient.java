@@ -19,10 +19,11 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
+import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
 import net.nosam08.enchantmaxxing.config.EnchantifyModMenu;
-import net.nosam08.enchantmaxxing.menu.EnchantmaxBuilder;
-import net.nosam08.enchantmaxxing.menu.EnchantmaxMenu;
+import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
+import net.nosam08.enchantmaxxing.emm.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
@@ -40,6 +41,13 @@ public class EnchantifyClient implements ClientModInitializer {
         GLFW.GLFW_KEY_X, 
         "title.enchantify.config"
     )); //does OWO Lib have something to make this better?
+
+    public static KeyBinding ORDERING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "key.enchantify.ordering",
+        InputUtil.Type.KEYSYM, 
+        GLFW.GLFW_KEY_Y,
+        "title.enchantify.config"
+    ));
 
     // public static Optional<Registry<Enchantment>> ALL_ENCHANTMENTS = Optional.empty(); TODO
 
@@ -61,6 +69,9 @@ public class EnchantifyClient implements ClientModInitializer {
             while (MAXXING.wasPressed()) {
                 on_emenu_open(client);
             }
+            while (ORDERING.wasPressed()){
+                on_amenu_open(client);
+            }
         });
 
         ItemTooltipCallback.EVENT.register((stack, _context, _type, lines) -> {
@@ -76,6 +87,19 @@ public class EnchantifyClient implements ClientModInitializer {
 
 
         
+    }
+
+    /** This is called when the Anvil Menu Key is pressed. */
+    public static void on_amenu_open(MinecraftClient client){
+        var item = detect_hovered_item(client);
+
+        var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(item));
+
+        if(profile == null){
+            return;
+        }
+
+        client.setScreen(AnvilMenu.start(profile));
     }
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */

@@ -7,7 +7,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Pair;
-import net.nosam08.enchantmaxxing.menu.component_data.EnchantmentButton;
+import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
 
 public class EnchantmaxProfile {
     public ArrayList<EnchantmentLevelEntry> profile = new ArrayList<>();
