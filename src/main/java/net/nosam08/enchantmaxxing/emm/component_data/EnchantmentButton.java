@@ -18,6 +18,8 @@ public class EnchantmentButton extends ButtonComponent {
     /** Tracks the index of the bucketgroup. */
     public int bg_index;
 
+    private float glintOffset = 0f;
+
     public EnchantmentButton(Text message, Consumer<ButtonComponent> onPress, int b_index, int bg_index) {
         super(message, onPress);
         this.b_index = b_index;
@@ -40,6 +42,11 @@ public class EnchantmentButton extends ButtonComponent {
     @Override
     public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
         super.draw(context, mouseX, mouseY, partialTicks, delta);
+
+        ///Manually animate the glint for faster speeds.
+        glintOffset += delta * 0.0025; // Speed multiplier
+        if (glintOffset > 16.0f) glintOffset -= 16.0f;
+
         if(enchanted){
             drawEnchantmentGlint(context);
         }
@@ -62,7 +69,7 @@ public class EnchantmentButton extends ButtonComponent {
             (_id) -> RenderLayer.getGlint(),
             ItemRenderer.ITEM_ENCHANTMENT_GLINT,
             x, y,           // x, y position
-            0.0f, 0.0f,     // u, v texture coordinates (float)
+            glintOffset, glintOffset,     // u, v texture coordinates (float)
             width, height,  // width, height to draw
             1, 1,         // texture width, height
             0x1AD4FFFF      // color (not sure this does much lol)
