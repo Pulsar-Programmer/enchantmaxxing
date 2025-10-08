@@ -103,11 +103,14 @@ public class EnchantmaxBuilder {
             }
 
             ///Do not display if it is blocked by one of the enchantments on the item.
-            //riptide is not properly displayed here because of the non-symmetry - you know what? lets just fix that. TODO
-            //note to self - this is a thing that messes up ALL our algorithms - we shouldn't be required to work double for it. It should be implemented in your `blocking` checker. But isn't this costly to do so, especially with our exclusive set impl? TODO
-            for (var ench_y : ench_x_val.exclusiveSet()) {
-                var id_ench_y = ench_y.getIdAsString();
-                if(id_ench_y.equals(enchantment.getIdAsString())){
+            //TODO enchantments are not properly blocked
+            var temp = all_enchantments();
+            // EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val).stream().forEach(x->System.out.println("1: " +x));
+            // ench_x_val.exclusiveSet().stream().forEach(x->System.out.println("2:" + x));
+            for (var ench_y : EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val)) {
+                var id_ench_y = temp.getEntry(ench_y).getIdAsString();
+                if(id_ench_y.equals(enchantment.getIdAsString())){ //just check if it contains the enchantment instead
+                    System.out.println("Y: %s, E: %s".formatted(id_ench_y, enchantment));
                     return false;
                 }
             }
@@ -127,7 +130,6 @@ public class EnchantmaxBuilder {
         var built = new ArchetypesInsert();
 
         all.forEach(ench -> {
-            built.prepare(ench.value());
             //TODO everything HERE is already filtered
             ///Do not include in exclusive set if its head enchantment is leveled.
             ///Do not enable exclusive sets if it is leveled.
@@ -154,6 +156,31 @@ public class EnchantmaxBuilder {
                 }
 
                 built.oa_insert(ench.value(), val);
+                //TODO we must fix the riptide problem
+                // built.oa_insert(val, ench.value()); ///Inserts the opposite just in case of the Riptide problem.
+            });
+        });
+
+        return built;
+    }
+
+    /** Creates and returns the Global Archetypes Arrangement. */
+    public static ArchetypesInsert global_archetypes(Stream<RegistryEntry<Enchantment>> all){
+        var built = new ArchetypesInsert();
+
+        all.forEach(ench -> {
+
+            ench.value().exclusiveSet().forEach(x -> {
+
+                var val = x.value();
+                
+                ///Only let non-same archetypes through.
+                if(ench.getIdAsString().equals(x.getIdAsString())){
+                    return;
+                }
+
+                built.oa_insert(ench.value(), val);
+                built.oa_insert(val, ench.value()); ///Inserts the opposite just in case of the Riptide problem.
             });
         });
 

@@ -21,6 +21,11 @@ public class Bucket {
         this();
         inner.addAll(add);
     }
+
+    public Bucket(HashSet<Enchantment> add){
+        this();
+        inner.addAll(add);
+    }
     
     /** Clones the bucket. */
     public Bucket clone(){

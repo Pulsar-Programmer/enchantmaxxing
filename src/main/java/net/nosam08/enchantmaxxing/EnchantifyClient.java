@@ -1,6 +1,7 @@
 package net.nosam08.enchantmaxxing;
 
-import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
@@ -18,12 +20,13 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
 import net.nosam08.enchantmaxxing.config.EnchantifyModMenu;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxMenu;
+import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
@@ -49,7 +52,7 @@ public class EnchantifyClient implements ClientModInitializer {
         "title.enchantify.config"
     ));
 
-    // public static Optional<Registry<Enchantment>> ALL_ENCHANTMENTS = Optional.empty(); TODO
+    public static ArchetypesInsert GLOBAL_ARCHETYPES;
 
     @Override
     public void onInitializeClient() {
@@ -81,9 +84,13 @@ public class EnchantifyClient implements ClientModInitializer {
             }
         });
 
-        
-
-
+        ClientPlayConnectionEvents.INIT.register((handler, _client) -> {
+            var enchantments = handler.getRegistryManager()
+            .getOrThrow(RegistryKeys.ENCHANTMENT);
+            Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false);
+            var entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+            GLOBAL_ARCHETYPES = EnchantmaxBuilder.global_archetypes(entries);
+        });
 
 
         

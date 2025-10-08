@@ -1,6 +1,7 @@
 package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -19,21 +20,21 @@ public class OppositeArchetypes {
 
         var iter = insert.inner.entrySet().iterator();
 
-        Entry<Enchantment, ArrayList<Enchantment>> first;
+        Entry<Enchantment, HashSet<Enchantment>> first;
         try {
             first = iter.next();
         } catch (Exception e) {
             return new ArrayList<>();
         }
         
-        built.add(BucketGroup.from_insert(first.getKey(), first.getValue()));
+        built.add(BucketGroup.from_insert(first.getKey(), new ArrayList<>(first.getValue())));
 
         while (iter.hasNext()) {
             var pair = iter.next();
             var pivot = pair.getKey();
             var rest = pair.getValue();
 
-            merge(built, pivot, rest);
+            merge(built, pivot, new ArrayList<>(rest));
         }
         
         return built;
