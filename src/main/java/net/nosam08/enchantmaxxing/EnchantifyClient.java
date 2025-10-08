@@ -80,7 +80,7 @@ public class EnchantifyClient implements ClientModInitializer {
         ItemTooltipCallback.EVENT.register((stack, _context, _type, lines) -> {
             var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(stack));
             if(profile != null){
-                Enchantips.generate_tooltips(lines, profile);
+                Enchantips.generate_tooltips(lines, profile, stack);
             }
         });
 
