@@ -103,16 +103,8 @@ public class EnchantmaxBuilder {
             }
 
             ///Do not display if it is blocked by one of the enchantments on the item.
-            //TODO enchantments are not properly blocked
-            var temp = all_enchantments();
-            // EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val).stream().forEach(x->System.out.println("1: " +x));
-            // ench_x_val.exclusiveSet().stream().forEach(x->System.out.println("2:" + x));
-            for (var ench_y : EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val)) {
-                var id_ench_y = temp.getEntry(ench_y).getIdAsString();
-                if(id_ench_y.equals(enchantment.getIdAsString())){ //just check if it contains the enchantment instead
-                    System.out.println("Y: %s, E: %s".formatted(id_ench_y, enchantment));
-                    return false;
-                }
+            if(EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val).contains(enchantment.value())){
+                return false;
             }
         }
 
@@ -130,6 +122,9 @@ public class EnchantmaxBuilder {
         var built = new ArchetypesInsert();
 
         all.forEach(ench -> {
+            ///We prepare here in order to register the item in the pool to begin with.
+            built.prepare(ench.value());
+
             //TODO everything HERE is already filtered
             ///Do not include in exclusive set if its head enchantment is leveled.
             ///Do not enable exclusive sets if it is leveled.
@@ -156,8 +151,7 @@ public class EnchantmaxBuilder {
                 }
 
                 built.oa_insert(ench.value(), val);
-                //TODO we must fix the riptide problem
-                // built.oa_insert(val, ench.value()); ///Inserts the opposite just in case of the Riptide problem.
+                built.oa_insert(val, ench.value()); ///Inserts the opposite just in case of the Riptide problem.
             });
         });
 
@@ -167,9 +161,9 @@ public class EnchantmaxBuilder {
     /** Creates and returns the Global Archetypes Arrangement. */
     public static ArchetypesInsert global_archetypes(Stream<RegistryEntry<Enchantment>> all){
         var built = new ArchetypesInsert();
-
+        
         all.forEach(ench -> {
-
+            built.prepare(ench.value());
             ench.value().exclusiveSet().forEach(x -> {
 
                 var val = x.value();

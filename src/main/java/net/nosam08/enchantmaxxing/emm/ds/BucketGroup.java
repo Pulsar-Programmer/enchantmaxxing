@@ -1,7 +1,6 @@
 package net.nosam08.enchantmaxxing.emm.ds;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.registry.Registry;

@@ -91,9 +91,6 @@ public class EnchantifyClient implements ClientModInitializer {
             var entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
             GLOBAL_ARCHETYPES = EnchantmaxBuilder.global_archetypes(entries);
         });
-
-
-        
     }
 
     /** This is called when the Anvil Menu Key is pressed. */

@@ -1,5 +1,6 @@
 package net.nosam08.enchantmaxxing.emm.ds;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -28,12 +29,17 @@ public class ArchetypesInsert {
     public void oa_insert(Enchantment a, Enchantment b){
         var val = inner.get(a);
         if(val == null){
-            inner.put(a, new HashSet<>());
+            prepare(a);
             oa_insert(a, b);
             return;
         }
         val.add(b);
         inner.put(a, val);
+    }
+
+    /** Prepares the pool by inserting an empty vec in the relevant spot. Prepare is important because it notifies the pool that such an Enchantment exists. */
+    public void prepare(Enchantment a){
+        inner.put(a, new HashSet<>());
     }
 
     public String display(){
