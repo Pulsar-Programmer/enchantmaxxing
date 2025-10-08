@@ -23,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
-import net.nosam08.enchantmaxxing.config.EnchantifyModMenu;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
@@ -36,7 +35,7 @@ public class EnchantifyClient implements ClientModInitializer {
     public static final String MOD_ID = "enchantify";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static EnchantifyConfig CONFIG = EnchantifyModMenu.load();
+    public static EnchantifyConfig CONFIG = Filesystem.load_config();
 
     public static KeyBinding MAXXING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.enchantify.opengui",
@@ -57,6 +56,10 @@ public class EnchantifyClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Tests.testing();
+
+        // if (FabricLoader.getInstance().isModLoaded("modmenu")) {
+        //     CONFIG = EnchantifyModMenu.load();
+        // }
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
 			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, key, scancode, modifiers) -> {
