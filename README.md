@@ -25,3 +25,13 @@ To open the maxing menu, you can press X while:
 Autofusing is a special mechanism to make the UI of the Enchantment Modification Menu a lot better by fusing options together across different paths.
 Toggle UI is a different implementation of the selecting of Enchantments during the Enchantment Modification Menu.
 
+# Version Nomenclature
+
+The nomenclature follows (MAJOR).(MINOR).(MINISCULE)
+
+In a standardized UPDATE model to be specified with CHANGELOG, it is presented as the following:
+Major: Large Update
+Minor: New Feature
+Miniscule: Bug Fix, Dependency Bump, etc.
+
+For versions <1.0.0 (0.x.x), they typically follow the (MILESTONE).(ISSUE).(COMMIT) pattern.
