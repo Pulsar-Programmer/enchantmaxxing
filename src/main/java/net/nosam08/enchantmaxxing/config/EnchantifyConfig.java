@@ -11,9 +11,6 @@ public class EnchantifyConfig {
     /** Determines whether to enchantmax enchantments that are already applied. */
     public boolean is_static = false;
 
-    /** Determines whether to do anvil prioritization notes. */
-    public boolean do_anvil_notes = false;
-
 
 
 
@@ -29,4 +26,12 @@ public class EnchantifyConfig {
 
     /** Determines the order of the curses in the menu. */
     public CurseOrderOptions curse_order = CurseOrderOptions.BOTTOM;
+
+
+
+    /** Determines whether to do anvil prioritization notes. */
+    public boolean do_anvil_notes = false;
+
+    /** The color of anvil prioritization notes. */
+    public Integer next_fuse_color = 0x00A8FF;
 }

@@ -8,8 +8,6 @@
     "option.enchantify.hoverColor.tooltip": "The color of needed enchantments that appear under the item.",
     "option.enchantify.is_static": "Static Enchantmax Notes",
     "option.enchantify.is_static.tooltip": "Determines whether to enchantmax enchantments that are already applied.",
-    "option.enchantify.do_anvil_notes": "Anvil Prioritization Notes",
-    "option.enchantify.do_anvil_notes.tooltip": "Determines whether to do anvil prioritization notes.",
 
     "category.enchantify.menu": "Menu",
     "option.enchantify.do_autofuse": "Do Afterfuse in Menu",
@@ -24,6 +22,12 @@
     "option.enchantify.bottom": "BOTTOM",
     "option.enchantify.off": "OFF",
     "option.enchantify.random": "RANDOM",
+
+    "category.enchantify.anvil": "Anvil Prioritization",
+    "option.enchantify.do_anvil_notes": "Anvil Prioritization Notes",
+    "option.enchantify.do_anvil_notes.tooltip": "Determines whether to do anvil prioritization notes.",
+    "option.enchantify.next_fuse_color": "Next Fuse Color",
+    "option.enchantify.next_fuse_color.tooltip": "The color of anvil prioritization notes.",
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
     "key.enchantify.ordering": "Open Anvil Ordering Menu",

@@ -56,13 +56,6 @@ public class EnchantifyModMenu implements ModMenuApi {
             .build()
         );
 
-        general.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.do_anvil_notes"), EnchantifyClient.CONFIG.do_anvil_notes)
-            .setDefaultValue(def.do_anvil_notes)
-            .setTooltip(Text.translatable("option.enchantify.do_anvil_notes.tooltip"))
-            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_anvil_notes = newBool)
-            .build()
-        );
 
         ConfigCategory menu = builder.getOrCreateCategory(Text.translatable("category.enchantify.menu"));
 
@@ -96,6 +89,25 @@ public class EnchantifyModMenu implements ModMenuApi {
             .setEnumNameProvider(option -> Text.translatable(option.toString()).withColor(((CurseOrderOptions)option).getColor()))
             .setTooltip(Text.translatable("option.enchantify.curse_order.tooltip"))
             .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.curse_order = newBool)
+            .build()
+        );
+
+        ConfigCategory anvil = builder.getOrCreateCategory(Text.translatable("category.enchantify.anvil"));
+
+        anvil.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.do_anvil_notes"), EnchantifyClient.CONFIG.do_anvil_notes)
+            .setDefaultValue(def.do_anvil_notes)
+            .setTooltip(Text.translatable("option.enchantify.do_anvil_notes.tooltip"))
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_anvil_notes = newBool)
+            .build()
+        );
+
+        anvil.addEntry(entryBuilder
+            .startColorField(Text.translatable("option.enchantify.next_fuse_color"), EnchantifyClient.CONFIG.next_fuse_color)
+            // .setAlphaMode(true)
+            .setDefaultValue(TextColor.fromRgb(def.next_fuse_color))
+            .setTooltip(Text.translatable("option.enchantify.next_fuse_color.tooltip"))
+            .setSaveConsumer(newColor -> EnchantifyClient.CONFIG.next_fuse_color = newColor)
             .build()
         );
 
