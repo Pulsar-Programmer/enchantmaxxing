@@ -1,6 +1,7 @@
 package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -47,6 +48,81 @@ public class OppositeArchetypes {
             built.add(BucketGroup.from_insert(pivot, rest));
         }
     }
+
+    /** Hashes and determines where to merge buckets from the ArchetypesInsert. */
+    public static void hash_merge(ArchetypesInsert from){
+        //transform HashMap<A, HashSet<BC>> to Vec^2<ABC> form
+        ArrayList<ArrayList<Enchantment>> bars = new ArrayList<>();
+        for (var pair : from.inner.entrySet()) {
+            var key = pair.getKey();
+            var value = pair.getValue();
+            ArrayList<Enchantment> bar = new ArrayList<>();
+            bar.add(key);
+            for (Enchantment e : value) {
+                bar.add(e);
+            }
+            bars.add(bar);
+        }
+
+        HashMap<Enchantment, Integer> stc_mapping = new HashMap<>();
+        ArrayList<ArrayList<Integer>> the_stc = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> merge_orders = new ArrayList<>();
+        for (int i = 0; i < bars.size(); i++) {
+            var bar = bars.get(i);
+            Integer bar_focused_bucket;
+
+            var first_atom = bar.get(0);
+            //hash it
+            var result = stc_mapping.get(first_atom);
+            if (result == null) {
+                bar_focused_bucket = the_stc.size();
+                stc_mapping.put(first_atom, bar_focused_bucket);
+                the_stc.add(new ArrayList<>());
+            } else {
+                bar_focused_bucket = result;
+            }
+
+            for (int j = 0; j < bar.size(); j++) {
+                var atom = bar.get(j);
+
+                var res = stc_mapping.get(atom);
+                if (res == null) {
+                    stc_mapping.put(first_atom, bar_focused_bucket);
+                } else {
+                    if (res == bar_focused_bucket) {
+                        continue; //we don't need to rehash if they are equal since this does nothing
+                    }
+
+                    //MOVE BAR FOCUSED BUCKET TO RESULT
+                    // the_stc.get(bar_focused_bucket)
+                    //we get rather thanr remove here to prevent the references fom sliding
+
+                    //reset our focused bucket now that we know
+                    bar_focused_bucket = res;
+                    //here we just assume that res is correct, but if res points to another one?
+                    //if res points to a different one, everything is OK because we may not preserve the order
+                    //but at least the bucket gets moved over there
+                    //but what about those times when 
+                    //I actually think Merge Orders are more elegant here.
+
+                    //TODO rehash
+                }
+            }
+
+            //TODO resolve merge orders
+
+            the_stc.get(bar_focused_bucket).add(i);
+        }
+
+
+
+        
+        
+    }
+
+    // public static String enchantment_key(Enchantment enchantment){
+    //     return enchantment.description();
+    // }
 
     /** Places the, if newfound, Buckets in the BucketGroup. */
     public static boolean fuse(BucketGroup fuse, Enchantment pivot, ArrayList<Enchantment> rest){
