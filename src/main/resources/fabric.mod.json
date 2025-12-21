@@ -28,18 +28,17 @@
 		"enchantify.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.14",
+		"fabricloader": "*",
 		"minecraft": "${minecraft_version}",
 		"java": ">=21",
 
-		"fabric-api": "${fabric_version}",
-		"cloth-config": "${cloth_config}",
-		"owo": ">=0.12.19+1.21.4"
+		"fabric-api": ">=${fabric_version}",
+		"cloth-config": ">=${cloth_config}",
+		"owo": ">=${owo_version}"
 	},
 	"suggests": {
 		"fabricloader": ">=${loader_version}",
 		
-		"modmenu": "${mod_menu}",
-		"owo": "${owo_version}"
+		"modmenu": ">=${mod_menu}"
 	}
 }
