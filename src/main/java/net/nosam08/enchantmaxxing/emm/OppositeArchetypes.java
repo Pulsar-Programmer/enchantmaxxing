@@ -50,10 +50,10 @@ public class OppositeArchetypes {
     }
 
     /** Hashes and determines where to merge buckets from the ArchetypesInsert. */
-    public static void hash_merge(ArchetypesInsert from){
+    public static ArrayList<ArrayList<ArrayList<Enchantment>>> stc(ArchetypesInsert ai){
         //transform HashMap<A, HashSet<BC>> to Vec^2<ABC> form
         ArrayList<ArrayList<Enchantment>> bars = new ArrayList<>();
-        for (var pair : from.inner.entrySet()) {
+        for (var pair : ai.inner.entrySet()) {
             var key = pair.getKey();
             var value = pair.getValue();
             ArrayList<Enchantment> bar = new ArrayList<>();
@@ -65,7 +65,7 @@ public class OppositeArchetypes {
         }
 
         HashMap<Enchantment, Integer> stc_mapping = new HashMap<>();
-        ArrayList<ArrayList<Integer>> the_stc = new ArrayList<>();
+        ArrayList<ArrayList<ArrayList<Enchantment>>> the_stc = new ArrayList<>();
         ArrayList<Pair<Integer, Integer>> merge_orders = new ArrayList<>();
         for (int i = 0; i < bars.size(); i++) {
             var bar = bars.get(i);
@@ -93,31 +93,30 @@ public class OppositeArchetypes {
                         continue; //we don't need to rehash if they are equal since this does nothing
                     }
 
-                    //MOVE BAR FOCUSED BUCKET TO RESULT
-                    // the_stc.get(bar_focused_bucket)
-                    //we get rather thanr remove here to prevent the references fom sliding
-
-                    //reset our focused bucket now that we know
-                    bar_focused_bucket = res;
-                    //here we just assume that res is correct, but if res points to another one?
-                    //if res points to a different one, everything is OK because we may not preserve the order
-                    //but at least the bucket gets moved over there
-                    //but what about those times when 
-                    //I actually think Merge Orders are more elegant here.
-
-                    //TODO rehash
+                    //insert merge order because these are the same buckets
+                    merge_orders.add(new Pair<Integer,Integer>(bar_focused_bucket, res));
                 }
             }
-
-            //TODO resolve merge orders
-
-            the_stc.get(bar_focused_bucket).add(i);
+            the_stc.get(bar_focused_bucket).add(bar);
         }
 
 
 
         
-        
+        //resolve merge orders
+        //keep in mind that the order in which you merge MATTERS.
+        //it is guaranteed that when we merge, we can merge in reverse
+        while (merge_orders.isEmpty()) {
+            var top = merge_orders.removeLast();
+            var from = Math.max(top.getLeft(), top.getRight());
+            var to = Math.min(top.getLeft(), top.getRight());
+            //move them
+            var from_section = the_stc.get(from);
+            var to_section = the_stc.get(to);
+            to_section.addAll(from_section);
+        }
+
+        return the_stc;
     }
 
     // public static String enchantment_key(Enchantment enchantment){
