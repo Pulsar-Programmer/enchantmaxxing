@@ -2,8 +2,6 @@ package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import net.minecraft.enchantment.Enchantment;
@@ -37,7 +35,10 @@ public class OppositeArchetypes {
         for (int i = 0; i < bars.size(); i++) {
             var bar = bars.get(i);
             Integer bar_focused_bucket;
+            
+            // Tests.printNestedCollections(new ArrayList<>(stc_mapping.entrySet())); SO FUN TO LOOK AT
 
+            //hashing the first atom in the archetype to determine our bar number
             var first_atom = bar.get(0);
             //hash it
             var result = stc_mapping.get(first_atom);
@@ -49,12 +50,13 @@ public class OppositeArchetypes {
                 bar_focused_bucket = result;
             }
 
-            for (int j = 0; j < bar.size(); j++) {
+            //each atom in the bar
+            for (int j = 1; j < bar.size(); j++) {
                 var atom = bar.get(j);
 
                 var res = stc_mapping.get(atom);
                 if (res == null) {
-                    stc_mapping.put(first_atom, bar_focused_bucket);
+                    stc_mapping.put(atom, bar_focused_bucket);
                 } else {
                     if (res == bar_focused_bucket) {
                         continue; //we don't need to rehash if they are equal since this does nothing
