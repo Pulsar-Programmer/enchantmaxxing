@@ -80,7 +80,8 @@ public class EnchantmaxBuilder {
             return stored_enchants.getEnchantments().contains(e);
         });
         
-        var instructions = OppositeArchetypes.opposite_archetypes(insert);
+        var stc = OppositeArchetypes.stc(insert);
+        var instructions = OppositeArchetypes.opposite_archetypes(stc);
         return instructions;
     }
 

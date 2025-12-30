@@ -2,6 +2,7 @@ package net.nosam08.enchantmaxxing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
@@ -17,6 +18,40 @@ import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
 
 public class Tests {
+
+
+
+    //silly java so im printing everything
+    public static void printNestedCollections(List<?> list) {
+        printNestedCollections(list, 0);
+    }
+
+    private static void printNestedCollections(Object value, int depth) {
+        if (value instanceof List<?> nestedList) {
+            System.out.printf("%s[%s%n", indent(depth), nestedList.getClass().getSimpleName());
+            for (Object element : nestedList) {
+                printNestedCollections(element, depth + 1);
+            }
+            System.out.printf("%s]%n", indent(depth));
+        } else if (value instanceof Object[]) {
+            System.out.printf("%s[%s%n", indent(depth), value.getClass().getComponentType().getSimpleName());
+            for (Object element : (Object[]) value) {
+                printNestedCollections(element, depth + 1);
+            }
+            System.out.printf("%s]%n", indent(depth));
+        } else {
+            System.out.printf("%s- %s%n", indent(depth), value);
+        }
+    }
+
+    private static String indent(int depth) {
+        return "  ".repeat(Math.max(0, depth));
+    }
+
+
+
+
+
 
     public static void testing(){
         EnchantifyClient.LOGGER.info("Starting Tests...");
@@ -63,14 +98,14 @@ public class Tests {
         var p3 = enchantment("X");
         var r3 = Lists.newArrayList(enchantment("Y"));
 
-        OppositeArchetypes.merge(bucket_groups, pivot, rest);
-        EnchantifyClient.LOGGER.info(bucket_groups.get(0).display());
+        // OppositeArchetypes.merge(bucket_groups, pivot, rest);
+        // EnchantifyClient.LOGGER.info(bucket_groups.get(0).display());
 
-        OppositeArchetypes.merge(bucket_groups, p2, new ArrayList<>());
-        EnchantifyClient.LOGGER.info(bucket_groups.get(1).display());
+        // OppositeArchetypes.merge(bucket_groups, p2, new ArrayList<>());
+        // EnchantifyClient.LOGGER.info(bucket_groups.get(1).display());
 
-        OppositeArchetypes.merge(bucket_groups, p3, r3);
-        EnchantifyClient.LOGGER.info(bucket_groups.get(2).display());
+        // OppositeArchetypes.merge(bucket_groups, p3, r3);
+        // EnchantifyClient.LOGGER.info(bucket_groups.get(2).display());
     }
 
     public static void test_fuse(){

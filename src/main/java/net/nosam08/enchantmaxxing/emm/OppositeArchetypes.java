@@ -8,46 +8,13 @@ import java.util.Optional;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Pair;
+import net.nosam08.enchantmaxxing.Tests;
 import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.emm.ds.ComparePool;
 import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
 
 public class OppositeArchetypes {
-    
-    /** Uses the opposite archetypes method of creating a menu. */
-    public static ArrayList<BucketGroup> opposite_archetypes(ArchetypesInsert insert){
-        ArrayList<BucketGroup> built = new ArrayList<>();
-
-        var iter = insert.inner.entrySet().iterator();
-
-        Entry<Enchantment, HashSet<Enchantment>> first;
-        try {
-            first = iter.next();
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-        
-        built.add(BucketGroup.from_insert(first.getKey(), new ArrayList<>(first.getValue())));
-
-        while (iter.hasNext()) {
-            var pair = iter.next();
-            var pivot = pair.getKey();
-            var rest = pair.getValue();
-
-            merge(built, pivot, new ArrayList<>(rest));
-        }
-        
-        return built;
-    }
-
-    /** From the ArchetypesInsert, it adds the next element to the ArchetypesPool or Vec<BucketGroup>. */
-    public static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
-        if(!built.stream().anyMatch(x -> fuse(x, pivot, rest))){
-            ///If we could not ever fuse, register independently.
-            built.add(BucketGroup.from_insert(pivot, rest));
-        }
-    }
 
     /** Hashes and determines where to merge buckets from the ArchetypesInsert. */
     public static ArrayList<ArrayList<ArrayList<Enchantment>>> stc(ArchetypesInsert ai){
@@ -106,7 +73,7 @@ public class OppositeArchetypes {
         //resolve merge orders
         //keep in mind that the order in which you merge MATTERS.
         //it is guaranteed that when we merge, we can merge in reverse
-        while (merge_orders.isEmpty()) {
+        while (!merge_orders.isEmpty()) {
             var top = merge_orders.removeLast();
             var from = Math.max(top.getLeft(), top.getRight());
             var to = Math.min(top.getLeft(), top.getRight());
@@ -114,10 +81,55 @@ public class OppositeArchetypes {
             var from_section = the_stc.get(from);
             var to_section = the_stc.get(to);
             to_section.addAll(from_section);
+            from_section.clear();
         }
 
         return the_stc;
     }
+    
+    /** Uses the opposite archetypes method of creating a menu. */
+    public static ArrayList<BucketGroup> opposite_archetypes(ArrayList<ArrayList<ArrayList<Enchantment>>> stc){
+        ArrayList<BucketGroup> built = new ArrayList<>();
+
+        Tests.printNestedCollections(stc);
+
+        for (var gate : stc) {
+            var iter = gate.iterator();
+
+            ArrayList<Enchantment> first;
+            try {
+                first = iter.next();
+            } catch (Exception e) {
+                continue;
+            }
+
+            var key = first.removeFirst();
+
+            var ref_built_bg = BucketGroup.from_insert(key, first);
+            
+            built.add(ref_built_bg);
+
+            while (iter.hasNext()) {
+                var pair = iter.next();
+                var pivot = pair.removeFirst();
+                var rest = pair;
+
+                fuse(ref_built_bg, pivot, rest);
+
+                // merge(built, pivot, new ArrayList<>(rest));
+            }
+        }
+        
+        return built;
+    }
+
+    // /** From the ArchetypesInsert, it adds the next element to the ArchetypesPool or Vec<BucketGroup>. */
+    // public static void merge(ArrayList<BucketGroup> built, Enchantment pivot, ArrayList<Enchantment> rest){
+    //     if(!built.stream().anyMatch(x -> fuse(x, pivot, rest))){
+    //         ///If we could not ever fuse, register independently.
+    //         built.add(BucketGroup.from_insert(pivot, rest));
+    //     }
+    // }
 
     // public static String enchantment_key(Enchantment enchantment){
     //     return enchantment.description();
