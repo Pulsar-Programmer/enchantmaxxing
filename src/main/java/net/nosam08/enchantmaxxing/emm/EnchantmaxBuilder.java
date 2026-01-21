@@ -207,7 +207,7 @@ public class EnchantmaxBuilder {
         return map;
     }
 
-    /** Takes the ArrayList<BucketGroup> and sorts the ones containing curses to the bottom.*/
+    /** Takes the ArrayList<BucketGroup> and sorts the ones containing curses to the configured order.*/
     public static ArrayList<BucketGroup> to_vec_curses(ArrayList<BucketGroup> bgs, Registry<Enchantment> reg){
         var first = EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.TOP) ? 1 : 0;
         var second = EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.BOTTOM) ? 2 : 0;

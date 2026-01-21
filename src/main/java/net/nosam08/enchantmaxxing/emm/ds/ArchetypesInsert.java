@@ -9,7 +9,7 @@ import net.minecraft.enchantment.Enchantment;
 public class ArchetypesInsert {
     public HashMap<Enchantment, HashSet<Enchantment>> inner = new HashMap<>();
 
-    /** Inserts into the Archetype Portal. Only insert when A is compatible with B. */
+    // /** Inserts into the Archetype Portal. Only insert when A is compatible with B. */
     // private void lac_insert(Enchantment a, Enchantment b){
     //     ///Sort enchantments.
     //     List<Enchantment> enchantments = List.of(a, b);
@@ -21,6 +21,7 @@ public class ArchetypesInsert {
     //     inner.getOrDefault(one, new ArrayList<>()).add(two);
     // }
 
+    /** Returns the exclusive set of the enchantment. */
     public HashSet<Enchantment> exclusive_set(Enchantment of){
         return inner.get(of);
     }
