@@ -15,12 +15,12 @@ import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 /** Manager and creator of the Enchantment Tooltips. */
 public class Enchantips {
-    public static HashMap<ItemStackKey, EnchantmaxProfile> LOADED_PROFILES = new HashMap<>(); //maybe move to Client mod init?
+    public static HashMap<ItemStackKey, EnchantmaxProfile> ACTIVE_TASKS = new HashMap<>(); //maybe move to Client mod init?
     
     /** Starts the tooltips calculation based on the selected enchantments and their chosen levels. */
     public static void start_tooltips(ItemStack item, EnchantmaxProfile selected_enchantments){
         var key = new ItemStackKey(item);
-        LOADED_PROFILES.put(key, selected_enchantments);
+        ACTIVE_TASKS.put(key, selected_enchantments);
     }
 
     /** Generates the tooltips on the physical item. */

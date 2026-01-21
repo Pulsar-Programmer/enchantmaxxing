@@ -81,7 +81,7 @@ public class EnchantifyClient implements ClientModInitializer {
         });
 
         ItemTooltipCallback.EVENT.register((stack, _context, _type, lines) -> {
-            var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(stack));
+            var profile = Enchantips.ACTIVE_TASKS.get(new ItemStackKey(stack));
             if(profile != null){
                 Enchantips.generate_tooltips(lines, profile, stack);
             }
@@ -98,15 +98,15 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** This is called when the Anvil Menu Key is pressed. */
     public static void on_amenu_open(MinecraftClient client){
-        var item = detect_hovered_item(client);
+        // var item = detect_hovered_item(client);
 
-        var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(item));
+        // var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(item));
 
-        if(profile == null){
-            return;
-        }
+        // if(profile == null){
+        //     return;
+        // }
 
-        client.setScreen(AnvilMenu.start(profile));
+        client.setScreen(AnvilMenu.start());
     }
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */

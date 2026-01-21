@@ -2,24 +2,34 @@ package net.nosam08.enchantmaxxing.aom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Stack;
 
 import org.jetbrains.annotations.NotNull;
 
 import io.wispforest.owo.ui.base.BaseOwoScreen;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
+import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
+import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
+import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
@@ -29,8 +39,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     /** Starts the creation of the menu. */
-    public static AnvilMenu start(EnchantmaxProfile profile){ //need an object also there are advanced algorithms that should be done elsewhere
-        //TODO
+    public static AnvilMenu start(){ //need an object also there are advanced algorithms that should be done elsewhere TODO
         return new AnvilMenu();
     }
 
@@ -63,7 +72,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             .padding(Insets.of(5))
             .surface(Surface.DARK_PANEL)
             .verticalAlignment(VerticalAlignment.CENTER)
-            .horizontalAlignment(HorizontalAlignment.CENTER)
+            .horizontalAlignment(HorizontalAlignment.CENTER) //OR LEFT
             .margins(Insets.vertical(5));
 
         rootComponent.child(
@@ -72,50 +81,25 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     /** Creates the tasks for the main display of the menu. */
-    public ArrayList<Component> tasks(){
+    public static ArrayList<Component> tasks(){
         ArrayList<Component> active_tasks = new ArrayList<>();
-        //loop over tasks
-        //create a new task for each based on the DS TODO
+        Enchantips.ACTIVE_TASKS.forEach((ItemStackKey k, EnchantmaxProfile v) -> {
+            var ordering = AnvilOrdering.ordering(k, v);
+            active_tasks.add(task(ordering));
+        });
         return active_tasks;
     }
 
-    public static Component task(){
+    public static Component task(String order){
 
         var x_button = x_button();
 
-        var container = Containers.horizontalFlow(Sizing.content(), Sizing.content())
-        // .children(children_lines)
-        // .padding(Insets.both(0, 2))
-        .surface(Surface.PANEL_INSET) //WELLS effect 
-        .verticalAlignment(VerticalAlignment.CENTER)
-        .horizontalAlignment(HorizontalAlignment.CENTER)
-        .margins(Insets.bottom(6));
-
         var task = Containers.horizontalFlow(Sizing.content(), Sizing.content())
-        .children(new ArrayList<>(Arrays.asList(x_button, container)))
+        .children(Arrays.asList(x_button, AnvilMenu.order(order)))
         // .padding(Insets.both(0, 2))
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER)
-        .margins(Insets.bottom(6));
-
-
-        // ArrayList<Component> children = new ArrayList<>();
-        // Integer size = 20;
-        // for(var i = 0; i < bucketGroup.inner.size(); i++){
-        //     Bucket bucket = bucketGroup.inner.get(i);
-        //     var component = bucket(bucket, i, bg_index);
-        //     size = Math.max(component.getRight() * 26, size); //does the removed 6 of margin ruin it?
-        //     children.add(component.getLeft());
-        // }
-
-        // ArrayList<Component> children_lines = new ArrayList<>();
-        // for (Component component : children) {
-        //     children_lines.add(component);
-        //     children_lines.add(button_box(size));
-        // }
-        // children_lines.removeLast();
-
-        
+        .margins(Insets.vertical(2));
 
         // var h_scroll = BucketGroupScroller.bucket_group_scroller(container);
 
@@ -131,10 +115,29 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     ///Creates the button that can delete the task.
     public static Component x_button(){
-        //TODO finish fn body
-        //TODO maybe also add a pop up to prevent quick task losses
-        //TODO on hover it turns red
-        return null;
+        LabelComponent label = Components.label(Text.literal("✕"));
+        label.color(Color.ofArgb(0xFFFFFFFF)); // White
+        label.shadow(true);
+        label.cursorStyle(CursorStyle.HAND);
+        
+        label.mouseEnter().subscribe(() -> {
+            label.color(Color.ofArgb(0xFFFF0000)); // Red
+        });
+        
+        label.mouseLeave().subscribe(() -> {
+            label.color(Color.ofArgb(0xFFFFFFFF)); // White
+        });
+        
+        label.mouseDown().subscribe((double mouseX, double mouseY, int button) -> {
+            if (button == 0) { // Left click
+                // TODO: Your delete logic here
+                // TODO maybe also add a pop up to prevent quick task losses
+                return true;
+            }
+            return false;
+        });
+        
+        return label;
     }
     
     /** Builds the components based on the given order. */
@@ -175,15 +178,28 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     
 
 
-
+    /** Creates a pair of items. */
     public static Component item_pair(Component left, Component right){
-        //TODO
-        return null;
+        var container = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        .children(Arrays.asList(left, right))
+        // .padding(Insets.both(0, 2))
+        .surface(Surface.PANEL_INSET) //WELLS effect 
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER)
+        .margins(Insets.both(1, 1));
+        return container;
     }
 
+    /** Creates an item component from the name of the item. */
     public static Component item(String name){
-        //TODO
-        return null;
+        Identifier item_id = Identifier.tryParse(name);
+        Item yarn_item = Registries.ITEM.get(item_id);
+
+        ItemStack item_stack = new ItemStack(yarn_item, 1);
+
+        var item = Components.item(item_stack).showOverlay(true)
+        .margins(Insets.both(1, 0));
+        return item;
     }
 
 
