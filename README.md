@@ -30,8 +30,19 @@ Toggle UI is a different implementation of the selecting of Enchantments during 
 The nomenclature follows (MAJOR).(MINOR).(MINISCULE)
 
 In a standardized UPDATE model to be specified with CHANGELOG, it is presented as the following:
-Major: Large Update
-Minor: New Feature
-Miniscule: Bug Fix, Dependency Bump, etc.
 
-For versions <1.0.0 (0.x.x), they typically follow the (MILESTONE).(ISSUE).(COMMIT) pattern.
+| Type      | Repo Pattern | Description                    |
+| --------- | ------------ | ------------------------------ |
+| Major     | Milestone    | Large Update                   |
+| Minor     | Issue        | New Feature                    |
+| Miniscule | Commit       | Bug Fix, Dependency Bump, etc. |
+
+For versions <1.0.0 (0.x.x), they typically follow the (MILESTONE).(ISSUE).(COMMIT) pattern. Version 1.0.0 is essentially an MVP.
+
+# Dependency Guide
+
+The following table represents a guide for the dependencies used in what versions.
+
+| FTT               | Fabric         | Cloth Config | Owo Lib        | Mod Menu (optional) |
+| ----------------- | -------------- | ------------ | -------------- | ------------------- |
+| **0.41.0+1.21.4** | 0.119.3+1.21.4 | 17.0.144     | 0.12.19+1.21.4 | 13.0.3              |

@@ -3,7 +3,7 @@ Copyright © 2025 Nosam08 (Minecraft username) / Pulsar-Programmer (GitHub usern
 Throughout this license, “Author” refers to Nosam08 (Minecraft username) and Pulsar-Programmer (GitHub username).
 
 1. **Proprietary Components**  
-    1.1. All source code referencing the **Opposite Archetypes Algorithm** is proprietary to the Author. 
+    1.1. All source code referencing the core algorithms are proprietary to the Author. 
     1.2. The complete design and layout of the **Enchantment Modification Menu** is proprietary to the Author.
     
 2. **Permitted Use Without Permission**  
@@ -15,5 +15,5 @@ Throughout this license, “Author” refers to Nosam08 (Minecraft username) and
     
 4. **Clarification**  
     4.1. The “proprietary components” (Section 1) are defined by reference to their names and identifiers in the source code and documentation.  
-    4.2. If ambiguity arises regarding the scope of the Opposite Archetypes Algorithm or the Enchantment Modification Menu, the Author will be the sole authority in determining the scope of protection.
+    4.2. If ambiguity arises regarding the scope of the algorithms or the Enchantment Modification Menu, the Author will be the sole authority in determining the scope of protection.
 
