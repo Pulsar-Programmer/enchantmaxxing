@@ -22,7 +22,7 @@ public class AnvilOrdering {
 
     public static String ordering(ItemStackKey item, EnchantmaxProfile enchantments){
         //TODO INSERT THE TRUSTY TRUE ITEM HERE
-        return "(minecraft:diamond,(minecraft:book,minecraft:feather))";
+        return "(minecraft:diamond,((minecraft:book,minecraft:sharpness;5),minecraft:feather))";
     } //minecraft:sharpness;1
 
 

@@ -21,14 +21,17 @@ import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
 import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
@@ -108,14 +111,14 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         ArrayList<Component> active_tasks = new ArrayList<>();
         Enchantips.ACTIVE_TASKS.forEach((ItemStackKey k, EnchantmaxProfile v) -> {
             var ordering = AnvilOrdering.ordering(k, v);
-            active_tasks.add(task(ordering));
+            active_tasks.add(task(k, ordering));
         });
         return active_tasks;
     }
 
-    public Component task(String order){
+    public Component task(ItemStackKey k, String order){
 
-        var x_button = x_button();
+        var x_button = x_button(k, client);
 
         var task = Containers.horizontalFlow(Sizing.content(), Sizing.content())
         .children(Arrays.asList(x_button, AnvilMenu.order(order)))
@@ -135,7 +138,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     ///Creates the button that can delete the task.
-    public static Component x_button(){
+    public static Component x_button(ItemStackKey k, MinecraftClient client){
         LabelComponent label = Components.label(Text.literal("✕"));
         label.color(Color.ofArgb(0xFFFFFFFF)); // White
         label.shadow(true);
@@ -150,8 +153,11 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         });
         
         label.mouseDown().subscribe((double mouseX, double mouseY, int button) -> {
+            var key = k;
             if (button == 0) { // Left click
-                // TODO: Your delete logic here
+                Enchantips.ACTIVE_TASKS.remove(key);
+                client.setScreen(null);
+                client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 // TODO maybe also add a pop up to prevent quick task losses
                 return true;
             }
@@ -177,13 +183,15 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             } else if (c == ')') {
                 // pending_pairs-=1;
                 var left = last_left.pop();
-                var pair = item_pair(left, item(reading_buffer.toString()));
+                var right = !reading_buffer.isEmpty() ? item(reading_buffer.toString()) : last_left.pop();
+                var pair = item_pair(left, right);
                 last_left.add(pair);
+                reading_buffer = new StringBuilder();
             } else if (c == ',') {
                 if(!reading_buffer.isEmpty()){
                     last_left.add(item(reading_buffer.toString()));
+                    reading_buffer = new StringBuilder();
                 }
-                reading_buffer = new StringBuilder();
             } else {
                 reading_buffer.append(c);
             }
@@ -214,10 +222,9 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     /** Creates an item component from the name of the item. */
     public static Component item(String name){
         Identifier item_id = Identifier.tryParse(name);
-        Item yarn_item = Registries.ITEM.get(item_id);
-
-        ItemStack item_stack = new ItemStack(yarn_item, 1);
-        // ItemStack item_stack = AnvilOrdering.deserialize_enchantment("minecraft:sharpness;4");
+        ItemStack item_stack = item_id != null ?
+            new ItemStack(Registries.ITEM.get(item_id), 1) :
+            AnvilOrdering.deserialize_enchantment(name);
 
         var item = Components.item(item_stack).showOverlay(true).setTooltipFromStack(true)
         .margins(Insets.both(1, 0));
