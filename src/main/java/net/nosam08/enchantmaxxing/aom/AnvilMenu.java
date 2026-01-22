@@ -21,25 +21,48 @@ import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
+import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
+    ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
+
     @Override
     protected @NotNull OwoUIAdapter<FlowLayout> createAdapter() {
         return OwoUIAdapter.create(this, Containers::verticalFlow);
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (Screen.hasShiftDown()) {
+            horizontal_scrollers.forEach(x -> {
+                x.onMouseScroll(mouseX, mouseY, horizontalAmount);
+            });
+        }
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+    }
+
+    /** Handles updates for the Screen. */
+    @Override
+    public void tick() {
+        super.tick();
+        horizontal_scrollers.forEach(x->x.tick(width));
+    }
+
     /** Starts the creation of the menu. */
-    public static AnvilMenu start(){ //need an object also there are advanced algorithms that should be done elsewhere TODO
+    public static AnvilMenu start(){
         return new AnvilMenu();
     }
 
@@ -81,7 +104,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     /** Creates the tasks for the main display of the menu. */
-    public static ArrayList<Component> tasks(){
+    public ArrayList<Component> tasks(){
         ArrayList<Component> active_tasks = new ArrayList<>();
         Enchantips.ACTIVE_TASKS.forEach((ItemStackKey k, EnchantmaxProfile v) -> {
             var ordering = AnvilOrdering.ordering(k, v);
@@ -90,7 +113,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         return active_tasks;
     }
 
-    public static Component task(String order){
+    public Component task(String order){
 
         var x_button = x_button();
 
@@ -101,16 +124,14 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         .horizontalAlignment(HorizontalAlignment.CENTER)
         .margins(Insets.vertical(2));
 
-        // var h_scroll = BucketGroupScroller.bucket_group_scroller(container);
+        var h_scroll = BucketGroupScroller.bucket_group_scroller(task);
 
-        // horizontal_scrollers.add(h_scroll); TODO add horizontal scrollers to AM
+        horizontal_scrollers.add(h_scroll); //threatens static
 
-        // return h_scroll
-        // .scrollbarThiccness(0)
-        // .verticalAlignment(VerticalAlignment.CENTER)
-        // .horizontalAlignment(HorizontalAlignment.CENTER)
-        // .margins(Insets.bottom(5));
-        return task;
+        return h_scroll
+        .scrollbarThiccness(0)
+        .verticalAlignment(VerticalAlignment.CENTER)
+        .horizontalAlignment(HorizontalAlignment.CENTER);
     }
 
     ///Creates the button that can delete the task.
@@ -196,8 +217,9 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         Item yarn_item = Registries.ITEM.get(item_id);
 
         ItemStack item_stack = new ItemStack(yarn_item, 1);
+        // ItemStack item_stack = AnvilOrdering.deserialize_enchantment("minecraft:sharpness;4");
 
-        var item = Components.item(item_stack).showOverlay(true)
+        var item = Components.item(item_stack).showOverlay(true).setTooltipFromStack(true)
         .margins(Insets.both(1, 0));
         return item;
     }

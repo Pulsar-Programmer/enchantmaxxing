@@ -28,6 +28,9 @@
     "option.enchantify.do_anvil_notes.tooltip": "Determines whether to do anvil prioritization notes.",
     "option.enchantify.next_fuse_color": "Next Fuse Color",
     "option.enchantify.next_fuse_color.tooltip": "The color of anvil prioritization notes.",
+    "option.enchantify.aom_graph": "AOM Graph",
+    "option.enchantify.aom_graph.tooltip": "Determines whether to make the menu show a graph for combinations rather than the active tasks and ordering.",
+
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
     "key.enchantify.ordering": "Open Anvil Ordering Menu",

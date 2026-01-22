@@ -94,20 +94,28 @@ public class EnchantifyModMenu implements ModMenuApi {
 
         ConfigCategory anvil = builder.getOrCreateCategory(Text.translatable("category.enchantify.anvil"));
 
-        anvil.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.do_anvil_notes"), EnchantifyClient.CONFIG.do_anvil_notes)
-            .setDefaultValue(def.do_anvil_notes)
-            .setTooltip(Text.translatable("option.enchantify.do_anvil_notes.tooltip"))
-            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_anvil_notes = newBool)
-            .build()
-        );
+        // anvil.addEntry(entryBuilder
+        //     .startBooleanToggle(Text.translatable("option.enchantify.do_anvil_notes"), EnchantifyClient.CONFIG.do_anvil_notes)
+        //     .setDefaultValue(def.do_anvil_notes)
+        //     .setTooltip(Text.translatable("option.enchantify.do_anvil_notes.tooltip"))
+        //     .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.do_anvil_notes = newBool)
+        //     .build()
+        // );
+
+        // anvil.addEntry(entryBuilder
+        //     .startColorField(Text.translatable("option.enchantify.next_fuse_color"), EnchantifyClient.CONFIG.next_fuse_color)
+        //     // .setAlphaMode(true)
+        //     .setDefaultValue(TextColor.fromRgb(def.next_fuse_color))
+        //     .setTooltip(Text.translatable("option.enchantify.next_fuse_color.tooltip"))
+        //     .setSaveConsumer(newColor -> EnchantifyClient.CONFIG.next_fuse_color = newColor)
+        //     .build()
+        // );
 
         anvil.addEntry(entryBuilder
-            .startColorField(Text.translatable("option.enchantify.next_fuse_color"), EnchantifyClient.CONFIG.next_fuse_color)
-            // .setAlphaMode(true)
-            .setDefaultValue(TextColor.fromRgb(def.next_fuse_color))
-            .setTooltip(Text.translatable("option.enchantify.next_fuse_color.tooltip"))
-            .setSaveConsumer(newColor -> EnchantifyClient.CONFIG.next_fuse_color = newColor)
+            .startBooleanToggle(Text.translatable("option.enchantify.aom_graph"), EnchantifyClient.CONFIG.aom_graph)
+            .setDefaultValue(def.aom_graph)
+            .setTooltip(Text.translatable("option.enchantify.aom_graph.tooltip"))
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.aom_graph = newBool)
             .build()
         );
 

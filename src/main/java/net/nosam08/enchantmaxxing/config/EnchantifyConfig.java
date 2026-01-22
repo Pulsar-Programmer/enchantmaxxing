@@ -22,16 +22,19 @@ public class EnchantifyConfig {
     public boolean anvil_apply_sound = true;
 
     /** Determines whether to implement the fancy menu or the regular one. */
-    public boolean do_fancy_menu = false;
+    public boolean do_fancy_menu = false; //TODO
 
     /** Determines the order of the curses in the menu. */
     public CurseOrderOptions curse_order = CurseOrderOptions.BOTTOM;
 
 
 
-    /** Determines whether to do anvil prioritization notes. */
-    public boolean do_anvil_notes = false;
+    // /** Determines whether to do anvil prioritization notes. */
+    // public boolean do_anvil_notes = false;
 
-    /** The color of anvil prioritization notes. */
-    public Integer next_fuse_color = 0x00A8FF;
+    // /** The color of anvil prioritization notes. */
+    // public Integer next_fuse_color = 0x00A8FF;
+
+    /** Determines whether to make the menu show a graph for combinations rather than an active tasks menu. */
+    public boolean aom_graph = false; //TODO
 }
