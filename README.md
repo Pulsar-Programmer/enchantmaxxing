@@ -43,6 +43,6 @@ For versions <1.0.0 (0.x.x), they typically follow the (MILESTONE).(ISSUE).(COMM
 
 The following table represents a guide for the dependencies used in what versions.
 
-| FTT               | Fabric         | Cloth Config | Owo Lib        | Mod Menu (optional) |
-| ----------------- | -------------- | ------------ | -------------- | ------------------- |
-| **0.41.0+1.21.4** | 0.119.3+1.21.4 | 17.0.144     | 0.12.19+1.21.4 | 13.0.3              |
+| FTT               | Fabric Loader | Cloth Config | Owo Lib        | Mod Menu (optional) |
+| ----------------- | ------------- | ------------ | -------------- | ------------------- |
+| **0.41.0+1.21.4** | 0.17.0        | 17.0.144     | 0.12.19+1.21.4 | 13.0.3              |
