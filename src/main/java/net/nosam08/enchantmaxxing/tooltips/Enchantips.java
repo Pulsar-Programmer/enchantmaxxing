@@ -3,7 +3,6 @@ package net.nosam08.enchantmaxxing.tooltips;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
@@ -11,7 +10,6 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
@@ -55,12 +53,23 @@ public class Enchantips {
     public static void shift_active_task(ItemStack item, ArrayList<EnchantmentLevelEntry> enchantments, ItemStack result){
         var key = new ItemStackKey(item);
         var task = ACTIVE_TASKS.remove(key);
-        if(task == null) System.out.println("When shifting tasks, ORIGINAL is null!");
+        // key.read(); System.out.println("Old key!");
+        // if(task == null) System.out.println("When shifting tasks, ORIGINAL is null!");
         if(task == null) return;
-        task.profile.removeIf((EnchantmentLevelEntry x) -> enchantments.contains(x));
-        task.profile.forEach((var x) -> System.out.println("current task:" + x.enchantment.getIdAsString() + " " + x.level));
+        for (EnchantmentLevelEntry entry : enchantments) {
+            task.profile.removeIf((EnchantmentLevelEntry profile_entry) -> {
+                if(!entry.enchantment.getIdAsString().equals(profile_entry.enchantment.getIdAsString())) return false;
+                if(entry.level >= profile_entry.level){
+                    //then override
+                    return true;
+                }
+                return false;
+            });
+        }
+        // task.profile.forEach((var x) -> System.out.println("current task:" + x.enchantment.getIdAsString() + " " + x.level)); //need to consider WP for Keys
         // item.addEnchantment(enchantment.enchantment, enchantment.level);
         var new_key = new ItemStackKey(result);
+        // new_key.read(); System.out.println("New key!");
         ACTIVE_TASKS.put(new_key, task);
     }
 
