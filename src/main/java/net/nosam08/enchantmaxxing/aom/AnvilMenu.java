@@ -23,16 +23,13 @@ import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
+import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
@@ -116,7 +113,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         return active_tasks;
     }
 
-    public Component task(ItemStackKey k, String order){
+    public Component task(ItemStackKey k, OrderString order){
 
         var x_button = x_button(k, client);
 
@@ -168,7 +165,9 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
     
     /** Builds the components based on the given order. */
-    public static Component order(String order){
+    public static Component order(OrderString order_string){
+        var order = order_string.ordering;
+        var obj = order_string.object;
 
         // int pending_pairs = 0;
         Stack<Component> last_left = new Stack<Component>();
@@ -185,7 +184,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
                 var left = last_left.pop();
                 Component right;
                 if(!reading_buffer.isEmpty()){
-                    right = item(reading_buffer.toString());
+                    right = item_if(reading_buffer.toString(), obj);
                     reading_buffer = new StringBuilder();
                 } else {
                     right = left;
@@ -195,7 +194,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
                 last_left.add(pair);
             } else if (c == ',') {
                 if(!reading_buffer.isEmpty()){
-                    last_left.add(item(reading_buffer.toString()));
+                    last_left.add(item_if(reading_buffer.toString(), obj));
                     reading_buffer = new StringBuilder();
                 }
             } else {
@@ -204,7 +203,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         }
 
         if(last_left.isEmpty()){
-            return item(reading_buffer.toString());
+            return item_if(reading_buffer.toString(), obj);
         }
         return last_left.pop();
     }
@@ -225,6 +224,11 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         return container;
     }
 
+    /** Exactly item but handles if OBJ is given. To be used with the order component creator. */
+    public static Component item_if(String name, ItemStack obj){
+        return name.equals("OBJ") ? item_stack(obj) : item(name);
+    }
+
     /** Creates an item component from the name of the item. */
     public static Component item(String name){
         Identifier item_id = Identifier.tryParse(name);
@@ -233,6 +237,13 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             AnvilOrdering.deserialize_enchantment(name);
 
         var item = Components.item(item_stack).showOverlay(true).setTooltipFromStack(true)
+        .margins(Insets.both(1, 0));
+        return item;
+    }
+
+    /** Creates an item component from the ItemStack. */
+    public static Component item_stack(ItemStack obj){
+        var item = Components.item(obj).showOverlay(true).setTooltipFromStack(true)
         .margins(Insets.both(1, 0));
         return item;
     }
