@@ -183,10 +183,16 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             } else if (c == ')') {
                 // pending_pairs-=1;
                 var left = last_left.pop();
-                var right = !reading_buffer.isEmpty() ? item(reading_buffer.toString()) : last_left.pop();
+                Component right;
+                if(!reading_buffer.isEmpty()){
+                    right = item(reading_buffer.toString());
+                    reading_buffer = new StringBuilder();
+                } else {
+                    right = left;
+                    left = last_left.pop();
+                }
                 var pair = item_pair(left, right);
                 last_left.add(pair);
-                reading_buffer = new StringBuilder();
             } else if (c == ',') {
                 if(!reading_buffer.isEmpty()){
                     last_left.add(item(reading_buffer.toString()));
