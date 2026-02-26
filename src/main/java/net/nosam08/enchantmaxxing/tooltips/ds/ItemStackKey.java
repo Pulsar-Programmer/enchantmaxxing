@@ -3,12 +3,21 @@ package net.nosam08.enchantmaxxing.tooltips.ds;
 import java.util.Objects;
 
 import net.minecraft.item.ItemStack;
+import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 
 public class ItemStackKey {
     private final ItemStack stack;
     
     public ItemStackKey(ItemStack stack) {
-        this.stack = stack.copy(); // Make a copy to avoid mutations
+        this.stack = Enchantips.strip_extras(stack); // Make a copy to avoid mutations
+    }
+
+    /** Allows the reading of an ItemStackKey. */
+    public void read(){
+        var data = this.stack.getEnchantments();
+        for (var ench_level : data.getEnchantments()) {
+            System.out.println(ench_level + ":" + data.getLevel(ench_level));
+        }
     }
     
     @Override

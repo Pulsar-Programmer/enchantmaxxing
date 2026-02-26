@@ -1,29 +1,29 @@
 package net.nosam08.enchantmaxxing.mixins;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.EnchantmentScreenHandler;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 
 @Mixin(EnchantmentScreenHandler.class)
 public class EnchantmentScreenHandlerMixin {
-    @Inject(method = "onButtonClick", at = @At("RETURN"))
-    private void onEnchant(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValue()) return; // enchant didn't happen
-
-        EnchantmentScreenHandler self = (EnchantmentScreenHandler)(Object)this;
-        ItemStack result = self.slots.get(0).getStack();
-
-        ///we know the input is always the plain item so we can take advantage of that here
+    @Inject(method = "updateSlotStacks", at = @At("HEAD"))
+    private void onSlotsUpdated(int revision, List<ItemStack> stacks, ItemStack cursorStack, CallbackInfo ci) {
+        // if (!player.getWorld().isClient()) return;
+        // stacks.get(0) is the item slot, now with enchantments applied by server
+        ItemStack result = stacks.get(0);
+        if (!result.hasEnchantments()) return; // nothing enchanted
+        
         ItemStack item = Enchantips.stripEnchantments(result);
+        
         var enchantments = new ArrayList<EnchantmentLevelEntry>();
         var enchantment_data = result.getEnchantments();
         for (var enchantment : enchantment_data.getEnchantments()) {

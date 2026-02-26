@@ -17,6 +17,8 @@ import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 public class AnvilScreenHandlerMixin {
     @Inject(method = "onTakeOutput", at = @At("RETURN"))
     private void onAnvil(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+        if (!player.getWorld().isClient()) return;
+
         AnvilScreenHandler self = (AnvilScreenHandler)(Object)this;
         ItemStack input = self.slots.get(AnvilScreenHandler.INPUT_1_ID).getStack(); // left input slot
 

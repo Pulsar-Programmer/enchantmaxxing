@@ -78,10 +78,15 @@ public class Enchantips {
         return stripped;
     }
 
-    /** Removes the modded orange stuff and all other data except the Enchantment data from the ItemStack. */
-    public static ItemStack strip_modded_orange(ItemStack stack) {
+    /** Removes the modded orange stuff and all other data except the Enchantment data from the ItemStack. Clears also WP which is useful for after enchantment shifts and stuff. Diff WP will collapse to same Key this means however. */
+    public static ItemStack strip_extras(ItemStack stack) {
         ItemStack stripped = stripEnchantments(stack);
-        stripped.set(DataComponentTypes.ENCHANTMENTS, stack.getEnchantments());
+        // Build a fresh enchantments component instead of referencing the original
+        ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
+        stack.getEnchantments().getEnchantments().forEach(entry -> 
+            builder.add(entry, stack.getEnchantments().getLevel(entry))
+        );
+        stripped.set(DataComponentTypes.ENCHANTMENTS, builder.build());
         // stripped.remove(DataComponentTypes.CUSTOM_DATA); // wipes mod NBT
         return stripped;
     }
