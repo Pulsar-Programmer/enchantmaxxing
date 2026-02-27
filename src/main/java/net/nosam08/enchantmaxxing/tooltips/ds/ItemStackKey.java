@@ -19,6 +19,10 @@ public class ItemStackKey {
             System.out.println(ench_level + ":" + data.getLevel(ench_level));
         }
     }
+
+    public ItemStack inner(){
+        return stack;
+    }
     
     @Override
     public boolean equals(Object obj) {

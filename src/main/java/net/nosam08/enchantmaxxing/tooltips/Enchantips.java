@@ -96,6 +96,9 @@ public class Enchantips {
             builder.add(entry, stack.getEnchantments().getLevel(entry))
         );
         stripped.set(DataComponentTypes.ENCHANTMENTS, builder.build());
+        if (stack.contains(DataComponentTypes.CUSTOM_NAME)) {
+            stripped.set(DataComponentTypes.CUSTOM_NAME, stack.get(DataComponentTypes.CUSTOM_NAME));
+        }
         // stripped.remove(DataComponentTypes.CUSTOM_DATA); // wipes mod NBT
         return stripped;
     }

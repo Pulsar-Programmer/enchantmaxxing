@@ -1,6 +1,10 @@
 package net.nosam08.enchantmaxxing.aom.actors;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
@@ -11,45 +15,126 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.aom.ds.OrderString;
-// import net.nosam08.enchantmaxxing.aom.ds.SimEnchantment;
-// import net.nosam08.enchantmaxxing.aom.ds.SimItem;
-// import net.nosam08.enchantmaxxing.aom.ds.SimReport;
-// import net.nosam08.enchantmaxxing.aom.ds.SimReportTree;
+import net.nosam08.enchantmaxxing.aom.ds.SimEnchantment;
+import net.nosam08.enchantmaxxing.aom.ds.SimItem;
+import net.nosam08.enchantmaxxing.aom.ds.SimReport;
+import net.nosam08.enchantmaxxing.aom.ds.SimReportTree;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class AnvilOrdering {
-    
+    public HashMap<Pair<ItemStackKey, EnchantmaxProfile>, String> STORE;
 
 
 
     public static OrderString ordering(ItemStackKey item, EnchantmaxProfile enchantments){
-        //TODO INSERT THE TRUSTY TRUE ITEM HERE
-        return new OrderString(deserialize_enchantment("sharpness:3"), "(OBJ,((minecraft:book,minecraft:sharpness;5),minecraft:feather))");
+        //TODO fix errors
+        return new OrderString(item.inner(), obtain_ordered(parse_paths(n_set(new SimItem(0), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new))))));
     } //minecraft:sharpness;1
 
 
+    public static String obtain_ordered(ArrayList<Pair<String, Integer>> paths){
+        var lowest = new String();
+        Optional<Integer> lowest_cost = Optional.empty();
+        for (Pair<String,Integer> pair : paths) {
+            if(lowest_cost.isEmpty() || lowest_cost.get() > pair.getRight()){
+                lowest_cost = Optional.of(pair.getRight());
+            }
+        }
+        return lowest;
+    }
 
-    // public static void evaluate(){
-    //     //TODO
-    // }
+
+    public static ArrayList<Pair<String, Integer>> parse_paths(SimReportTree head){
+        var cost = head.current.exp_sum();
+        if(head.disciples.isEmpty()){
+            return new ArrayList<>(Arrays.asList(new Pair<String, Integer>(head.current.operation, cost)));
+        }
+        var costs = new ArrayList<Pair<String, Integer>>();
+        for (SimReportTree tree : head.disciples) {
+            var rest = parse_paths(tree).stream().map((pair) -> {
+                return new Pair<String, Integer>(pair.getLeft() + cost, pair.getRight());
+            }).collect(Collectors.toCollection(ArrayList::new));
+            costs.addAll(rest);
+        }
+        return costs;
+    }
+
+
+    public static SimReportTree one_set(SimItem o, SimEnchantment x){
+        var operation = SimReport.combine(o, x);
+
+        return new SimReportTree(operation);
+    }
+
+    /** Brute force algorithm to find n_set. */
+    public static SimReportTree n_set(SimItem o, ArrayList<SimEnchantment> e){
+        if(e.size() == 1){
+            return one_set(o, e.getFirst());
+        }
+
+        var head = new SimReportTree(new SimReport(0, 0, 0, "HEAD"));
+        //BASIC
+        for(var i = 0; i < e.size(); i++){
+            var new_e = clone(e);
+            var new_o = o.clone();
+
+            var path = one_set(new_o, new_e.remove(i));
+
+            path.open(n_set(new_o, new_e));
+            head.open(path);
+        }
+        //CHOOSE
+        for(var i = 0; i < e.size(); i++){
+            var new_e = clone(e);
+
+            var first = new_e.remove(i).clone();
+            for(var j=0; j<e.size()-1;j++){
+                var new_e_2 = clone(new_e);
+
+                var second = new_e_2.remove(j);
+
+                var pair1 = SimReport.merged(first, second);
+                var pair2 = SimReport.merged(second, first);
+
+                var path1 = new SimReportTree(pair1.getRight());
+                var path2 = new SimReportTree(pair2.getRight());
+
+                var resolved1 = clone(new_e_2);
+                var resolved2 = clone(new_e_2);
+
+                resolved1.add(i, pair1.getLeft());
+                resolved2.add(i, pair2.getLeft());
+
+                path1.open(n_set(o.clone(), resolved1));
+                path2.open(n_set(o.clone(), resolved2));
+
+                head.open(path1);
+                head.open(path2);
+            }
+        }
+
+        return head;
+    }
+
+    public static ArrayList<SimEnchantment> clone(ArrayList<SimEnchantment> e){
+        return e.stream().map((ench) -> ench.clone()).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+
+    
 
 
 
 
 
 
-    // public static SimReportTree one_set(SimItem o, SimEnchantment x){
-    //     var operation = SimReport.combine(o, x);
+    
 
-    //     return new SimReportTree(operation);
-    // }
-
-    // public static SimReportTree n_set(SimItem o, SimEnchantment operation){
-        
-    // }
+    
 
 
     /** Advances the PWP of an object. */
