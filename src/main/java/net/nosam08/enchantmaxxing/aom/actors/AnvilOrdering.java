@@ -11,6 +11,11 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.nosam08.enchantmaxxing.aom.ds.OrderString;
+// import net.nosam08.enchantmaxxing.aom.ds.SimEnchantment;
+// import net.nosam08.enchantmaxxing.aom.ds.SimItem;
+// import net.nosam08.enchantmaxxing.aom.ds.SimReport;
+// import net.nosam08.enchantmaxxing.aom.ds.SimReportTree;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
@@ -26,6 +31,31 @@ public class AnvilOrdering {
     } //minecraft:sharpness;1
 
 
+
+    // public static void evaluate(){
+    //     //TODO
+    // }
+
+
+
+
+
+
+    // public static SimReportTree one_set(SimItem o, SimEnchantment x){
+    //     var operation = SimReport.combine(o, x);
+
+    //     return new SimReportTree(operation);
+    // }
+
+    // public static SimReportTree n_set(SimItem o, SimEnchantment operation){
+        
+    // }
+
+
+    /** Advances the PWP of an object. */
+    public static Integer adv(Integer x){
+        return x * 2 + 1;
+    }
 
 
 

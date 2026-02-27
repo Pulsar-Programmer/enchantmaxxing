@@ -48,5 +48,6 @@ public class AnvilScreenHandlerMixin {
             }
         }
         Enchantips.shift_active_task(captured_old, added_enchantments, stack);
+        captured_old = null;
     }
 }
