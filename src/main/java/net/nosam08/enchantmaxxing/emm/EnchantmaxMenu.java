@@ -311,6 +311,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }
 
         if(level == reg_level){
+            unregister_enchantment(ench, level);
+
             unanimate_button(selected_level_button);
         } else {
             ///-> Do not pick up on zero events.
@@ -343,6 +345,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             hm.put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
             present.setRight(hm);
         }
+    }
+
+    /** Unregister level in output map. */
+    public void unregister_enchantment(RegistryEntry<Enchantment> ench, int level){
+        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new HashMap<>()));
+        present.getRight().remove(ench);
     }
 
     /** Makes the button fancy. */
