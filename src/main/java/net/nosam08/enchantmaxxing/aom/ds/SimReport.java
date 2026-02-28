@@ -20,8 +20,10 @@ public class SimReport {
 
 
     public static SimReport combine(SimItem o, SimEnchantment x){
-        var rpr = new SimReport(Integer.valueOf(o.pwp), Integer.valueOf(x.pwp), Integer.valueOf(x.cost), "(OBJ," + x.identifier + ")");
+        var new_ident = "(" + o.identifier + "," + x.identifier + ")";
+        var rpr = new SimReport(Integer.valueOf(o.pwp), Integer.valueOf(x.pwp), Integer.valueOf(x.cost), new_ident);
         o.pwp = AnvilOrdering.adv(o.pwp);
+        o.identifier = new_ident;
         return rpr;
     }
 

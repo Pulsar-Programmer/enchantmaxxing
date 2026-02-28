@@ -31,17 +31,23 @@ public class AnvilOrdering {
 
 
     public static OrderString ordering(ItemStackKey item, EnchantmaxProfile enchantments){
-        //TODO fix errors
-        return new OrderString(item.inner(), obtain_ordered(parse_paths(n_set(new SimItem(0), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new))))));
-    } //minecraft:sharpness;1
+        //TODO some redundancy in n_set, figure it out
+        var n_set = n_set(new SimItem(0, "OBJ"), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new)));
+        var paths = parse_paths(n_set);
+        var string = obtain_ordered(paths);
+        // System.out.println(string);
+        return new OrderString(item.inner(), string);
+    }
 
 
     public static String obtain_ordered(ArrayList<Pair<String, Integer>> paths){
+        paths.forEach((x)->System.out.println(x.getLeft() + x.getRight()));
         var lowest = new String();
         Optional<Integer> lowest_cost = Optional.empty();
         for (Pair<String,Integer> pair : paths) {
             if(lowest_cost.isEmpty() || lowest_cost.get() > pair.getRight()){
                 lowest_cost = Optional.of(pair.getRight());
+                lowest = pair.getLeft();
             }
         }
         return lowest;
@@ -49,14 +55,13 @@ public class AnvilOrdering {
 
 
     public static ArrayList<Pair<String, Integer>> parse_paths(SimReportTree head){
-        var cost = head.current.exp_sum();
         if(head.disciples.isEmpty()){
-            return new ArrayList<>(Arrays.asList(new Pair<String, Integer>(head.current.operation, cost)));
+            return new ArrayList<>(Arrays.asList(new Pair<String, Integer>(head.current.operation, head.current.exp_sum())));
         }
         var costs = new ArrayList<Pair<String, Integer>>();
         for (SimReportTree tree : head.disciples) {
             var rest = parse_paths(tree).stream().map((pair) -> {
-                return new Pair<String, Integer>(pair.getLeft() + cost, pair.getRight());
+                return new Pair<String, Integer>(pair.getLeft(), pair.getRight()); //+ cost
             }).collect(Collectors.toCollection(ArrayList::new));
             costs.addAll(rest);
         }
@@ -75,6 +80,8 @@ public class AnvilOrdering {
         if(e.size() == 1){
             return one_set(o, e.getFirst());
         }
+        System.out.println("COMBINING:");
+        e.forEach(x->System.out.println(x.identifier));
 
         var head = new SimReportTree(new SimReport(0, 0, 0, "HEAD"));
         //BASIC
@@ -92,7 +99,7 @@ public class AnvilOrdering {
             var new_e = clone(e);
 
             var first = new_e.remove(i).clone();
-            for(var j=0; j<e.size()-1;j++){
+            for(var j=0; j < e.size()-1;j++){
                 var new_e_2 = clone(new_e);
 
                 var second = new_e_2.remove(j);
@@ -106,8 +113,8 @@ public class AnvilOrdering {
                 var resolved1 = clone(new_e_2);
                 var resolved2 = clone(new_e_2);
 
-                resolved1.add(i, pair1.getLeft());
-                resolved2.add(i, pair2.getLeft());
+                resolved1.add(pair1.getLeft());
+                resolved2.add(pair2.getLeft());
 
                 path1.open(n_set(o.clone(), resolved1));
                 path2.open(n_set(o.clone(), resolved2));

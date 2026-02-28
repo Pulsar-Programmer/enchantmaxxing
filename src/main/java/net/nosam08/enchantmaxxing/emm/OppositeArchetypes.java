@@ -93,7 +93,7 @@ public class OppositeArchetypes {
     public static ArrayList<BucketGroup> opposite_archetypes(ArrayList<ArrayList<ArrayList<Enchantment>>> stc){
         ArrayList<BucketGroup> built = new ArrayList<>();
 
-        Tests.printNestedCollections(stc);
+        // Tests.printNestedCollections(stc);
 
         for (var gate : stc) {
             var iter = gate.iterator();
