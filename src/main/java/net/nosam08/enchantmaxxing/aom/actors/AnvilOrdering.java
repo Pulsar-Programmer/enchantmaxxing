@@ -26,7 +26,7 @@ import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class AnvilOrdering {
-    public static HashMap<Pair<ItemStackKey, EnchantmaxProfile>, String> STORE;
+    public static HashMap<Pair<ItemStackKey, EnchantmaxProfile>, Pair<String, Integer>> STORE = new HashMap<>();
 
 
 
@@ -38,11 +38,12 @@ public class AnvilOrdering {
             var string = obtain_ordered(paths);
             STORE.put(args, string);
         }
-        return new OrderString(item.inner(), STORE.get(args));
+        var result = STORE.get(args);
+        return new OrderString(item.inner(), result.getLeft(), result.getRight());
     }
 
 
-    public static String obtain_ordered(ArrayList<Pair<String, Integer>> paths){
+    public static Pair<String, Integer> obtain_ordered(ArrayList<Pair<String, Integer>> paths){
         paths.forEach((x)->System.out.println(x.getLeft() + x.getRight()));
         var lowest = new String();
         Optional<Integer> lowest_cost = Optional.empty();
@@ -52,7 +53,7 @@ public class AnvilOrdering {
                 lowest = pair.getLeft();
             }
         }
-        return lowest;
+        return new Pair<String,Integer>(lowest, lowest_cost.get());
     }
 
 

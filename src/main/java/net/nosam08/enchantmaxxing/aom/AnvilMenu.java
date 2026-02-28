@@ -117,8 +117,10 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
         var x_button = x_button(k, client);
 
+        var cost = cost_label(order.cost).margins(Insets.horizontal(2));
+
         var task = Containers.horizontalFlow(Sizing.content(), Sizing.content())
-        .children(Arrays.asList(x_button, AnvilMenu.order(order)))
+        .children(Arrays.asList(x_button, AnvilMenu.order(order), cost))
         // .padding(Insets.both(0, 2))
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER)
@@ -160,6 +162,21 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             }
             return false;
         });
+        
+        return label;
+    }
+
+    ///Creates the label of the cost.
+    public static Component cost_label(Integer cost){
+        var player = MinecraftClient.getInstance().player;
+        int playerLevel = player != null ? player.experienceLevel : 0;
+
+        // Determine color based on whether player can afford it
+        int color = (playerLevel >= cost ? 0x80FF20 : 0xFF6060);
+
+        LabelComponent label = Components.label(Text.literal(cost.toString()));
+        label.color(Color.ofArgb(color)); // White
+        label.shadow(true);
         
         return label;
     }
