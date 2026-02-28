@@ -18,7 +18,7 @@ public class SimEnchantment {
 
     /** Creates a new SimEnchantment from the Enchantment and a level. */
     public static SimEnchantment from_enchantment(EnchantmentLevelEntry enchantment){
-        var cost = enchantment.getWeight().getValue();
+        var cost = enchantment.getWeight().getValue() * enchantment.level;
         return new SimEnchantment(0, cost, enchantment.enchantment.getIdAsString() + ";" + enchantment.level);
     }
 
