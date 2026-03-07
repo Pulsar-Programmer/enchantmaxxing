@@ -49,7 +49,7 @@ public class Enchantips {
         return insertIndex;
     }
 
-    /** Shifts the active task by removing what was combined with it. */ //< do we add one of these for grindstone?
+    /** Shifts the active task by removing what was combined with it. */
     public static void shift_active_task(ItemStack item, ArrayList<EnchantmentLevelEntry> enchantments, ItemStack result){
         var key = new ItemStackKey(item);
         var task = ACTIVE_TASKS.remove(key);
@@ -70,6 +70,24 @@ public class Enchantips {
         // item.addEnchantment(enchantment.enchantment, enchantment.level);
         var new_key = new ItemStackKey(result);
         // new_key.read(); System.out.println("New key!");
+        ACTIVE_TASKS.put(new_key, task);
+    }
+
+    /** Shifts the active task by removing all enchantments.*/
+    public static void grindstone_task(ItemStack item, ArrayList<EnchantmentLevelEntry> enchantments, ItemStack result){
+        var key = new ItemStackKey(item);
+        var task = ACTIVE_TASKS.remove(key);
+
+        if(true) return; //do we want to reactivate the task or just remove it entirely? config?
+
+        if(task == null) return;
+        for (EnchantmentLevelEntry entry : enchantments) {
+            if(task.profile.contains(entry)){
+                continue;
+            }
+            task.profile.add(entry);
+        }
+        var new_key = new ItemStackKey(result);
         ACTIVE_TASKS.put(new_key, task);
     }
 
