@@ -63,7 +63,7 @@ public class EnchantifyClient implements ClientModInitializer {
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
 			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, key, scancode, modifiers) -> {
-                if (MAXXING.matchesKey(key, scancode)) {
+                if (MAXXING.matchesKey(key, scancode)  && !(screen instanceof net.minecraft.client.gui.screen.ChatScreen) && !(screen instanceof net.minecraft.client.gui.screen.DeathScreen)) {
                     on_emenu_open(client);
                 }
             });

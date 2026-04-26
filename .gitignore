@@ -3,7 +3,4 @@
 /.vscode
 /.idea
 /run
-
-# Added by cargo
-
-/target
+/bin
