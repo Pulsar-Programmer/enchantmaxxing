@@ -93,7 +93,7 @@ public class AnvilOrdering {
 
             var path = one_set(new_o, new_e.remove(i));
 
-            path.open(n_set(new_o, new_e));
+            path.open(n_set(new_o.clone(), new_e));
             head.open(path);
         }
         //CHOOSE
@@ -101,7 +101,7 @@ public class AnvilOrdering {
             var new_e = clone(e);
 
             var first = new_e.remove(i).clone();
-            for(var j=0; j < e.size()-1;j++){
+            for(var j=0; j < new_e.size();j++){
                 var new_e_2 = clone(new_e);
 
                 var second = new_e_2.remove(j);
