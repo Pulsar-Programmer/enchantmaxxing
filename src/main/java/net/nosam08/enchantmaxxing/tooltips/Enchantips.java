@@ -98,14 +98,17 @@ public class Enchantips {
 
 
     /**
-     * Returns a copy of the given ItemStack with all enchantments removed.
+     * Returns a copy of the given ItemStack with all enchantments removed, but WP maintained.
      */
     public static ItemStack stripEnchantments(ItemStack stack) {
         ItemStack stripped = new ItemStack(stack.getItem(), stack.getCount());
+        if (stack.contains(DataComponentTypes.REPAIR_COST)) {
+            stripped.set(DataComponentTypes.REPAIR_COST, stack.get(DataComponentTypes.REPAIR_COST));
+        }
         return stripped;
     }
 
-    /** Removes the modded orange stuff and all other data except the Enchantment data from the ItemStack. Clears also WP which is useful for after enchantment shifts and stuff. Diff WP will collapse to same Key this means however. */
+    /** Removes the modded orange stuff and all other data except the Enchantment data from the ItemStack. Maintains WP. */
     public static ItemStack strip_extras(ItemStack stack) {
         ItemStack stripped = stripEnchantments(stack);
         // Build a fresh enchantments component instead of referencing the original

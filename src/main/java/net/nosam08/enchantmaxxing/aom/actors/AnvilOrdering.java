@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
@@ -33,7 +34,9 @@ public class AnvilOrdering {
     public static OrderString ordering(ItemStackKey item, EnchantmaxProfile enchantments){
         var args = new Pair<ItemStackKey,EnchantmaxProfile>(item, enchantments);
         if (STORE.get(args) == null) {
-            var n_set = n_set(new SimItem(0, "OBJ"), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new)));
+            var pwp_item = item.inner().get(DataComponentTypes.REPAIR_COST);
+            // System.out.println("PWP ITEM: " + pwp_item);
+            var n_set = n_set(new SimItem(pwp_item, "OBJ"), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new)));
             var paths = parse_paths(n_set);
             var string = obtain_ordered(paths);
             STORE.put(args, string);
@@ -44,7 +47,7 @@ public class AnvilOrdering {
 
 
     public static Pair<String, Integer> obtain_ordered(ArrayList<Pair<String, Integer>> paths){
-        paths.forEach((x)->System.out.println(x.getLeft() + x.getRight()));
+        // paths.forEach((x)->System.out.println(x.getLeft() + x.getRight()));
         var lowest = new String();
         Optional<Integer> lowest_cost = Optional.empty();
         for (Pair<String,Integer> pair : paths) {
