@@ -12,6 +12,9 @@ import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
 public class EnchantmaxProfile {
     public ArrayList<EnchantmentLevelEntry> profile = new ArrayList<>();
 
+    /** Empty profile, used when loading from disk. */
+    public EnchantmaxProfile(){}
+
     public EnchantmaxProfile(HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments){
         for (Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>> bucket_groups : selected_enchantments.values()) {
             for (var hm_entry : bucket_groups.getRight().entrySet()) {

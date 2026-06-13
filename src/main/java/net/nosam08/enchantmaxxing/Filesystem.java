@@ -45,6 +45,4 @@ public class Filesystem {
 
         return new EnchantifyConfig();
     }
-
-    //implement stuff in future for profiles and other enchantify stuff, are profiles world-specific? no
 }

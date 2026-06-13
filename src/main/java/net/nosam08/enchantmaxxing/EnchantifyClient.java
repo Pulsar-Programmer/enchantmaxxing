@@ -27,6 +27,7 @@ import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.mixins.HandledScreenAccessor;
+import net.nosam08.enchantmaxxing.profiles.ProfileStore;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
@@ -94,6 +95,10 @@ public class EnchantifyClient implements ClientModInitializer {
             var entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
             GLOBAL_ARCHETYPES = EnchantmaxBuilder.global_archetypes(entries);
         });
+
+        // Load this world's saved profiles once joined; flush them on disconnect.
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> ProfileStore.on_join(client));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ProfileStore.on_disconnect());
     }
 
     /** This is called when the Anvil Menu Key is pressed. */

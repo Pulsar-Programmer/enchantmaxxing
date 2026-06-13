@@ -155,6 +155,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             var key = k;
             if (button == 0) { // Left click
                 Enchantips.ACTIVE_TASKS.remove(key);
+                net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
                 client.setScreen(null);
                 client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 // TODO maybe also add a pop up to prevent quick task losses

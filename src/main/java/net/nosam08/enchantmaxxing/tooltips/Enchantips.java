@@ -23,6 +23,7 @@ public class Enchantips {
     public static void start_tooltips(ItemStack item, EnchantmaxProfile selected_enchantments){
         var key = new ItemStackKey(item);
         ACTIVE_TASKS.put(key, selected_enchantments);
+        net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
     }
 
     /** Generates the tooltips on the physical item. */
@@ -83,10 +84,14 @@ public class Enchantips {
         }
         // task.profile.forEach((var x) -> System.out.println("current task:" + x.enchantment.getIdAsString() + " " + x.level)); //need to consider WP for Keys
         // item.addEnchantment(enchantment.enchantment, enchantment.level);
-        if(task.profile.isEmpty()) return; //task hit zero: drop it instead of re-adding
+        if(task.profile.isEmpty()){ //task hit zero: drop it instead of re-adding
+            net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
+            return;
+        }
         var new_key = new ItemStackKey(result);
         // new_key.read(); System.out.println("New key!");
         ACTIVE_TASKS.put(new_key, task);
+        net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
     }
 
     /** Shifts the active task by removing all enchantments.*/
@@ -94,7 +99,7 @@ public class Enchantips {
         var key = new ItemStackKey(item);
         var task = ACTIVE_TASKS.remove(key);
 
-        if(true) return; //do we want to reactivate the task or just remove it entirely? config?
+        if(true){ net.nosam08.enchantmaxxing.profiles.ProfileStore.save(); return; } //do we want to reactivate the task or just remove it entirely? config?
 
         if(task == null) return;
         for (EnchantmentLevelEntry entry : enchantments) {
