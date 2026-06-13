@@ -33,20 +33,10 @@ public class AnvilScreenHandlerMixin {
     private void onAnvil(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
         if (!player.getWorld().isClient()) return;
         if (captured_old == null || captured_old.isEmpty()) return;
+        if (stack.isEmpty()) { captured_old = null; return; } //quick-move path: handled in ScreenHandlerMixin pre-mutation
 
         ///we wanna take the difference from before and after enchantments
-        var before_data = captured_old.getEnchantments();
-        var after_data = stack.getEnchantments();
-        ArrayList<EnchantmentLevelEntry> added_enchantments = new ArrayList<>();
-
-        ///cmp and find enchantments
-        for (var new_ench : after_data.getEnchantments()) {
-            int previous_level = before_data.getLevel(new_ench);
-            int now_level = after_data.getLevel(new_ench);
-            if(now_level > previous_level){
-                added_enchantments.add(new EnchantmentLevelEntry(new_ench, now_level));
-            }
-        }
+        ArrayList<EnchantmentLevelEntry> added_enchantments = Enchantips.added_enchantments(captured_old, stack);
         Enchantips.shift_active_task(captured_old, added_enchantments, stack);
         captured_old = null;
     }

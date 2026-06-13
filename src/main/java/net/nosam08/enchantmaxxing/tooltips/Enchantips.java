@@ -49,6 +49,21 @@ public class Enchantips {
         return insertIndex;
     }
 
+    /** Computes the enchantments gained between two stacks (new or upgraded levels). */
+    public static ArrayList<EnchantmentLevelEntry> added_enchantments(ItemStack before, ItemStack after){
+        var before_data = before.getEnchantments();
+        var after_data = after.getEnchantments();
+        ArrayList<EnchantmentLevelEntry> added = new ArrayList<>();
+        for (var new_ench : after_data.getEnchantments()) {
+            int previous_level = before_data.getLevel(new_ench);
+            int now_level = after_data.getLevel(new_ench);
+            if(now_level > previous_level){
+                added.add(new EnchantmentLevelEntry(new_ench, now_level));
+            }
+        }
+        return added;
+    }
+
     /** Shifts the active task by removing what was combined with it. */
     public static void shift_active_task(ItemStack item, ArrayList<EnchantmentLevelEntry> enchantments, ItemStack result){
         var key = new ItemStackKey(item);
@@ -68,6 +83,7 @@ public class Enchantips {
         }
         // task.profile.forEach((var x) -> System.out.println("current task:" + x.enchantment.getIdAsString() + " " + x.level)); //need to consider WP for Keys
         // item.addEnchantment(enchantment.enchantment, enchantment.level);
+        if(task.profile.isEmpty()) return; //task hit zero: drop it instead of re-adding
         var new_key = new ItemStackKey(result);
         // new_key.read(); System.out.println("New key!");
         ACTIVE_TASKS.put(new_key, task);

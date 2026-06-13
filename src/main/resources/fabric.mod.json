@@ -28,7 +28,7 @@
 		"enchantify.mixins.json"
 	],
 	"depends": {
-		"fabricloader": "*",
+		"fabricloader": ">=0.16.0",
 		"minecraft": "${minecraft_version}",
 		"java": ">=21",
 
