@@ -41,12 +41,12 @@ public class ScreenHandlerMixin {
         if (!slot.hasStack()) return;
 
         ItemStack current = slot.getStack();
-        if (!current.hasEnchantments()) return; // no enchantments = nothing to shift
+        var enchantment_data = Enchantips.effective_enchantments(current); // books store separately
+        if (enchantment_data.isEmpty()) return; // no enchantments = nothing to shift
 
         ItemStack strippedKey = Enchantips.stripEnchantments(current); // = old key (unenchanted)
 
         var enchantments = new ArrayList<EnchantmentLevelEntry>();
-        var enchantment_data = current.getEnchantments();
         for (var enchantment : enchantment_data.getEnchantments()) {
             var level = enchantment_data.getLevel(enchantment);
             enchantments.add(new EnchantmentLevelEntry(enchantment, level));

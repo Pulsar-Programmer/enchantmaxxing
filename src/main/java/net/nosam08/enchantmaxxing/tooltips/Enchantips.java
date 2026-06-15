@@ -50,10 +50,21 @@ public class Enchantips {
         return insertIndex;
     }
 
+    /** Returns the stack's enchantments from the correct component: books keep theirs in
+     * STORED_ENCHANTMENTS, everything else in ENCHANTMENTS. Using {@code getEnchantments()}
+     * directly returns empty for books, which made every book hash to the same task key. */
+    public static ItemEnchantmentsComponent effective_enchantments(ItemStack stack){
+        boolean is_book = stack.getItem() == Items.ENCHANTED_BOOK || stack.getItem() == Items.BOOK;
+        ItemEnchantmentsComponent data = stack.get(is_book
+            ? DataComponentTypes.STORED_ENCHANTMENTS
+            : DataComponentTypes.ENCHANTMENTS);
+        return data != null ? data : ItemEnchantmentsComponent.DEFAULT;
+    }
+
     /** Computes the enchantments gained between two stacks (new or upgraded levels). */
     public static ArrayList<EnchantmentLevelEntry> added_enchantments(ItemStack before, ItemStack after){
-        var before_data = before.getEnchantments();
-        var after_data = after.getEnchantments();
+        var before_data = effective_enchantments(before);
+        var after_data = effective_enchantments(after);
         ArrayList<EnchantmentLevelEntry> added = new ArrayList<>();
         for (var new_ench : after_data.getEnchantments()) {
             int previous_level = before_data.getLevel(new_ench);
@@ -132,12 +143,16 @@ public class Enchantips {
     /** Removes the modded orange stuff and all other data except the Enchantment data from the ItemStack. Maintains WP. */
     public static ItemStack strip_extras(ItemStack stack) {
         ItemStack stripped = stripEnchantments(stack);
-        // Build a fresh enchantments component instead of referencing the original
+        // Build a fresh enchantments component instead of referencing the original. Read from the
+        // correct source (STORED_ENCHANTMENTS for books) so each book gets a distinct key, and write
+        // it back to the same component so the item still renders/tooltips its enchantments.
+        boolean is_book = stack.getItem() == Items.ENCHANTED_BOOK || stack.getItem() == Items.BOOK;
+        ItemEnchantmentsComponent source = effective_enchantments(stack);
         ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
-        stack.getEnchantments().getEnchantments().forEach(entry -> 
-            builder.add(entry, stack.getEnchantments().getLevel(entry))
+        source.getEnchantments().forEach(entry ->
+            builder.add(entry, source.getLevel(entry))
         );
-        stripped.set(DataComponentTypes.ENCHANTMENTS, builder.build());
+        stripped.set(is_book ? DataComponentTypes.STORED_ENCHANTMENTS : DataComponentTypes.ENCHANTMENTS, builder.build());
         if (stack.contains(DataComponentTypes.CUSTOM_NAME)) {
             stripped.set(DataComponentTypes.CUSTOM_NAME, stack.get(DataComponentTypes.CUSTOM_NAME));
         }

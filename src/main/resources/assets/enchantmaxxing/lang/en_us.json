@@ -34,6 +34,7 @@
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
     "key.enchantify.ordering": "Open Anvil Ordering Menu",
+    "key.enchantify.graph": "Open Order Graph for Hovered Item",
 
     "option.enchantify.enchantmax.back": "Back",
     "option.enchantify.enchantmax.apply": "Apply",

@@ -117,10 +117,12 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
         var x_button = x_button(k, client);
 
+        var graph_button = graph_button(order, client);
+
         var cost = cost_label(order.cost).margins(Insets.horizontal(2));
 
         var task = Containers.horizontalFlow(Sizing.content(), Sizing.content())
-        .children(Arrays.asList(x_button, AnvilMenu.order(order), cost))
+        .children(Arrays.asList(graph_button, AnvilMenu.order(order), cost, x_button))
         // .padding(Insets.both(0, 2))
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER)
@@ -167,6 +169,35 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         return label;
     }
 
+    ///Creates the button that opens the task's combine-order graph.
+    public static Component graph_button(OrderString order, MinecraftClient client){
+        LabelComponent label = Components.label(Text.literal("●"));
+        label.color(Color.ofArgb(0xFFFFFFFF)); // White
+        label.shadow(true);
+        label.cursorStyle(CursorStyle.HAND);
+        label.margins(Insets.horizontal(2));
+        label.tooltip(Text.literal("View Order Graph"));
+
+        label.mouseEnter().subscribe(() -> {
+            label.color(Color.ofArgb(0xFF40FF40)); // Green
+        });
+
+        label.mouseLeave().subscribe(() -> {
+            label.color(Color.ofArgb(0xFFFFFFFF)); // White
+        });
+
+        label.mouseDown().subscribe((double mouseX, double mouseY, int button) -> {
+            if (button == 0) { // Left click
+                client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
+                client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
+                return true;
+            }
+            return false;
+        });
+
+        return label;
+    }
+
     ///Creates the label of the cost.
     public static Component cost_label(Integer cost){
         var player = MinecraftClient.getInstance().player;
@@ -178,6 +209,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         LabelComponent label = Components.label(Text.literal(cost.toString()));
         label.color(Color.ofArgb(color)); // White
         label.shadow(true);
+        label.tooltip(Text.literal("Cancel Task"));
         
         return label;
     }

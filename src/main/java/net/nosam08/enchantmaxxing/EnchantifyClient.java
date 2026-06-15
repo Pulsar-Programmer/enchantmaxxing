@@ -47,8 +47,15 @@ public class EnchantifyClient implements ClientModInitializer {
 
     public static KeyBinding ORDERING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.enchantify.ordering",
-        InputUtil.Type.KEYSYM, 
+        InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_Y,
+        "title.enchantify.config"
+    ));
+
+    public static KeyBinding GRAPH = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "key.enchantify.graph",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_UNKNOWN, // unbound by default — assign it in Controls
         "title.enchantify.config"
     ));
 
@@ -78,6 +85,9 @@ public class EnchantifyClient implements ClientModInitializer {
             }
             while (ORDERING.wasPressed()){
                 on_amenu_open(client);
+            }
+            while (GRAPH.wasPressed()){
+                on_graph_open(client);
             }
         });
 
@@ -112,6 +122,21 @@ public class EnchantifyClient implements ClientModInitializer {
         // }
 
         client.setScreen(AnvilMenu.start());
+    }
+
+    /** Opens the order graph for the hovered item, if it has an active task. */
+    public static void on_graph_open(MinecraftClient client){
+        var item = detect_hovered_item(client);
+        if(item.isEmpty()){
+            return;
+        }
+        var key = new ItemStackKey(item);
+        var profile = Enchantips.ACTIVE_TASKS.get(key);
+        if(profile == null){
+            return;
+        }
+        var order = net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering.ordering(key, profile);
+        client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
     }
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */
