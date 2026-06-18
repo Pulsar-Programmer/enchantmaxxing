@@ -25,18 +25,19 @@ Flip on `defaultX` and the menu steps out of the way completely. Press X over a 
 
 You build the loadout once. The gear remembers.
 
-# Config
+# The Hover Guide
 
-This mod is compatible with ModMenu.
-The complete list of Config material is listed in `src/main/net/nosam08/enchantmaxxing/config/EnchantifyConfig.java`.
-It's formatted in `json5` if you want to edit the file in config directly.
+Hover an item you have configured and the enchantments it still needs glow orange right under its name. It is the running checklist for that piece of gear, and you decide which items get one, modded gear included.
 
-Everything this mod remembers lives under `config`, in plain readable files you can open, back up, or hand to a friend:
+The list is alive. Apply an enchantment at the anvil and it crosses itself off; the orange shrinks every time you do real work. Grind the item back down and the whole task lets go with it. You never have to remember where you left off. The item remembers for you.
 
-- `config/enchantify.json5` is the config itself; every option from `EnchantifyConfig.java`.
-- `config/ftt/profiles/{profile_name}.json` is one file per green Profile you make. The name you type becomes the file name.
-- `config/ftt/sp/<world>/profiles.json` and `config/ftt/mp/<server>/profiles.json` hold the live maxxing jobs you have started, kept per world and per server so a singleplayer save and a multiplayer server never step on each other.
-- The White **Default** Profiles ride along inside the mod at `assets/enchantmaxxing/defaults.json`.
+# Cheapest Anvil Order
+
+Anvils keep score. Every combine raises the prior work penalty, and a clumsy order makes the levels balloon, sometimes all the way to "Too Expensive!" before the build is even done.
+
+FTT runs the math so you do not have to. Press Y and it hands you the cheapest order to fuse your books and gear together, plus exactly what that order will cost. Bind a key in Controls and you can pull the same plan up as a graph for whatever item you are hovering, a little tree of what marries what and when.
+
+The solver thinks on its own thread, so even a monster build never stalls your game. You will see a quiet "Calculating..." while it works, then the answer drops in the moment it is ready. It remembers what it solved, so you only pay for the thinking once.
 
 # Particularities
 
@@ -49,6 +50,19 @@ Autofusing is a special mechanism to make the UI of the Enchantment Modification
 Toggle UI is a different implementation of the selecting of Enchantments during the Enchantment Modification Menu.
 
 You can press Y to open a menu of current tasks that are assigned. You can click the circle next to a task to see the graph of which order it should combine in, or you can also see it inlay. You can also assign a button to open the enchantmax graph of something naturally.
+
+# Config
+
+This mod is compatible with ModMenu.
+The complete list of Config material is listed in `src/main/net/nosam08/enchantmaxxing/config/EnchantifyConfig.java`.
+It's formatted in `json5` if you want to edit the file in config directly.
+
+Everything this mod remembers lives under `config`, in plain readable files you can open, back up, or hand to a friend:
+
+- `config/enchantify.json5` is the config itself; every option from `EnchantifyConfig.java`.
+- `config/ftt/profiles/{profile_name}.json` is one file per green Profile you make. The name you type becomes the file name.
+- `config/ftt/sp/<world>/profiles.json` and `config/ftt/mp/<server>/profiles.json` hold the live maxxing jobs you have started, kept per world and per server so a singleplayer save and a multiplayer server never step on each other.
+- The White **Default** Profiles ride along inside the mod at `assets/enchantmaxxing/defaults.json`.
 
 # Version Nomenclature
 
