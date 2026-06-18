@@ -2,6 +2,7 @@ package net.nosam08.enchantmaxxing.emm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -10,15 +11,18 @@ import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.ParentComponent;
+import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
@@ -37,6 +41,7 @@ import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
 import net.nosam08.enchantmaxxing.emm.ds.Bucket;
 import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
+import net.nosam08.enchantmaxxing.profiles.Profiles;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 
@@ -52,6 +57,34 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
     // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
     HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
+
+    /// --- Profiles ---
+    /** The currently loaded profile, or {@code null} when "None" is selected. */
+    private String active_profile = null;
+    /** Suppresses per-edit auto-save (and selection sounds) while a profile is being applied in bulk. */
+    private boolean applying = false; //consider removing this
+    /** Bottom-right container holding the optional dropdown/naming row above the [+ | name] bar. */
+    private FlowLayout profile_area;
+    /** Shows white "None" or the green active profile name. */
+    private LabelComponent profile_label;
+    /** The open profile dropdown, or {@code null} when closed. */
+    private FlowLayout profile_dropdown;
+    /** The open name-entry row, or {@code null} when not naming. */
+    private FlowLayout naming_row;
+    /** Every selectable enchantment on this item, keyed by id, so a profile can re-select it. */
+    private final HashMap<String, EnchantSlot> enchant_index = new HashMap<>();
+
+    /** The pieces needed to programmatically select an enchantment at a chosen level. */
+    private static class EnchantSlot {
+        final EnchantmentButton button;
+        final int base_level;
+        final ParentComponent level_row;
+        EnchantSlot(EnchantmentButton button, int base_level, ParentComponent level_row) {
+            this.button = button;
+            this.base_level = base_level;
+            this.level_row = level_row;
+        }
+    }
 
     public EnchantmaxMenu(ItemStack item, ArrayList<BucketGroup> original){
         this.item = item;
@@ -131,6 +164,9 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         rootComponent.child(
             bottom_menu()
         );
+
+        // Floats over the bottom-right corner; its dropdown grows upward out of the bar.
+        rootComponent.child(profile_selector());
 
     }
 
@@ -263,15 +299,19 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
         
-        var btn = new EnchantmentButton(name, b -> {
+        EnchantmentButton btn = new EnchantmentButton(name, b -> {
             on_enchant_click(b, horizontal);
-        }, b_index, bg_index).margins(Insets.horizontal(3));
+        }, b_index, bg_index);
+        btn.margins(Insets.horizontal(3));
 
         var head = Containers.horizontalFlow(Sizing.content(), Sizing.content())
         .child(btn)
         .child(horizontal)
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
+
+        // Index this enchantment so a loaded profile can re-select it without a real mouse click.
+        enchant_index.put(enchantment.getIdAsString(), new EnchantSlot(btn, level, horizontal));
 
         return head;
     }
@@ -355,13 +395,337 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Makes the button fancy. */
     public void animate_button(EnchantmentButton button){
-        client.player.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+        if(!applying){
+            client.player.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+        }
         button.enchanted = true;
     }
 
     /** Makes the button unfancy. */
     public void unanimate_button(EnchantmentButton button){
         button.enchanted = false;
+    }
+
+    /// ----------------------------------------------------------------------
+    /// Profiles: reusable, world-independent enchant-selection presets.
+    /// ----------------------------------------------------------------------
+
+    /** Builds the bottom-right profile control: a [+ | name] bar that grows a dropdown upward. */
+    public Component profile_selector(){
+        profile_label = Components.label(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
+        profile_label.shadow(true);
+        profile_label.cursorStyle(CursorStyle.HAND);
+        profile_label.margins(Insets.horizontal(6));
+        profile_label.tooltip(Text.literal("Select Profile"));
+        profile_label.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            if(button == 0){
+                toggle_dropdown();
+                return true;
+            }
+            return false;
+        });
+
+        var plus = Components.label(Text.literal("+")).color(Color.ofArgb(0xFF40FF40));
+        plus.shadow(true);
+        plus.cursorStyle(CursorStyle.HAND);
+        plus.margins(Insets.of(0, 0, 4, 4));
+        plus.tooltip(Text.literal("Add Profile"));
+        plus.mouseEnter().subscribe(() -> plus.color(Color.ofArgb(0xFF80FF80)));
+        plus.mouseLeave().subscribe(() -> plus.color(Color.ofArgb(0xFF40FF40)));
+        plus.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            if(button == 0){
+                start_naming();
+                return true;
+            }
+            return false;
+        });
+
+        // Blue checkmark: overwrite the active profile with the current on-screen selection.
+        var save = Components.label(Text.literal("✔")).color(Color.ofArgb(0xFF55AAFF));
+        save.shadow(true);
+        save.cursorStyle(CursorStyle.HAND);
+        save.margins(Insets.of(0, 0, 2, 4));
+        save.tooltip(Text.literal("Save Profile"));
+        save.mouseEnter().subscribe(() -> save.color(Color.ofArgb(0xFF80C8FF)));
+        save.mouseLeave().subscribe(() -> save.color(Color.ofArgb(0xFF55AAFF)));
+        save.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            if(button == 0){
+                overwrite_active_profile();
+                return true;
+            }
+            return false;
+        });
+
+        var bar = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+            .child(plus)
+            .child(save)
+            .child(button_box(16))
+            .child(profile_label);
+        bar.verticalAlignment(VerticalAlignment.CENTER);
+        bar.horizontalAlignment(HorizontalAlignment.CENTER);
+        bar.padding(Insets.of(4, 4, 2, 4));
+        bar.surface(Surface.DARK_PANEL);
+        // Clicking anywhere in the bar (not just the name text) pulls up the dropdown.
+        bar.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            if(button == 0){
+                toggle_dropdown();
+                return true;
+            }
+            return false;
+        });
+
+        profile_area = Containers.verticalFlow(Sizing.content(), Sizing.content());
+        profile_area.child(bar);
+        profile_area.verticalAlignment(VerticalAlignment.BOTTOM);
+        profile_area.horizontalAlignment(HorizontalAlignment.RIGHT);
+        profile_area.positioning(Positioning.relative(99, 97));
+
+        return profile_area;
+    }
+
+    /** Repaints the bar label to reflect the active profile (white "None" or green name). */
+    private void refresh_label(){
+        if(active_profile == null){
+            profile_label.text(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
+        } else {
+            profile_label.text(Text.literal(active_profile)).color(Color.ofArgb(0xFF40FF40));
+        }
+    }
+
+    /** Opens the dropdown if closed, closes it if open. */
+    private void toggle_dropdown(){
+        if(profile_dropdown != null){
+            close_dropdown();
+            return;
+        }
+        stop_naming();
+        profile_dropdown = build_dropdown();
+        // Insert above the bar so the list visually grows upward out of the control.
+        profile_area.child(0, profile_dropdown);
+        play_click();
+    }
+
+    /** Removes the dropdown from the screen if it is open. */
+    private void close_dropdown(){
+        if(profile_dropdown != null){
+            profile_area.removeChild(profile_dropdown);
+            profile_dropdown = null;
+        }
+    }
+
+    /** Builds the list of selectable profiles, "None" first, each saved profile with a delete handle. */
+    private FlowLayout build_dropdown(){
+        FlowLayout list = Containers.verticalFlow(Sizing.content(), Sizing.content());
+        list.horizontalAlignment(HorizontalAlignment.LEFT);
+        list.padding(Insets.of(4));
+        list.surface(Surface.DARK_PANEL);
+        list.margins(Insets.bottom(2));
+
+        list.child(dropdown_row(null));
+        for(String name : Profiles.list()){
+            list.child(dropdown_row(name));
+        }
+        return list;
+    }
+
+    /** One dropdown entry: a red delete handle (omitted for "None") plus the clickable profile name. */
+    private Component dropdown_row(String name){
+        FlowLayout row = Containers.horizontalFlow(Sizing.content(), Sizing.content());
+        row.verticalAlignment(VerticalAlignment.CENTER);
+        row.horizontalAlignment(HorizontalAlignment.LEFT);
+        row.margins(Insets.vertical(1));
+
+        if(name != null){
+            var trash = Components.label(Text.literal("✕")).color(Color.ofArgb(0xFFFF5555));
+            trash.shadow(true);
+            trash.cursorStyle(CursorStyle.HAND);
+            trash.margins(Insets.horizontal(4));
+            trash.tooltip(Text.literal("Delete Profile"));
+            trash.mouseEnter().subscribe(() -> trash.color(Color.ofArgb(0xFFFF0000)));
+            trash.mouseLeave().subscribe(() -> trash.color(Color.ofArgb(0xFFFF5555)));
+            trash.mouseDown().subscribe((mouseX, mouseY, button) -> {
+                if(button == 0){
+                    delete_profile(name);
+                    return true;
+                }
+                return false;
+            });
+            row.child(trash);
+        } else {
+            // Keep the "None" name aligned with the others that carry a delete handle.
+            row.child(Components.label(Text.literal("")).margins(Insets.horizontal(4)));
+        }
+
+        boolean active = name == null ? active_profile == null : name.equals(active_profile);
+        int color = name == null ? 0xFFFFFFFF : 0xFF40FF40;
+        var label = Components.label(Text.literal(name == null ? "None" : name)).color(Color.ofArgb(color));
+        label.shadow(true);
+        label.cursorStyle(CursorStyle.HAND);
+        label.margins(Insets.horizontal(2));
+        if(active){
+            label.text(Text.literal((name == null ? "None" : name) + " ◄"));
+        }
+        label.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            if(button == 0){
+                select_profile(name);
+                return true;
+            }
+            return false;
+        });
+        row.child(label);
+
+        return row;
+    }
+
+    /** Reveals an inline text box for naming a new profile, seeded from the current selection. */
+    private void start_naming(){
+        close_dropdown();
+        if(naming_row != null){
+            return;
+        }
+        var box = Components.textBox(Sizing.fixed(90));
+        box.setMaxLength(32);
+
+        var confirm = Components.label(Text.literal("✔")).color(Color.ofArgb(0xFF40FF40));
+        confirm.shadow(true);
+        confirm.cursorStyle(CursorStyle.HAND);
+        confirm.margins(Insets.horizontal(4));
+        confirm.tooltip(Text.literal("Create Profile"));
+        confirm.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            if(button == 0){
+                confirm_name(box.getText());
+                return true;
+            }
+            return false;
+        });
+
+        naming_row = Containers.horizontalFlow(Sizing.content(), Sizing.content());
+        naming_row.child(box);
+        naming_row.child(confirm);
+        naming_row.verticalAlignment(VerticalAlignment.CENTER);
+        naming_row.horizontalAlignment(HorizontalAlignment.CENTER);
+        naming_row.padding(Insets.of(4));
+        naming_row.surface(Surface.DARK_PANEL);
+        naming_row.margins(Insets.bottom(2));
+
+        profile_area.child(0, naming_row);
+    }
+
+    /** Hides the name-entry row if it is showing. */
+    private void stop_naming(){
+        if(naming_row != null){
+            profile_area.removeChild(naming_row);
+            naming_row = null;
+        }
+    }
+
+    /** Creates a profile from the current selection, makes it active, and persists it. */
+    private void confirm_name(String raw){
+        String name = Profiles.sanitize(raw);
+        if(name.isEmpty()){
+            return;
+        }
+        active_profile = name;
+        save_active_profile();
+        stop_naming();
+        refresh_label();
+        play_click();
+    }
+
+    /** Loads a profile (or clears to "None"), re-selecting its enchantments on the current item. */
+    private void select_profile(String name){
+        close_dropdown();
+        if(name == null){
+            active_profile = null;
+            refresh_label();
+            play_click();
+            return;
+        }
+
+        active_profile = name;
+        applying = true;
+        clear_all_selections();
+        for(Profiles.Entry entry : Profiles.load(name)){
+            apply_selection(entry.id(), entry.level());
+        }
+        applying = false;
+
+        refresh_label();
+        play_click();
+    }
+
+    /** Deletes a profile from disk; if it was active, falls back to "None". */
+    private void delete_profile(String name){
+        Profiles.delete(name);
+        if(name.equals(active_profile)){
+            active_profile = null;
+            refresh_label();
+        }
+        // Rebuild the open list so the removed row disappears immediately.
+        close_dropdown();
+        profile_dropdown = build_dropdown();
+        profile_area.child(0, profile_dropdown);
+        play_click();
+    }
+
+    /** Blue-checkmark action: overwrite the active profile with the current on-screen selection. */
+    private void overwrite_active_profile(){
+        if(active_profile == null){
+            return; // No profile loaded to save into — create one with + first.
+        }
+        save_active_profile();
+        play_click();
+    }
+
+    /** Serializes the current on-screen selection into the active profile's file. */
+    private void save_active_profile(){
+        if(active_profile == null){
+            return;
+        }
+        var profile = new EnchantmaxProfile(selected_enchantments);
+        List<Profiles.Entry> entries = new ArrayList<>();
+        for(var ple : profile.profile){
+            entries.add(new Profiles.Entry(ple.enchantment.getIdAsString(), ple.level));
+        }
+        Profiles.save(active_profile, entries);
+    }
+
+    /** Selects an enchantment at the given level by pressing its level button, as a click would. */
+    private void apply_selection(String id, int level){
+        EnchantSlot slot = enchant_index.get(id);
+        if(slot == null){
+            return;
+        }
+        int idx = level - slot.base_level;
+        var levels = slot.level_row.children();
+        if(idx < 0 || idx >= levels.size()){
+            return; // Item can't reach this level (e.g. already higher) — skip it.
+        }
+        selected_level_button = slot.button;
+        ((ButtonComponent) levels.get(idx)).onPress();
+    }
+
+    /** Resets every currently-selected enchantment back to its base level (i.e. deselects all). */
+    private void clear_all_selections(){
+        ArrayList<String> ids = new ArrayList<>();
+        for(var bucket_group : selected_enchantments.values()){
+            for(var ench : bucket_group.getRight().keySet()){
+                ids.add(ench.getIdAsString());
+            }
+        }
+        for(String id : ids){
+            EnchantSlot slot = enchant_index.get(id);
+            if(slot != null){
+                apply_selection(id, slot.base_level); // base level press unregisters it
+            }
+        }
+    }
+
+    /** Plays the standard UI click sound. */
+    private void play_click(){
+        if(client != null && client.player != null){
+            client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
+        }
     }
 
 
