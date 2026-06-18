@@ -71,8 +71,14 @@ public class EnchantifyClient implements ClientModInitializer {
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
 			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, key, scancode, modifiers) -> {
-                if (MAXXING.matchesKey(key, scancode)  && !(screen instanceof net.minecraft.client.gui.screen.ChatScreen) && !(screen instanceof net.minecraft.client.gui.screen.DeathScreen)) {
+                if (screen instanceof net.minecraft.client.gui.screen.ChatScreen || screen instanceof net.minecraft.client.gui.screen.DeathScreen) {
+                    return;
+                }
+                if (MAXXING.matchesKey(key, scancode)) {
                     on_emenu_open(client);
+                }
+                if (GRAPH.matchesKey(key, scancode)) {
+                    on_graph_open(client);
                 }
             });
         });
@@ -113,14 +119,6 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** This is called when the Anvil Menu Key is pressed. */
     public static void on_amenu_open(MinecraftClient client){
-        // var item = detect_hovered_item(client);
-
-        // var profile = Enchantips.LOADED_PROFILES.get(new ItemStackKey(item));
-
-        // if(profile == null){
-        //     return;
-        // }
-
         client.setScreen(AnvilMenu.start());
     }
 

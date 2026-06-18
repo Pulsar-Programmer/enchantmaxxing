@@ -127,6 +127,14 @@ public class ProfileStore {
                 profile.add(p);
             }
             task.add("profile", profile);
+
+            // Persist the solved combine order so it isn't recomputed (an expensive DP) next launch.
+            var solved = net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering.peek(entry.getKey(), entry.getValue());
+            if (solved != null) {
+                task.addProperty("order", solved.getLeft());
+                task.addProperty("cost", solved.getRight());
+            }
+
             tasks.add(task);
         }
 
@@ -183,7 +191,14 @@ public class ProfileStore {
                 }
 
                 if (!profile.profile.isEmpty()) {
-                    Enchantips.ACTIVE_TASKS.put(new ItemStackKey(stack), profile);
+                    ItemStackKey key = new ItemStackKey(stack);
+                    Enchantips.ACTIVE_TASKS.put(key, profile);
+
+                    // Restore the previously-solved order so the menu doesn't recompute it.
+                    if (task.has("order") && task.has("cost")) {
+                        net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering.seed(
+                            key, profile, task.get("order").getAsString(), task.get("cost").getAsInt());
+                    }
                 }
             }
         } catch (Exception e) {

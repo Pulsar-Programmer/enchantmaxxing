@@ -11,6 +11,15 @@ public class EnchantifyConfig {
     /** Determines whether to enchantmax enchantments that are already applied. */
     public boolean is_static = false;
 
+    /**
+     * Forces every enchantment to be treated as combinable, ignoring exclusive sets entirely.
+     * Escape hatch for compatibility mods that unlock combining (e.g. stacking all protections)
+     * by overriding the anvil's combine logic *without* going through
+     * {@link net.minecraft.enchantment.Enchantment#canBeCombined} — those can't be auto-detected,
+     * so this lets the user opt in manually. Applied live the next time a menu is opened.
+     */
+    public boolean force_combinable = false;
+
 
 
 
@@ -34,7 +43,4 @@ public class EnchantifyConfig {
 
     // /** The color of anvil prioritization notes. */
     // public Integer next_fuse_color = 0x00A8FF;
-
-    /** Determines whether to make the menu show a graph for combinations rather than an active tasks menu. */
-    public boolean aom_graph = false; //TODO
 }

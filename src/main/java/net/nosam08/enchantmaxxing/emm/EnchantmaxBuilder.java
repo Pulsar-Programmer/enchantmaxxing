@@ -104,7 +104,10 @@ public class EnchantmaxBuilder {
             }
 
             ///Do not display if it is blocked by one of the enchantments on the item.
-            if(EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val).contains(enchantment.value())){
+            ///force_combinable removes every block; otherwise GLOBAL_ARCHETYPES already reflects
+            ///the runtime canBeCombined rules (built per connection).
+            if(!EnchantifyClient.CONFIG.force_combinable
+                && EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val).contains(enchantment.value())){
                 return false;
             }
         }
@@ -135,9 +138,14 @@ public class EnchantmaxBuilder {
             ench.value().exclusiveSet().forEach(x -> {
 
                 var val = x.value();
-                
+
                 ///Only let non-same archetypes through.
                 if(ench.getIdAsString().equals(x.getIdAsString())){
+                    return;
+                }
+
+                ///Respect compat mods that unlocked combining this pair (see actually_exclusive).
+                if(!actually_exclusive(ench, x)){
                     return;
                 }
 
@@ -168,9 +176,14 @@ public class EnchantmaxBuilder {
             ench.value().exclusiveSet().forEach(x -> {
 
                 var val = x.value();
-                
+
                 ///Only let non-same archetypes through.
                 if(ench.getIdAsString().equals(x.getIdAsString())){
+                    return;
+                }
+
+                ///Respect compat mods that unlocked combining this pair (see actually_exclusive).
+                if(!actually_exclusive(ench, x)){
                     return;
                 }
 
@@ -180,6 +193,21 @@ public class EnchantmaxBuilder {
         });
 
         return built;
+    }
+
+    /**
+     * Whether two enchantments really cannot be combined right now. The vanilla
+     * {@code exclusiveSet()} data is only the *default*: the authoritative runtime check is
+     * {@link Enchantment#canBeCombined}, which compatibility mods hook to unlock things like
+     * stacking every protection. We list a pair as exclusive only when the game still refuses to
+     * combine them, so those compat mods are honoured automatically. {@code force_combinable}
+     * is the manual override for compat mods that bypass {@code canBeCombined} altogether.
+     */
+    public static boolean actually_exclusive(RegistryEntry<Enchantment> a, RegistryEntry<Enchantment> b){
+        if(EnchantifyClient.CONFIG.force_combinable){
+            return false;
+        }
+        return !Enchantment.canBeCombined(a, b);
     }
 
     /** Returns the map of levels and enchantments from an item. */

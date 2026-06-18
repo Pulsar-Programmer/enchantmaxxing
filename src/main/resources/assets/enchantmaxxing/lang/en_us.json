@@ -16,6 +16,8 @@
     "option.enchantify.anvil_apply_sound.tooltip": "Determines whether to use the Anvil sound when clicking apply to your item.",
     "option.enchantify.do_fancy_menu": "Fancy Menu",
     "option.enchantify.do_fancy_menu.tooltip": "Determines whether to implement the fancy menu or the regular one.",
+    "option.enchantify.force_combinable": "Force Combinable Enchantments",
+    "option.enchantify.force_combinable.tooltip": "Ignores all enchantment exclusivity so any enchantments can be stacked (e.g. every protection). Use with compatibility mods that unlock combining via the anvil but not the game's canBeCombined check. Mods that hook canBeCombined are detected automatically and don't need this.",
     "option.enchantify.curse_order": "Curse Order",
     "option.enchantify.curse_order.tooltip": "Determines the order of the curses in the menu.",
     "option.enchantify.top": "TOP",
@@ -28,9 +30,7 @@
     "option.enchantify.do_anvil_notes.tooltip": "Determines whether to do anvil prioritization notes.",
     "option.enchantify.next_fuse_color": "Next Fuse Color",
     "option.enchantify.next_fuse_color.tooltip": "The color of anvil prioritization notes.",
-    "option.enchantify.aom_graph": "AOM Graph",
-    "option.enchantify.aom_graph.tooltip": "Determines whether to make the menu show a graph for combinations rather than the active tasks and ordering.",
-
+    
 
     "key.enchantify.opengui": "Open Enchantmaxxing Modification Menu",
     "key.enchantify.ordering": "Open Anvil Ordering Menu",

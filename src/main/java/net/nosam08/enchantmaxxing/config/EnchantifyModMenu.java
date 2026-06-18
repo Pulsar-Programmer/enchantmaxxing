@@ -84,6 +84,14 @@ public class EnchantifyModMenu implements ModMenuApi {
         );
 
         menu.addEntry(entryBuilder
+            .startBooleanToggle(Text.translatable("option.enchantify.force_combinable"), EnchantifyClient.CONFIG.force_combinable)
+            .setDefaultValue(def.force_combinable)
+            .setTooltip(Text.translatable("option.enchantify.force_combinable.tooltip"))
+            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.force_combinable = newBool)
+            .build()
+        );
+
+        menu.addEntry(entryBuilder
             .startEnumSelector(Text.translatable("option.enchantify.curse_order"), CurseOrderOptions.class, EnchantifyClient.CONFIG.curse_order)
             .setDefaultValue(def.curse_order)
             .setEnumNameProvider(option -> Text.translatable(option.toString()).withColor(((CurseOrderOptions)option).getColor()))
@@ -110,14 +118,6 @@ public class EnchantifyModMenu implements ModMenuApi {
         //     .setSaveConsumer(newColor -> EnchantifyClient.CONFIG.next_fuse_color = newColor)
         //     .build()
         // );
-
-        anvil.addEntry(entryBuilder
-            .startBooleanToggle(Text.translatable("option.enchantify.aom_graph"), EnchantifyClient.CONFIG.aom_graph)
-            .setDefaultValue(def.aom_graph)
-            .setTooltip(Text.translatable("option.enchantify.aom_graph.tooltip"))
-            .setSaveConsumer(newBool -> EnchantifyClient.CONFIG.aom_graph = newBool)
-            .build()
-        );
 
         builder.setSavingRunnable(() -> {
             Filesystem.save_config(EnchantifyClient.CONFIG);

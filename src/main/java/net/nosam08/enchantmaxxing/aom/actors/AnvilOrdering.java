@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import net.minecraft.component.DataComponentTypes;
@@ -11,6 +15,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -27,21 +32,59 @@ import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class AnvilOrdering {
-    public static HashMap<Pair<ItemStackKey, EnchantmaxProfile>, Pair<String, Integer>> STORE = new HashMap<>();
+    /**
+     * Cache of solved orders, keyed by a content {@link #signature}. Previously keyed by
+     * {@code Pair<ItemStackKey, EnchantmaxProfile>} — but {@code net.minecraft.util.Pair} has no
+     * {@code equals}/{@code hashCode}, so every lookup missed and the (exponential) solve reran on
+     * every menu open. A value-based string key makes it actually hit, and lets the solved order
+     * be persisted and reloaded across restarts (see {@link #seed}/{@link #peek}).
+     */
+    public static HashMap<String, Pair<String, Integer>> STORE = new HashMap<>();
 
+    /** Deterministic, restart-stable key for an (item, profile) pair: item id + base work
+     * penalty + the sorted profile. The solved cost/order depend only on these. */
+    public static String signature(ItemStackKey item, EnchantmaxProfile enchantments){
+        var stack = item.inner();
+        var pwp_item = stack.get(DataComponentTypes.REPAIR_COST);
+        int base_pwp = pwp_item != null ? pwp_item : 0;
 
+        var entries = enchantments.profile.stream()
+            .map(AnvilOrdering::serialize_enchantment)
+            .sorted()
+            .collect(Collectors.joining(","));
+
+        return Registries.ITEM.getId(stack.getItem()) + "|" + base_pwp + "|" + entries;
+    }
+
+    /** Returns the already-solved (order, cost) for this task, or null if not cached yet. */
+    public static Pair<String, Integer> peek(ItemStackKey item, EnchantmaxProfile enchantments){
+        return STORE.get(signature(item, enchantments));
+    }
+
+    /** Pre-populates the cache with a previously-solved order (used when loading from disk). */
+    public static void seed(ItemStackKey item, EnchantmaxProfile enchantments, String order, int cost){
+        STORE.put(signature(item, enchantments), new Pair<>(order, cost));
+    }
 
     public static OrderString ordering(ItemStackKey item, EnchantmaxProfile enchantments){
-        var args = new Pair<ItemStackKey,EnchantmaxProfile>(item, enchantments);
-        if (STORE.get(args) == null) {
+        var key = signature(item, enchantments);
+        var result = STORE.get(key);
+        if (result == null) {
             var pwp_item = item.inner().get(DataComponentTypes.REPAIR_COST);
             // System.out.println("PWP ITEM: " + pwp_item);
             var n_set = n_set(new SimItem(pwp_item, "OBJ"), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new)));
             var paths = parse_paths(n_set);
-            var string = obtain_ordered(paths);
-            STORE.put(args, string);
+            result = obtain_ordered(paths);
+
+
+
+            // int base_pwp = pwp_item != null ? pwp_item : 0;
+            // var e = enchantments.profile.stream()
+            //     .map(SimEnchantment::from_enchantment)
+            //     .collect(Collectors.toCollection(ArrayList::new));
+            // result = solve(new SimItem(base_pwp, "OBJ"), e);
+            STORE.put(key, result);
         }
-        var result = STORE.get(args);
         return new OrderString(item.inner(), result.getLeft(), result.getRight());
     }
 
