@@ -105,22 +105,12 @@ public class Enchantips {
         net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
     }
 
-    /** Shifts the active task by removing all enchantments.*/
-    public static void grindstone_task(ItemStack item, ArrayList<EnchantmentLevelEntry> enchantments, ItemStack result){
+    /** Grinding strips every (non-curse) enchantment off the item, so its active task no
+     * longer applies: drop the task entirely. */
+    public static void grindstone_task(ItemStack item){
         var key = new ItemStackKey(item);
-        var task = ACTIVE_TASKS.remove(key);
-
-        if(true){ net.nosam08.enchantmaxxing.profiles.ProfileStore.save(); return; } //do we want to reactivate the task or just remove it entirely? config?
-
-        if(task == null) return;
-        for (EnchantmentLevelEntry entry : enchantments) {
-            if(task.profile.contains(entry)){
-                continue;
-            }
-            task.profile.add(entry);
-        }
-        var new_key = new ItemStackKey(result);
-        ACTIVE_TASKS.put(new_key, task);
+        if (ACTIVE_TASKS.remove(key) == null) return;
+        net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
     }
 
 

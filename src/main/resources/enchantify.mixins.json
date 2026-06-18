@@ -3,7 +3,8 @@
   "client": [
     "HandledScreenAccessor",
     "ScreenHandlerMixin",
-    "AnvilScreenHandlerMixin"
+    "AnvilScreenHandlerMixin",
+    "GrindstoneScreenHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
