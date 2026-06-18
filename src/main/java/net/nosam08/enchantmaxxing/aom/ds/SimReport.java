@@ -1,6 +1,5 @@
 package net.nosam08.enchantmaxxing.aom.ds;
 
-import net.minecraft.util.Pair;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
 
 public class SimReport {
@@ -25,15 +24,5 @@ public class SimReport {
         o.pwp = AnvilOrdering.adv(o.pwp);
         o.identifier = new_ident;
         return rpr;
-    }
-
-    public static Pair<SimEnchantment, SimReport> merged(SimEnchantment x, SimEnchantment y) {
-        var merged_enchantment = SimEnchantment.merged(x, y);
-        var rpr = new SimReport(Integer.valueOf(x.pwp), Integer.valueOf(y.pwp), Integer.valueOf(y.cost), new String(merged_enchantment.identifier));
-        return new Pair<SimEnchantment,SimReport>(merged_enchantment, rpr);
-    }
-
-    public Integer exp_sum(){
-        return pwp1 + pwp2 + sacrifice;
     }
 }

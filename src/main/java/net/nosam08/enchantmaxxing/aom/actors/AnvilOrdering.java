@@ -1,7 +1,6 @@
 package net.nosam08.enchantmaxxing.aom.actors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +25,6 @@ import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 import net.nosam08.enchantmaxxing.aom.ds.SimEnchantment;
 import net.nosam08.enchantmaxxing.aom.ds.SimItem;
 import net.nosam08.enchantmaxxing.aom.ds.SimReport;
-import net.nosam08.enchantmaxxing.aom.ds.SimReportTree;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
 import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
@@ -37,9 +35,10 @@ public class AnvilOrdering {
      * {@code Pair<ItemStackKey, EnchantmaxProfile>} — but {@code net.minecraft.util.Pair} has no
      * {@code equals}/{@code hashCode}, so every lookup missed and the (exponential) solve reran on
      * every menu open. A value-based string key makes it actually hit, and lets the solved order
-     * be persisted and reloaded across restarts (see {@link #seed}/{@link #peek}).
+     * be persisted and reloaded across restarts (see {@link #seed}/{@link #peek}). Concurrent
+     * because the background solver thread writes to it while the client thread reads.
      */
-    public static HashMap<String, Pair<String, Integer>> STORE = new HashMap<>();
+    public static ConcurrentHashMap<String, Pair<String, Integer>> STORE = new ConcurrentHashMap<>();
 
     /** Deterministic, restart-stable key for an (item, profile) pair: item id + base work
      * penalty + the sorted profile. The solved cost/order depend only on these. */
@@ -66,117 +65,181 @@ public class AnvilOrdering {
         STORE.put(signature(item, enchantments), new Pair<>(order, cost));
     }
 
-    public static OrderString ordering(ItemStackKey item, EnchantmaxProfile enchantments){
-        var key = signature(item, enchantments);
-        var result = STORE.get(key);
-        if (result == null) {
-            var pwp_item = item.inner().get(DataComponentTypes.REPAIR_COST);
-            // System.out.println("PWP ITEM: " + pwp_item);
-            var n_set = n_set(new SimItem(pwp_item, "OBJ"), enchantments.profile.stream().map((x)->SimEnchantment.from_enchantment(x)).collect(Collectors.toCollection(ArrayList::new)));
-            var paths = parse_paths(n_set);
-            result = obtain_ordered(paths);
+    /** Background solver thread so a large profile never freezes the client; results land in
+     * {@link #STORE} and the menu picks them up on its next tick. Single daemon thread. */
+    private static final ExecutorService SOLVER = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "ftt-aom-solver");
+        t.setDaemon(true);
+        return t;
+    });
+    /** Signatures currently being solved off-thread, so the same one is never queued twice. */
+    private static final Set<String> PENDING = ConcurrentHashMap.newKeySet();
 
-
-
-            // int base_pwp = pwp_item != null ? pwp_item : 0;
-            // var e = enchantments.profile.stream()
-            //     .map(SimEnchantment::from_enchantment)
-            //     .collect(Collectors.toCollection(ArrayList::new));
-            // result = solve(new SimItem(base_pwp, "OBJ"), e);
-            STORE.put(key, result);
-        }
+    /** Returns the solved order if it is already cached, otherwise null (never computes). */
+    public static OrderString cached(ItemStackKey item, EnchantmaxProfile enchantments){
+        var result = STORE.get(signature(item, enchantments));
+        if(result == null) return null;
         return new OrderString(item.inner(), result.getLeft(), result.getRight());
     }
 
+    /** Whether a solve for this task is still running in the background. */
+    public static boolean is_loading(ItemStackKey item, EnchantmaxProfile enchantments){
+        return PENDING.contains(signature(item, enchantments));
+    }
 
-    public static Pair<String, Integer> obtain_ordered(ArrayList<Pair<String, Integer>> paths){
-        // paths.forEach((x)->System.out.println(x.getLeft() + x.getRight()));
-        var lowest = new String();
-        Optional<Integer> lowest_cost = Optional.empty();
-        for (Pair<String,Integer> pair : paths) {
-            if(lowest_cost.isEmpty() || lowest_cost.get() > pair.getRight()){
-                lowest_cost = Optional.of(pair.getRight());
-                lowest = pair.getLeft();
+    /**
+     * Non-blocking order lookup. Returns the cached order if ready; otherwise kicks off the solve on
+     * the background thread and returns null. The pure-int inputs are gathered here on the client
+     * thread (safe ItemStack/registry reads) so the worker never touches game state.
+     */
+    public static OrderString request(ItemStackKey item, EnchantmaxProfile enchantments){
+        String key = signature(item, enchantments);
+        var result = STORE.get(key);
+        if(result != null) return new OrderString(item.inner(), result.getLeft(), result.getRight());
+
+        if(PENDING.add(key)){
+            var pwp_item = item.inner().get(DataComponentTypes.REPAIR_COST);
+            int base_pwp = pwp_item != null ? pwp_item : 0;
+            var e = enchantments.profile.stream()
+                .map(SimEnchantment::from_enchantment)
+                .collect(Collectors.toCollection(ArrayList::new));
+            SOLVER.execute(() -> {
+                try {
+                    STORE.put(key, solve(new SimItem(base_pwp, "OBJ"), e));
+                } finally {
+                    PENDING.remove(key);
+                }
+            });
+        }
+        return null;
+    }
+
+    /**
+     * Minimum-cost combine order via a memoized DP.
+     *
+     * Explores the same BASIC (apply an enchantment straight onto the item) and CHOOSE (merge two
+     * enchantments into a book first) options the old {@code n_set}/{@code parse_paths} brute force
+     * did, so it returns an identical optimum. The key realisation: the cost to finish a subproblem
+     * depends only on the object's work penalty and the *multiset of (pwp, cost)* still in the pool,
+     * never on which enchantments they are. So {@link #min_cost} memoizes that canonical state and
+     * collapses the many ways to reach it (combine A then B == B then A, etc.) into one.
+     *
+     * The order *string* depends on identifiers, so it can't share the memo. Once the costs are
+     * known, {@link #reconstruct} replays the optimal moves once on the real SimItem/SimEnchantment
+     * objects (which carry the identifiers) to build the nested string. Runs off-thread; see
+     * {@link #request}.
+     */
+    public static Pair<String, Integer> solve(SimItem o, ArrayList<SimEnchantment> e){
+        if(e.isEmpty()){
+            return new Pair<String, Integer>("OBJ", 0);
+        }
+        HashMap<String, Integer> memo = new HashMap<>();
+        int cost = min_cost(o.pwp, pool_of(e), memo);
+        String order = reconstruct(o, e, memo);
+        return new Pair<String, Integer>(order, cost);
+    }
+
+    /** Canonical pool representation: one {pwp, cost} pair per enchantment, identities dropped. */
+    private static ArrayList<int[]> pool_of(ArrayList<SimEnchantment> e){
+        var pool = new ArrayList<int[]>(e.size());
+        for(var x : e) pool.add(new int[]{x.pwp, x.cost});
+        return pool;
+    }
+
+    /** Memo key: object work-penalty plus the sorted multiset of (pwp, cost) — order-independent. */
+    private static String state_key(int o_pwp, ArrayList<int[]> pool){
+        var sorted = new ArrayList<>(pool);
+        sorted.sort((a, b) -> a[0] != b[0] ? a[0] - b[0] : a[1] - b[1]);
+        StringBuilder sb = new StringBuilder().append(o_pwp).append('|');
+        for(var p : sorted) sb.append(p[0]).append(',').append(p[1]).append(';');
+        return sb.toString();
+    }
+
+    private static ArrayList<int[]> without(ArrayList<int[]> pool, int... indices){
+        var copy = new ArrayList<int[]>(pool);
+        var sorted = indices.clone();
+        java.util.Arrays.sort(sorted);
+        for(int k = sorted.length - 1; k >= 0; k--) copy.remove(sorted[k]); // high-to-low: indices stay valid
+        return copy;
+    }
+
+    /** Minimum additional cost to combine the whole pool onto the object. Memoized by state. */
+    private static int min_cost(int o_pwp, ArrayList<int[]> pool, HashMap<String, Integer> memo){
+        if(pool.size() == 1){
+            int[] x = pool.get(0);
+            return o_pwp + x[0] + x[1]; // combine object with the last enchantment
+        }
+
+        String key = state_key(o_pwp, pool);
+        Integer cached = memo.get(key);
+        if(cached != null) return cached;
+
+        int best = Integer.MAX_VALUE;
+
+        // BASIC: combine each enchantment straight onto the object.
+        for(int i = 0; i < pool.size(); i++){
+            int[] x = pool.get(i);
+            int immediate = o_pwp + x[0] + x[1];
+            int total = immediate + min_cost(adv(o_pwp), without(pool, i), memo);
+            if(total < best) best = total;
+        }
+
+        // CHOOSE: merge a target i with a sacrifice j into a book, then continue.
+        for(int i = 0; i < pool.size(); i++){
+            for(int j = 0; j < pool.size(); j++){
+                if(i == j) continue;
+                int[] xi = pool.get(i), xj = pool.get(j);
+                int immediate = xi[0] + xj[0] + xj[1];
+                var next = without(pool, i, j);
+                next.add(new int[]{adv(Math.max(xi[0], xj[0])), xi[1] + xj[1]});
+                int total = immediate + min_cost(o_pwp, next, memo);
+                if(total < best) best = total;
             }
         }
-        return new Pair<String,Integer>(lowest, lowest_cost.get());
+
+        memo.put(key, best);
+        return best;
     }
 
-
-    public static ArrayList<Pair<String, Integer>> parse_paths(SimReportTree head){
-        var cost = head.current.exp_sum();
-        if(head.disciples.isEmpty()){
-            return new ArrayList<>(Arrays.asList(new Pair<String, Integer>(head.current.operation, cost)));
-        }
-        var costs = new ArrayList<Pair<String, Integer>>();
-        for (SimReportTree tree : head.disciples) {
-            var rest = parse_paths(tree).stream().map((pair) -> {
-                return new Pair<String, Integer>(pair.getLeft(), pair.getRight() + cost);
-            }).collect(Collectors.toCollection(ArrayList::new));
-            costs.addAll(rest);
-        }
-        return costs;
-    }
-
-
-    public static SimReportTree one_set(SimItem o, SimEnchantment x){
-        var operation = SimReport.combine(o, x);
-
-        return new SimReportTree(operation);
-    }
-
-    /** Brute force algorithm to find n_set. */
-    public static SimReportTree n_set(SimItem o, ArrayList<SimEnchantment> e){
+    /** Rebuilds the optimal nested order string by replaying the cost-optimal moves on real objects. */
+    private static String reconstruct(SimItem o, ArrayList<SimEnchantment> e, HashMap<String, Integer> memo){
         if(e.size() == 1){
-            return one_set(o, e.getFirst());
+            return SimReport.combine(o.clone(), e.get(0)).operation;
         }
 
-        var head = new SimReportTree(new SimReport(0, 0, 0, "HEAD"));
-        //BASIC
-        for(var i = 0; i < e.size(); i++){
-            var new_e = clone(e);
-            var new_o = o.clone();
+        int target = min_cost(o.pwp, pool_of(e), memo);
 
-            var path = one_set(new_o, new_e.remove(i));
-
-            path.open(n_set(new_o.clone(), new_e));
-            head.open(path);
-        }
-        //CHOOSE
-        for(var i = 0; i < e.size(); i++){
-            var new_e = clone(e);
-
-            var first = new_e.remove(i).clone();
-            for(var j=0; j < new_e.size();j++){
-                var new_e_2 = clone(new_e);
-
-                var second = new_e_2.remove(j);
-
-                var pair1 = SimReport.merged(first, second);
-                // var pair2 = SimReport.merged(second, first);
-
-                var path1 = new SimReportTree(pair1.getRight());
-                // var path2 = new SimReportTree(pair2.getRight());
-
-                var resolved1 = clone(new_e_2);
-                // var resolved2 = clone(new_e_2);
-
-                resolved1.add(pair1.getLeft());
-                // resolved2.add(pair2.getLeft());
-
-                path1.open(n_set(o.clone(), resolved1));
-                // path2.open(n_set(o.clone(), resolved2));
-
-                head.open(path1);
-                // head.open(path2);
+        // BASIC
+        for(int i = 0; i < e.size(); i++){
+            var x = e.get(i);
+            int immediate = o.pwp + x.pwp + x.cost;
+            var rest = new ArrayList<>(e);
+            rest.remove(i);
+            if(immediate + min_cost(adv(o.pwp), pool_of(rest), memo) == target){
+                var no = o.clone();
+                SimReport.combine(no, x); // advances the object's pwp + identifier
+                return reconstruct(no, rest, memo);
             }
         }
 
-        return head;
-    }
+        // CHOOSE
+        for(int i = 0; i < e.size(); i++){
+            for(int j = 0; j < e.size(); j++){
+                if(i == j) continue;
+                var xi = e.get(i);
+                var xj = e.get(j);
+                int immediate = xi.pwp + xj.pwp + xj.cost;
+                var rest = new ArrayList<>(e);
+                rest.remove(Math.max(i, j)); // remove the higher index first so the lower stays valid
+                rest.remove(Math.min(i, j));
+                rest.add(SimEnchantment.merged(xi, xj));
+                if(immediate + min_cost(o.pwp, pool_of(rest), memo) == target){
+                    return reconstruct(o.clone(), rest, memo);
+                }
+            }
+        }
 
-    public static ArrayList<SimEnchantment> clone(ArrayList<SimEnchantment> e){
-        return e.stream().map((ench) -> ench.clone()).collect(Collectors.toCollection(ArrayList::new));
+        return e.get(0).identifier; // unreachable: some move always matches the optimum
     }
 
 
@@ -196,9 +259,6 @@ public class AnvilOrdering {
     public static Integer adv(Integer x){
         return x * 2 + 1;
     }
-
-
-
 
     /** Creates a String from the enchantment. */
     public static String serialize_enchantment(EnchantmentLevelEntry entry){

@@ -133,7 +133,15 @@ public class EnchantifyClient implements ClientModInitializer {
         if(profile == null){
             return;
         }
-        var order = net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering.ordering(key, profile);
+        var order = net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering.request(key, profile);
+        if(order == null){
+            // Still computing on the background thread — tell the player and bail; the result is
+            // cached, so pressing the key again in a moment will open the graph instantly.
+            if(client.player != null){
+                client.player.sendMessage(net.minecraft.text.Text.literal("Calculating order…"), true);
+            }
+            return;
+        }
         client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
     }
 

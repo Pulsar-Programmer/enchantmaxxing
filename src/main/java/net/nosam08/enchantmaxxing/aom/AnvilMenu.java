@@ -39,6 +39,9 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
 
+    /** Number of task rows still showing "Calculating…" — used to refresh once a background solve lands. */
+    private int loading_count = 0;
+
     @Override
     protected @NotNull OwoUIAdapter<FlowLayout> createAdapter() {
         return OwoUIAdapter.create(this, Containers::verticalFlow);
@@ -59,6 +62,21 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     public void tick() {
         super.tick();
         horizontal_scrollers.forEach(x->x.tick(width));
+
+        // If a background solve finished, fewer tasks are still loading — rebuild so the freshly
+        // computed order replaces its "Calculating…" row.
+        if (loading_count > 0 && still_loading() < loading_count && client != null) {
+            client.setScreen(AnvilMenu.start());
+        }
+    }
+
+    /** Count of active tasks whose order isn't cached yet (still being computed in the background). */
+    private int still_loading() {
+        int n = 0;
+        for (var entry : Enchantips.ACTIVE_TASKS.entrySet()) {
+            if (AnvilOrdering.cached(entry.getKey(), entry.getValue()) == null) n++;
+        }
+        return n;
     }
 
     /** Starts the creation of the menu. */
@@ -103,14 +121,36 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         );
     }
 
-    /** Creates the tasks for the main display of the menu. */
+    /** Creates the tasks for the main display of the menu. Orders are computed off-thread; tasks
+     * whose order isn't ready yet show a "Calculating…" row until the next tick refreshes them. */
     public ArrayList<Component> tasks(){
         ArrayList<Component> active_tasks = new ArrayList<>();
+        loading_count = 0;
         Enchantips.ACTIVE_TASKS.forEach((ItemStackKey k, EnchantmaxProfile v) -> {
-            var ordering = AnvilOrdering.ordering(k, v);
-            active_tasks.add(task(k, ordering));
+            var ordering = AnvilOrdering.request(k, v);
+            if (ordering != null) {
+                active_tasks.add(task(k, ordering));
+            } else {
+                loading_count++;
+                active_tasks.add(loading_task(k));
+            }
         });
         return active_tasks;
+    }
+
+    /** A placeholder row shown while a task's order is still being computed in the background. */
+    public Component loading_task(ItemStackKey k){
+        var label = Components.label(Text.literal("Calculating…"))
+            .color(Color.ofArgb(0xFFFFFF55)) // soft yellow
+            .shadow(true);
+        label.margins(Insets.horizontal(4));
+
+        return Containers.horizontalFlow(Sizing.content(), Sizing.content())
+            .child(item_stack(k.inner()))
+            .child(label)
+            .verticalAlignment(VerticalAlignment.CENTER)
+            .horizontalAlignment(HorizontalAlignment.CENTER)
+            .margins(Insets.vertical(2));
     }
 
     public Component task(ItemStackKey k, OrderString order){
