@@ -1,0 +1,1526 @@
+{
+  "minecraft:wooden_sword": {
+    "enchants": [
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:looting",
+        "level": 3
+      },
+      {
+        "id": "minecraft:sweeping_edge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:knockback",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:wooden_pickaxe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:wooden_axe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:wooden_shovel": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:wooden_hoe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:stone_sword": {
+    "enchants": [
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:looting",
+        "level": 3
+      },
+      {
+        "id": "minecraft:sweeping_edge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:knockback",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:stone_pickaxe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:stone_axe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:stone_shovel": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:stone_hoe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_sword": {
+    "enchants": [
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:looting",
+        "level": 3
+      },
+      {
+        "id": "minecraft:sweeping_edge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:knockback",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_pickaxe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_axe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_shovel": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_hoe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_sword": {
+    "enchants": [
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:looting",
+        "level": 3
+      },
+      {
+        "id": "minecraft:sweeping_edge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:knockback",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_pickaxe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_axe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_shovel": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_hoe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_sword": {
+    "enchants": [
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:looting",
+        "level": 3
+      },
+      {
+        "id": "minecraft:sweeping_edge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:knockback",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_pickaxe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_axe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_shovel": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_hoe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_sword": {
+    "enchants": [
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:looting",
+        "level": 3
+      },
+      {
+        "id": "minecraft:sweeping_edge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:knockback",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_pickaxe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_axe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:sharpness",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_shovel": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_hoe": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:fortune",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:leather_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:leather_chestplate": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:leather_leggings": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:swift_sneak",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:leather_boots": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:feather_falling",
+        "level": 4
+      },
+      {
+        "id": "minecraft:depth_strider",
+        "level": 3
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:soul_speed",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:chainmail_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:chainmail_chestplate": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:chainmail_leggings": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:swift_sneak",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:chainmail_boots": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:feather_falling",
+        "level": 4
+      },
+      {
+        "id": "minecraft:depth_strider",
+        "level": 3
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:soul_speed",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_chestplate": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_leggings": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:swift_sneak",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:iron_boots": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:feather_falling",
+        "level": 4
+      },
+      {
+        "id": "minecraft:depth_strider",
+        "level": 3
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:soul_speed",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_chestplate": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_leggings": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:swift_sneak",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:golden_boots": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:feather_falling",
+        "level": 4
+      },
+      {
+        "id": "minecraft:depth_strider",
+        "level": 3
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:soul_speed",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_chestplate": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_leggings": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:swift_sneak",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:diamond_boots": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:feather_falling",
+        "level": 4
+      },
+      {
+        "id": "minecraft:depth_strider",
+        "level": 3
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:soul_speed",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_chestplate": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_leggings": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:swift_sneak",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:netherite_boots": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:feather_falling",
+        "level": 4
+      },
+      {
+        "id": "minecraft:depth_strider",
+        "level": 3
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:soul_speed",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:bow": {
+    "enchants": [
+      {
+        "id": "minecraft:power",
+        "level": 5
+      },
+      {
+        "id": "minecraft:flame",
+        "level": 1
+      },
+      {
+        "id": "minecraft:punch",
+        "level": 2
+      },
+      {
+        "id": "minecraft:infinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      }
+    ]
+  },
+  "minecraft:crossbow": {
+    "enchants": [
+      {
+        "id": "minecraft:quick_charge",
+        "level": 3
+      },
+      {
+        "id": "minecraft:piercing",
+        "level": 4
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:trident": {
+    "enchants": [
+      {
+        "id": "minecraft:loyalty",
+        "level": 3
+      },
+      {
+        "id": "minecraft:channeling",
+        "level": 1
+      },
+      {
+        "id": "minecraft:impaling",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:mace": {
+    "enchants": [
+      {
+        "id": "minecraft:density",
+        "level": 5
+      },
+      {
+        "id": "minecraft:wind_burst",
+        "level": 3
+      },
+      {
+        "id": "minecraft:fire_aspect",
+        "level": 2
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:elytra": {
+    "enchants": [
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:fishing_rod": {
+    "enchants": [
+      {
+        "id": "minecraft:luck_of_the_sea",
+        "level": 3
+      },
+      {
+        "id": "minecraft:lure",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:shears": {
+    "enchants": [
+      {
+        "id": "minecraft:efficiency",
+        "level": 5
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:flint_and_steel": {
+    "enchants": [
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:shield": {
+    "enchants": [
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:brush": {
+    "enchants": [
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:carrot_on_a_stick": {
+    "enchants": [
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:warped_fungus_on_a_stick": {
+    "enchants": [
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  },
+  "minecraft:turtle_helmet": {
+    "enchants": [
+      {
+        "id": "minecraft:protection",
+        "level": 4
+      },
+      {
+        "id": "minecraft:respiration",
+        "level": 3
+      },
+      {
+        "id": "minecraft:aqua_affinity",
+        "level": 1
+      },
+      {
+        "id": "minecraft:thorns",
+        "level": 3
+      },
+      {
+        "id": "minecraft:unbreaking",
+        "level": 3
+      },
+      {
+        "id": "minecraft:mending",
+        "level": 1
+      }
+    ]
+  }
+}

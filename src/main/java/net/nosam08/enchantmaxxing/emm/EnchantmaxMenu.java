@@ -41,6 +41,7 @@ import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
 import net.nosam08.enchantmaxxing.emm.ds.Bucket;
 import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.emm.ds.MenuInstructions;
+import net.nosam08.enchantmaxxing.profiles.DefaultProfiles;
 import net.nosam08.enchantmaxxing.profiles.Profiles;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
@@ -59,8 +60,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
 
     /// --- Profiles ---
-    /** The currently loaded profile, or {@code null} when "None" is selected. */
+    /** The active *user* (green) profile, or {@code null} for the white "None"/"Default" profiles. */
     private String active_profile = null;
+    /** True when the read-only white "Default" profile is the active one. */
+    private boolean default_active = false;
     /** Suppresses per-edit auto-save (and selection sounds) while a profile is being applied in bulk. */
     private boolean applying = false; //consider removing this
     /** Bottom-right container holding the optional dropdown/naming row above the [+ | name] bar. */
@@ -485,10 +488,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Repaints the bar label to reflect the active profile (white "None" or green name). */
     private void refresh_label(){
-        if(active_profile == null){
-            profile_label.text(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
-        } else {
+        if(default_active){
+            profile_label.text(Text.literal("Default")).color(Color.ofArgb(0xFFFFFFFF));
+        } else if(active_profile != null){
             profile_label.text(Text.literal(active_profile)).color(Color.ofArgb(0xFF40FF40));
+        } else {
+            profile_label.text(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
         }
     }
 
@@ -513,7 +518,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }
     }
 
-    /** Builds the list of selectable profiles, "None" first, each saved profile with a delete handle. */
+    /** The kind of dropdown entry. White rows (None/Default) are read-only; user rows are editable. */
+    private enum RowKind { NONE, DEFAULT, USER }
+
+    /** Builds the list: white "None", then the white "Default" (if this item has one), then user
+     * profiles. White profiles carry no delete handle; user profiles do. */
     private FlowLayout build_dropdown(){
         FlowLayout list = Containers.verticalFlow(Sizing.content(), Sizing.content());
         list.horizontalAlignment(HorizontalAlignment.LEFT);
@@ -521,21 +530,24 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         list.surface(Surface.DARK_PANEL);
         list.margins(Insets.bottom(2));
 
-        list.child(dropdown_row(null));
+        list.child(dropdown_row(RowKind.NONE, null));
+        if(DefaultProfiles.has(item)){
+            list.child(dropdown_row(RowKind.DEFAULT, null));
+        }
         for(String name : Profiles.list()){
-            list.child(dropdown_row(name));
+            list.child(dropdown_row(RowKind.USER, name));
         }
         return list;
     }
 
-    /** One dropdown entry: a red delete handle (omitted for "None") plus the clickable profile name. */
-    private Component dropdown_row(String name){
+    /** One dropdown entry: a red delete handle (user profiles only) plus the clickable name. */
+    private Component dropdown_row(RowKind kind, String name){
         FlowLayout row = Containers.horizontalFlow(Sizing.content(), Sizing.content());
         row.verticalAlignment(VerticalAlignment.CENTER);
         row.horizontalAlignment(HorizontalAlignment.LEFT);
         row.margins(Insets.vertical(1));
 
-        if(name != null){
+        if(kind == RowKind.USER){
             var trash = Components.label(Text.literal("✕")).color(Color.ofArgb(0xFFFF5555));
             trash.shadow(true);
             trash.cursorStyle(CursorStyle.HAND);
@@ -552,22 +564,33 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             });
             row.child(trash);
         } else {
-            // Keep the "None" name aligned with the others that carry a delete handle.
+            // White profiles can't be deleted; keep their name aligned with the user rows.
             row.child(Components.label(Text.literal("")).margins(Insets.horizontal(4)));
         }
 
-        boolean active = name == null ? active_profile == null : name.equals(active_profile);
-        int color = name == null ? 0xFFFFFFFF : 0xFF40FF40;
-        var label = Components.label(Text.literal(name == null ? "None" : name)).color(Color.ofArgb(color));
+        String text = switch(kind){
+            case NONE -> "None";
+            case DEFAULT -> "Default";
+            case USER -> name;
+        };
+        boolean active = switch(kind){
+            case NONE -> !default_active && active_profile == null;
+            case DEFAULT -> default_active;
+            case USER -> name.equals(active_profile);
+        };
+        int color = kind == RowKind.USER ? 0xFF40FF40 : 0xFFFFFFFF;
+
+        var label = Components.label(Text.literal(active ? text + " ◄" : text)).color(Color.ofArgb(color));
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
         label.margins(Insets.horizontal(2));
-        if(active){
-            label.text(Text.literal((name == null ? "None" : name) + " ◄"));
-        }
         label.mouseDown().subscribe((mouseX, mouseY, button) -> {
             if(button == 0){
-                select_profile(name);
+                switch(kind){
+                    case NONE -> select_none();
+                    case DEFAULT -> select_default();
+                    case USER -> select_profile(name);
+                }
                 return true;
             }
             return false;
@@ -619,12 +642,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }
     }
 
-    /** Creates a profile from the current selection, makes it active, and persists it. */
+    /** Creates a (green) user profile from the current selection, makes it active, and persists it. */
     private void confirm_name(String raw){
         String name = Profiles.sanitize(raw);
         if(name.isEmpty()){
             return;
         }
+        default_active = false;
         active_profile = name;
         save_active_profile();
         stop_naming();
@@ -632,16 +656,38 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         play_click();
     }
 
-    /** Loads a profile (or clears to "None"), re-selecting its enchantments on the current item. */
+    /** Selects the white "None" profile — drops any active profile without touching the selection. */
+    private void select_none(){
+        close_dropdown();
+        default_active = false;
+        active_profile = null;
+        refresh_label();
+        play_click();
+    }
+
+    /** Selects the read-only white "Default" profile, applying this item's bundled best-in-slot goals. */
+    private void select_default(){
+        close_dropdown();
+        var entries = DefaultProfiles.for_item(item);
+        if(entries == null){
+            return; // No bundled default for this item.
+        }
+        default_active = true;
+        active_profile = null;
+        applying = true;
+        clear_all_selections();
+        for(Profiles.Entry entry : entries){
+            apply_selection(entry.id(), entry.level());
+        }
+        applying = false;
+        refresh_label();
+        play_click();
+    }
+
+    /** Loads a (green) user profile, re-selecting its enchantments on the current item. */
     private void select_profile(String name){
         close_dropdown();
-        if(name == null){
-            active_profile = null;
-            refresh_label();
-            play_click();
-            return;
-        }
-
+        default_active = false;
         active_profile = name;
         applying = true;
         clear_all_selections();
@@ -668,10 +714,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         play_click();
     }
 
-    /** Blue-checkmark action: overwrite the active profile with the current on-screen selection. */
+    /** Blue-checkmark action: overwrite the active user profile with the current on-screen selection.
+     * White profiles (None/Default) are read-only, so this no-ops for them. */
     private void overwrite_active_profile(){
         if(active_profile == null){
-            return; // No profile loaded to save into — create one with + first.
+            return; // None or read-only Default — nothing to overwrite. Use + to make a new one.
         }
         save_active_profile();
         play_click();

@@ -21,6 +21,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.sound.SoundEvents;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
@@ -149,7 +150,16 @@ public class EnchantifyClient implements ClientModInitializer {
     public static void on_emenu_open(MinecraftClient client){
         var item = detect_hovered_item(client);
 
-        // Enchantify.LOGGER.info(item.toString());
+        if(CONFIG.defaultX){
+            var default_profile = net.nosam08.enchantmaxxing.profiles.DefaultProfiles.profile_for(item);
+            if(default_profile != null){
+                if(client.player != null){
+                    client.player.playSound(CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+                }
+                Enchantips.start_tooltips(item, default_profile);
+                return;
+            }
+        }
 
         if(!CONFIG.do_afterfuse){
             var instructions = EnchantmaxBuilder.build_direct(item);
