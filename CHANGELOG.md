@@ -1,3 +1,9 @@
+2.0.0+1.21.8
+- Updated to Minecraft 1.21.8
+- Bumped Fabric API to 0.136.1 (owo-lib 0.12.23, Cloth Config 19.0.147, Mod Menu 15.0.2 unchanged — all native to 1.21.8)
+- No source changes needed
+- Fixed task-menu labels: "Cancel Task" tooltip now on the ✕ button, and the level-cost number no longer renders transparent
+
 2.0.0+1.21.7
 - Updated to Minecraft 1.21.7
 - Bumped dependencies: Fabric API 0.129.0, owo-lib 0.12.23 (Cloth Config 19.0.147 and Mod Menu 15.0.2 unchanged, both 1.21.6-1.21.8 compatible)
