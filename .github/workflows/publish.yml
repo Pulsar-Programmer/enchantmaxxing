@@ -36,5 +36,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           files: build/libs/!(*-sources).jar
           loaders: fabric
-          game-versions: 1.21.4
+          game-versions: 1.21.5
           version-type: release

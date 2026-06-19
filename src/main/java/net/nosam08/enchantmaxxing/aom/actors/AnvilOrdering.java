@@ -262,7 +262,7 @@ public class AnvilOrdering {
 
     /** Creates a String from the enchantment. */
     public static String serialize_enchantment(EnchantmentLevelEntry entry){
-        return entry.enchantment.getIdAsString() + ";" + entry.level;
+        return entry.enchantment().getIdAsString() + ";" + entry.level();
     }
 
     /** Creates an ItemStack from the Enchantment. */

@@ -732,7 +732,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var profile = new EnchantmaxProfile(selected_enchantments);
         List<Profiles.Entry> entries = new ArrayList<>();
         for(var ple : profile.profile){
-            entries.add(new Profiles.Entry(ple.enchantment.getIdAsString(), ple.level));
+            entries.add(new Profiles.Entry(ple.enchantment().getIdAsString(), ple.level()));
         }
         Profiles.save(active_profile, entries);
     }

@@ -60,8 +60,9 @@ public class EnchantmentButton extends ButtonComponent {
         int width = this.width();
         int height = this.height();
         
-        // Use vanilla's enchantment glint rendering
-        RenderSystem.enableBlend();
+        // Use vanilla's enchantment glint rendering. The glint render layer
+        // manages its own blend state in 1.21.5+ (RenderSystem.enableBlend/
+        // disableBlend were removed in the render pipeline overhaul).
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         
         // This renders the enchantment glint texture
@@ -74,7 +75,5 @@ public class EnchantmentButton extends ButtonComponent {
             1, 1,         // texture width, height
             0x1AD4FFFF      // color (not sure this does much lol)
         );
-        
-        RenderSystem.disableBlend();
     }
 }

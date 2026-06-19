@@ -122,8 +122,8 @@ public class ProfileStore {
             JsonArray profile = new JsonArray();
             for (EnchantmentLevelEntry ple : entry.getValue().profile) {
                 JsonObject p = new JsonObject();
-                p.addProperty("id", ple.enchantment.getIdAsString());
-                p.addProperty("level", ple.level);
+                p.addProperty("id", ple.enchantment().getIdAsString());
+                p.addProperty("level", ple.level());
                 profile.add(p);
             }
             task.add("profile", profile);

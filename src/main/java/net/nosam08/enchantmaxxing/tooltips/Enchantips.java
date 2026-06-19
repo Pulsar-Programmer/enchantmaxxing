@@ -29,7 +29,7 @@ public class Enchantips {
     /** Generates the tooltips on the physical item. */
     public static void generate_tooltips(List<Text> lines, EnchantmaxProfile selected_enchantments, ItemStack stack){
         for (var ench_level : selected_enchantments.profile) {
-            var name = Enchantment.getName(ench_level.enchantment, ench_level.level);
+            var name = Enchantment.getName(ench_level.enchantment(), ench_level.level());
             var insert_idx = enchantment_line_idx(stack);
             lines.add(insert_idx, Text.translatable(name.getString()).withColor(EnchantifyClient.CONFIG.hoverColor));
         }
@@ -85,8 +85,8 @@ public class Enchantips {
         if(task == null) return;
         for (EnchantmentLevelEntry entry : enchantments) {
             task.profile.removeIf((EnchantmentLevelEntry profile_entry) -> {
-                if(!entry.enchantment.getIdAsString().equals(profile_entry.enchantment.getIdAsString())) return false;
-                if(entry.level >= profile_entry.level){
+                if(!entry.enchantment().getIdAsString().equals(profile_entry.enchantment().getIdAsString())) return false;
+                if(entry.level() >= profile_entry.level()){
                     //then override
                     return true;
                 }

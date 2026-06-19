@@ -1,3 +1,8 @@
+2.0.0+1.21.5
+- Updated to Minecraft 1.21.5
+- Bumped dependencies: Fabric API 0.128.2, Cloth Config 18.0.145, owo-lib 0.12.21, Mod Menu 14.0.2
+- Adapted to 1.21.5 API changes (EnchantmentLevelEntry record accessors, RenderSystem blend removal)
+
 1.0.0
 - Added all base features of the mod
 
