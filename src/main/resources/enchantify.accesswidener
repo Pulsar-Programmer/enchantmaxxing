@@ -1,7 +1,7 @@
-accessWidener	v2	named
+accessWidener	v2	official
 
 # Reuse vanilla's GUI textured render-pipeline snippet (vertex shader core/gui,
 # fragment core/position_tex_color, Sampler0, Projection/DynamicTransforms uniforms)
 # so we can build a glint variant that only swaps the blend function. See
 # EnchantmentButton#ENCHANT_GLINT_PIPELINE.
-accessible	field	net/minecraft/client/gl/RenderPipelines	POSITION_TEX_COLOR_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible	field	net/minecraft/client/renderer/RenderPipelines	GUI_TEXTURED_SNIPPET	Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;

@@ -21,14 +21,14 @@ import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
 import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
@@ -66,8 +66,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
         // If a background solve finished, fewer tasks are still loading — rebuild so the freshly
         // computed order replaces its "Calculating…" row.
-        if (loading_count > 0 && still_loading() < loading_count && client != null) {
-            client.setScreen(AnvilMenu.start());
+        if (loading_count > 0 && still_loading() < loading_count && minecraft != null) {
+            minecraft.setScreen(AnvilMenu.start());
         }
     }
 
@@ -141,7 +141,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     /** A placeholder row shown while a task's order is still being computed in the background. */
     public UIComponent loading_task(ItemStackKey k){
-        var label = UIComponents.label(Text.literal("Calculating…"))
+        var label = UIComponents.label(Component.literal("Calculating…"))
             .color(Color.ofArgb(0xFFFFFF55)) // soft yellow
             .shadow(true);
         label.margins(Insets.horizontal(4));
@@ -156,9 +156,9 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     public UIComponent task(ItemStackKey k, OrderString order){
 
-        var x_button = x_button(k, client);
+        var x_button = x_button(k, minecraft);
 
-        var graph_button = graph_button(order, client);
+        var graph_button = graph_button(order, minecraft);
 
         var cost = cost_label(order.cost).margins(Insets.horizontal(2));
 
@@ -180,12 +180,12 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     ///Creates the button that can delete the task.
-    public static UIComponent x_button(ItemStackKey k, MinecraftClient client){
-        LabelComponent label = UIComponents.label(Text.literal("✕"));
+    public static UIComponent x_button(ItemStackKey k, Minecraft minecraft){
+        LabelComponent label = UIComponents.label(Component.literal("✕"));
         label.color(Color.ofArgb(0xFFFFFFFF)); // White
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
-        label.tooltip(Text.literal("Cancel Task"));
+        label.tooltip(Component.literal("Cancel Task"));
 
         label.mouseEnter().subscribe(() -> {
             label.color(Color.ofArgb(0xFFFF0000)); // Red
@@ -195,13 +195,13 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             label.color(Color.ofArgb(0xFFFFFFFF)); // White
         });
         
-        label.mouseDown().subscribe((Click click, boolean dbl) -> {
+        label.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             var key = k;
             if (click.button() == 0) { // Left click
                 Enchantips.ACTIVE_TASKS.remove(key);
                 net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
-                client.setScreen(null);
-                client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
+                minecraft.setScreen(null);
+                minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 // TODO maybe also add a pop up to prevent quick task losses
                 return true;
             }
@@ -212,13 +212,13 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     ///Creates the button that opens the task's combine-order graph.
-    public static UIComponent graph_button(OrderString order, MinecraftClient client){
-        LabelComponent label = UIComponents.label(Text.literal("●"));
+    public static UIComponent graph_button(OrderString order, Minecraft minecraft){
+        LabelComponent label = UIComponents.label(Component.literal("●"));
         label.color(Color.ofArgb(0xFFFFFFFF)); // White
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
         label.margins(Insets.horizontal(2));
-        label.tooltip(Text.literal("View Order Graph"));
+        label.tooltip(Component.literal("View Order Graph"));
 
         label.mouseEnter().subscribe(() -> {
             label.color(Color.ofArgb(0xFF40FF40)); // Green
@@ -228,10 +228,10 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             label.color(Color.ofArgb(0xFFFFFFFF)); // White
         });
 
-        label.mouseDown().subscribe((Click click, boolean dbl) -> {
+        label.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if (click.button() == 0) { // Left click
-                client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
-                client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
+                minecraft.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
+                minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 return true;
             }
             return false;
@@ -242,7 +242,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     ///Creates the label of the cost.
     public static UIComponent cost_label(Integer cost){
-        var player = MinecraftClient.getInstance().player;
+        var player = Minecraft.getInstance().player;
         int playerLevel = player != null ? player.experienceLevel : 0;
 
         // Determine color based on whether player can afford it.
@@ -250,10 +250,10 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         // and the cost number renders invisibly.
         int color = (playerLevel >= cost ? 0xFF80FF20 : 0xFFFF6060);
 
-        LabelComponent label = UIComponents.label(Text.literal(cost.toString()));
+        LabelComponent label = UIComponents.label(Component.literal(cost.toString()));
         label.color(Color.ofArgb(color)); // green if affordable, red if not
         label.shadow(true);
-        label.tooltip(Text.literal("Total Level Cost"));
+        label.tooltip(Component.literal("Total Level Cost"));
 
         return label;
     }
@@ -327,7 +327,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     public static UIComponent item(String name){
         Identifier item_id = Identifier.tryParse(name);
         ItemStack item_stack = item_id != null ?
-            new ItemStack(Registries.ITEM.get(item_id), 1) :
+            new ItemStack(BuiltInRegistries.ITEM.getValue(item_id), 1) :
             AnvilOrdering.deserialize_enchantment(name);
 
         var item = UIComponents.item(item_stack).showOverlay(true).setTooltipFromStack(true)

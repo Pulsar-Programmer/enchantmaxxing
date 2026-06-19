@@ -4,9 +4,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
 import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 
@@ -88,7 +88,7 @@ public class OrderNode {
         }
         Identifier id = Identifier.tryParse(name);
         ItemStack stack = id != null
-            ? new ItemStack(Registries.ITEM.get(id), 1)
+            ? new ItemStack(BuiltInRegistries.ITEM.getValue(id), 1)
             : AnvilOrdering.deserialize_enchantment(name);
         return new OrderNode(stack);
     }

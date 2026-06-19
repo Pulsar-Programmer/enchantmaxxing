@@ -18,17 +18,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
@@ -65,16 +65,16 @@ public class ProfileStore {
     /** Directory for the world we are currently connected to (null when disconnected). */
     private static Path current_dir = null;
     /** Registry lookup from the active connection, needed to (de)serialize items and enchantments. */
-    private static RegistryWrapper.WrapperLookup lookup = null;
+    private static HolderLookup.Provider lookup = null;
 
     /** Resolves the per-world directory the way JourneyMap does. */
-    private static Path world_dir(MinecraftClient client) {
-        if (client.isInSingleplayer() && client.getServer() != null) {
-            String name = client.getServer().getSaveProperties().getLevelName();
+    private static Path world_dir(Minecraft client) {
+        if (client.hasSingleplayerServer() && client.getSingleplayerServer() != null) {
+            String name = client.getSingleplayerServer().getWorldData().getLevelName();
             return BASE.resolve("sp").resolve(sanitize(name));
         }
-        ServerInfo server = client.getCurrentServerEntry();
-        String name = server != null ? server.address : "unknown";
+        ServerData server = client.getCurrentServer();
+        String name = server != null ? server.ip : "unknown";
         return BASE.resolve("mp").resolve(sanitize(name));
     }
 
@@ -85,10 +85,10 @@ public class ProfileStore {
     }
 
     /** Called once a world is fully joined: caches the world context and loads its profiles. */
-    public static void on_join(MinecraftClient client) {
-        if (client.getNetworkHandler() == null) return;
+    public static void on_join(Minecraft client) {
+        if (client.getConnection() == null) return;
         current_dir = world_dir(client);
-        lookup = client.getNetworkHandler().getRegistryManager();
+        lookup = client.getConnection().registryAccess();
         load();
     }
 
@@ -109,7 +109,7 @@ public class ProfileStore {
     public static void save() {
         if (current_dir == null || lookup == null) return;
 
-        RegistryOps<JsonElement> ops = RegistryOps.of(JsonOps.INSTANCE, lookup);
+        RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, lookup);
         JsonArray tasks = new JsonArray();
 
         for (Map.Entry<ItemStackKey, EnchantmaxProfile> entry : Enchantips.ACTIVE_TASKS.entrySet()) {
@@ -120,9 +120,9 @@ public class ProfileStore {
             task.add("item", ItemStack.CODEC.encodeStart(ops, stack).getOrThrow());
 
             JsonArray profile = new JsonArray();
-            for (EnchantmentLevelEntry ple : entry.getValue().profile) {
+            for (EnchantmentInstance ple : entry.getValue().profile) {
                 JsonObject p = new JsonObject();
-                p.addProperty("id", ple.enchantment().getIdAsString());
+                p.addProperty("id", ple.enchantment().getRegisteredName());
                 p.addProperty("level", ple.level());
                 profile.add(p);
             }
@@ -131,8 +131,8 @@ public class ProfileStore {
             // Persist the solved combine order so it isn't recomputed (an expensive DP) next launch.
             var solved = net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering.peek(entry.getKey(), entry.getValue());
             if (solved != null) {
-                task.addProperty("order", solved.getLeft());
-                task.addProperty("cost", solved.getRight());
+                task.addProperty("order", solved.getA());
+                task.addProperty("cost", solved.getB());
             }
 
             tasks.add(task);
@@ -164,8 +164,8 @@ public class ProfileStore {
         Path file = file();
         if (!Files.exists(file)) return;
 
-        RegistryOps<JsonElement> ops = RegistryOps.of(JsonOps.INSTANCE, lookup);
-        RegistryWrapper.Impl<Enchantment> enchantments = lookup.getOrThrow(RegistryKeys.ENCHANTMENT);
+        RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, lookup);
+        HolderLookup.RegistryLookup<Enchantment> enchantments = lookup.lookupOrThrow(Registries.ENCHANTMENT);
 
         try {
             String content = Files.readString(file);
@@ -185,9 +185,9 @@ public class ProfileStore {
                     if (id == null) continue;
                     int level = p.get("level").getAsInt();
 
-                    Optional<RegistryEntry.Reference<Enchantment>> ref =
-                        enchantments.getOptional(RegistryKey.of(RegistryKeys.ENCHANTMENT, id));
-                    ref.ifPresent(reference -> profile.profile.add(new EnchantmentLevelEntry(reference, level)));
+                    Optional<Holder.Reference<Enchantment>> ref =
+                        enchantments.get(ResourceKey.create(Registries.ENCHANTMENT, id));
+                    ref.ifPresent(reference -> profile.profile.add(new EnchantmentInstance(reference, level)));
                 }
 
                 if (!profile.profile.isEmpty()) {

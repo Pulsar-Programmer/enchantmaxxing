@@ -15,7 +15,7 @@ public class EnchantifyConfig {
      * Forces every enchantment to be treated as combinable, ignoring exclusive sets entirely.
      * Escape hatch for compatibility mods that unlock combining (e.g. stacking all protections)
      * by overriding the anvil's combine logic *without* going through
-     * {@link net.minecraft.enchantment.Enchantment#canBeCombined} — those can't be auto-detected,
+     * {@link net.minecraft.world.item.enchantment.Enchantment#areCompatible} — those can't be auto-detected,
      * so this lets the user opt in manually. Applied live the next time a menu is opened.
      */
     public boolean force_combinable = false;

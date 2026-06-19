@@ -13,14 +13,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.tooltips.ds.EnchantmaxProfile;
@@ -66,7 +64,7 @@ public class DefaultProfiles {
     /** The curated default goals for this item, or {@code null} when none is bundled. */
     public static List<Profiles.Entry> for_item(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return null;
-        String id = Registries.ITEM.getId(stack.getItem()).toString();
+        String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
         List<Profiles.Entry> list = all().get(id);
         return (list == null || list.isEmpty()) ? null : list;
     }
@@ -95,9 +93,9 @@ public class DefaultProfiles {
             Identifier id = Identifier.tryParse(entry.id());
             if (id == null) continue;
             if (existing.getOrDefault(id, 0) >= entry.level()) continue;
-            Optional<RegistryEntry.Reference<Enchantment>> ref =
-                registry.getOptional(RegistryKey.of(RegistryKeys.ENCHANTMENT, id));
-            ref.ifPresent(r -> profile.profile.add(new EnchantmentLevelEntry(r, entry.level())));
+            Optional<Holder.Reference<Enchantment>> ref =
+                registry.get(id);
+            ref.ifPresent(r -> profile.profile.add(new EnchantmentInstance(r, entry.level())));
         }
         return profile.profile.isEmpty() ? null : profile;
     }

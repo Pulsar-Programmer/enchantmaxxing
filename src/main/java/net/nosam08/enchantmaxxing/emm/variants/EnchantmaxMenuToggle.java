@@ -3,10 +3,10 @@ package net.nosam08.enchantmaxxing.emm.variants;
 import java.util.ArrayList;
 
 import io.wispforest.owo.ui.core.UIComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxMenu;
 import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 
@@ -16,10 +16,10 @@ public class EnchantmaxMenuToggle extends EnchantmaxMenu {
         super(item, original);
     }
 
-    public ArrayList<UIComponent> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
+    public ArrayList<UIComponent> generate_levels(int level, Holder<Enchantment> enchantment){
         var list = new ArrayList<UIComponent>();
         for(var i = level + 1; i <= enchantment.value().getMaxLevel(); i++){
-            var text = Text.translatable("enchantment.level." + Integer.toString(i));
+            var text = Component.translatable("enchantment.level." + Integer.toString(i));
             var lvl = Integer.valueOf(i);
             list.add(level_button(text, x -> {
                 on_level_select(x, lvl, level, enchantment);
@@ -40,7 +40,7 @@ public class EnchantmaxMenuToggle extends EnchantmaxMenu {
     //     horizontal.horizontalSizing(Sizing.content());
     // }
 
-    // public void on_level_select(ButtonComponent lvl_btn, int level, int reg_level, RegistryEntry<Enchantment> ench){
+    // public void on_level_select(ButtonComponent lvl_btn, int level, int reg_level, Holder<Enchantment> ench){
     //     lvl_btn.parent().horizontalSizing(Sizing.fixed(0));
     //     selected_level_button.active(true);
         

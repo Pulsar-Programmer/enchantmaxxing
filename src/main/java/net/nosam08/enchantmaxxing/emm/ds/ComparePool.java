@@ -3,7 +3,7 @@ package net.nosam08.enchantmaxxing.emm.ds;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 
 /** CMP Pool of items. */

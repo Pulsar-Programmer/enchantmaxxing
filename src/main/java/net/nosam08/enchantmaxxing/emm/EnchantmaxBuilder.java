@@ -6,17 +6,17 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.resources.Identifier;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.config.CurseOrderOptions;
 import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
@@ -28,10 +28,10 @@ public class EnchantmaxBuilder {
 
     /** Returns all enchantments. */
     public static Registry<Enchantment> all_enchantments(){
-        return MinecraftClient.getInstance()
-            .getNetworkHandler()
-            .getRegistryManager()
-            .getOrThrow(RegistryKeys.ENCHANTMENT);
+        return Minecraft.getInstance()
+            .getConnection()
+            .registryAccess()
+            .lookupOrThrow(Registries.ENCHANTMENT);
     }
 
     /** Builds the core and direct menu instructions given the item to Enchantmax. */
@@ -44,16 +44,16 @@ public class EnchantmaxBuilder {
             return new ArrayList<>();
         }
 
-        Stream<RegistryEntry<Enchantment>> entries;
-        ItemEnchantmentsComponent stored_enchants;
+        Stream<Holder<Enchantment>> entries;
+        ItemEnchantments stored_enchants;
 
         var is_book = is_book(item);
         if(is_book){
             Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false);
 
-            entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+            entries = stream.map((Enchantment x) ->enchantments.wrapAsHolder(x));
 
-            stored_enchants = item.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            stored_enchants = item.get(DataComponents.STORED_ENCHANTMENTS);
             
             if(stored_enchants != null && !EnchantifyClient.CONFIG.is_static){
                 entries = entries.filter(ench_i -> is_compatible(stored_enchants, ench_i));
@@ -62,7 +62,7 @@ public class EnchantmaxBuilder {
         } else {
             Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false).filter(ench_i -> ench_i.isSupportedItem(item));
 
-            entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+            entries = stream.map((Enchantment x) ->enchantments.wrapAsHolder(x));
 
             stored_enchants = item.getEnchantments();
 
@@ -72,12 +72,12 @@ public class EnchantmaxBuilder {
         }
 
         if(EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.OFF)){
-            entries = entries.filter(ench -> !ench.isIn(EnchantmentTags.CURSE));
+            entries = entries.filter(ench -> !ench.is(EnchantmentTags.CURSE));
         }
 
-        var insert = build_from_start(entries, item, is_book, (RegistryEntry<Enchantment> e) -> {
+        var insert = build_from_start(entries, item, is_book, (Holder<Enchantment> e) -> {
             if(stored_enchants == null) return false;
-            return stored_enchants.getEnchantments().contains(e);
+            return stored_enchants.keySet().contains(e);
         });
         
         var stc = OppositeArchetypes.stc(insert);
@@ -87,15 +87,15 @@ public class EnchantmaxBuilder {
 
     /** Determines whether the <code>ItemStack</code> is a book or enchanted book. */
     public static boolean is_book(ItemStack stack){
-        return stack.isOf(Items.BOOK) || stack.isOf(Items.ENCHANTED_BOOK);
+        return stack.getItem() == Items.BOOK || stack.getItem() == Items.ENCHANTED_BOOK;
     }
 
     /** Checks whether an enchantment, "in an anvil", can be applied to the item. */
-    public static boolean is_compatible(ItemEnchantmentsComponent enchants, RegistryEntry<Enchantment> enchantment){
-        for (var ench_x : enchants.getEnchantments()) {
+    public static boolean is_compatible(ItemEnchantments enchants, Holder<Enchantment> enchantment){
+        for (var ench_x : enchants.keySet()) {
             var ench_x_val = ench_x.value();
-            var id_ench_x = ench_x.getIdAsString();
-            if(id_ench_x.equals(enchantment.getIdAsString())){
+            var id_ench_x = ench_x.getRegisteredName();
+            if(id_ench_x.equals(enchantment.getRegisteredName())){
                 ///Add the leveling feature. You can't change your enchantments but you sure can level one of them up.
                 if(enchants.getLevel(ench_x) != ench_x_val.getMaxLevel()){
                     return true;
@@ -105,7 +105,7 @@ public class EnchantmaxBuilder {
 
             ///Do not display if it is blocked by one of the enchantments on the item.
             ///force_combinable removes every block; otherwise GLOBAL_ARCHETYPES already reflects
-            ///the runtime canBeCombined rules (built per connection).
+            ///the runtime areCompatible rules (built per connection).
             if(!EnchantifyClient.CONFIG.force_combinable
                 && EnchantifyClient.GLOBAL_ARCHETYPES.exclusive_set(ench_x_val).contains(enchantment.value())){
                 return false;
@@ -122,7 +122,7 @@ public class EnchantmaxBuilder {
     }
 
     /** Builds the ArchetypesInsert from a stream. */
-    public static ArchetypesInsert build_from_start(Stream<RegistryEntry<Enchantment>> all, ItemStack item, boolean is_book, Function<RegistryEntry<Enchantment>, Boolean> is_leveled){
+    public static ArchetypesInsert build_from_start(Stream<Holder<Enchantment>> all, ItemStack item, boolean is_book, Function<Holder<Enchantment>, Boolean> is_leveled){
         var built = new ArchetypesInsert();
 
         all.forEach(ench -> {
@@ -140,7 +140,7 @@ public class EnchantmaxBuilder {
                 var val = x.value();
 
                 ///Only let non-same archetypes through.
-                if(ench.getIdAsString().equals(x.getIdAsString())){
+                if(ench.getRegisteredName().equals(x.getRegisteredName())){
                     return;
                 }
 
@@ -155,7 +155,7 @@ public class EnchantmaxBuilder {
                 }
 
                 ///Do not include if an enchantment is a curse and they are off.
-                if(EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.OFF) && x.isIn(EnchantmentTags.CURSE)){
+                if(EnchantifyClient.CONFIG.curse_order.equals(CurseOrderOptions.OFF) && x.is(EnchantmentTags.CURSE)){
                     return;
                 }
 
@@ -168,7 +168,7 @@ public class EnchantmaxBuilder {
     }
 
     /** Creates and returns the Global Archetypes Arrangement. */
-    public static ArchetypesInsert global_archetypes(Stream<RegistryEntry<Enchantment>> all){
+    public static ArchetypesInsert global_archetypes(Stream<Holder<Enchantment>> all){
         var built = new ArchetypesInsert();
         
         all.forEach(ench -> {
@@ -178,7 +178,7 @@ public class EnchantmaxBuilder {
                 var val = x.value();
 
                 ///Only let non-same archetypes through.
-                if(ench.getIdAsString().equals(x.getIdAsString())){
+                if(ench.getRegisteredName().equals(x.getRegisteredName())){
                     return;
                 }
 
@@ -198,16 +198,16 @@ public class EnchantmaxBuilder {
     /**
      * Whether two enchantments really cannot be combined right now. The vanilla
      * {@code exclusiveSet()} data is only the *default*: the authoritative runtime check is
-     * {@link Enchantment#canBeCombined}, which compatibility mods hook to unlock things like
+     * {@link Enchantment#areCompatible}, which compatibility mods hook to unlock things like
      * stacking every protection. We list a pair as exclusive only when the game still refuses to
      * combine them, so those compat mods are honoured automatically. {@code force_combinable}
-     * is the manual override for compat mods that bypass {@code canBeCombined} altogether.
+     * is the manual override for compat mods that bypass {@code areCompatible} altogether.
      */
-    public static boolean actually_exclusive(RegistryEntry<Enchantment> a, RegistryEntry<Enchantment> b){
+    public static boolean actually_exclusive(Holder<Enchantment> a, Holder<Enchantment> b){
         if(EnchantifyClient.CONFIG.force_combinable){
             return false;
         }
-        return !Enchantment.canBeCombined(a, b);
+        return !Enchantment.areCompatible(a, b);
     }
 
     /** Returns the map of levels and enchantments from an item. */
@@ -216,17 +216,17 @@ public class EnchantmaxBuilder {
         var map = new HashMap<Identifier, Integer>();
 
         if(is_book(item)){
-            ItemEnchantmentsComponent stored_enchantments = item.get(DataComponentTypes.STORED_ENCHANTMENTS);
+            ItemEnchantments stored_enchantments = item.get(DataComponents.STORED_ENCHANTMENTS);
             if(stored_enchantments == null) return map;
-            for (var ench : stored_enchantments.getEnchantments()) {
-                var id = reg.getId(ench.value());
+            for (var ench : stored_enchantments.keySet()) {
+                var id = reg.getKey(ench.value());
                 var lvl = stored_enchantments.getLevel(ench);
                 map.put(id, lvl);
             }
         } else {
             var enchs = item.getEnchantments();
-            for (var ench : enchs.getEnchantments()) {
-                var id = reg.getId(ench.value());
+            for (var ench : enchs.keySet()) {
+                var id = reg.getKey(ench.value());
                 var lvl = enchs.getLevel(ench);
                 map.put(id, lvl);
             }

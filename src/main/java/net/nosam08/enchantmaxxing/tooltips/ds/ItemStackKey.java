@@ -2,7 +2,7 @@ package net.nosam08.enchantmaxxing.tooltips.ds;
 
 import java.util.Objects;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 
 public class ItemStackKey {
@@ -15,7 +15,7 @@ public class ItemStackKey {
     /** Allows the reading of an ItemStackKey. */
     public void read(){
         var data = this.stack.getEnchantments();
-        for (var ench_level : data.getEnchantments()) {
+        for (var ench_level : data.keySet()) {
             System.out.println(ench_level + ":" + data.getLevel(ench_level));
         }
     }
@@ -27,7 +27,7 @@ public class ItemStackKey {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ItemStackKey other){
-            return ItemStack.areItemsAndComponentsEqual(this.stack, other.stack);
+            return ItemStack.isSameItemSameComponents(this.stack, other.stack);
         }
         return false;
     }

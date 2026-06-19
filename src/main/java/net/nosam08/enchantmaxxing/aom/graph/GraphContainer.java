@@ -117,7 +117,7 @@ public class GraphContainer extends FlowLayout {
         if (len < 1e-3) return;
 
         int half = Math.max(1, (int) Math.round(LINE_THICKNESS / 2));
-        var matrices = context.getMatrices();
+        var matrices = context.pose();
         matrices.pushMatrix();
         matrices.translate((float) x1, (float) y1);
         matrices.rotate((float) Math.atan2(dy, dx));

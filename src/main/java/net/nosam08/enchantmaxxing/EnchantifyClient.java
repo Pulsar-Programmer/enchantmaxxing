@@ -10,19 +10,19 @@ import org.slf4j.LoggerFactory;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.Identifier;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
@@ -43,38 +43,38 @@ public class EnchantifyClient implements ClientModInitializer {
      * which was removed in 1.21.9 (shift state now lives on per-event KeyInput records).
      */
     public static boolean hasShiftDown() {
-        var window = MinecraftClient.getInstance().getWindow();
-        return InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_LEFT_SHIFT)
-            || InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+        var window = Minecraft.getInstance().getWindow();
+        return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT)
+            || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
 
     public static EnchantifyConfig CONFIG = Filesystem.load_config();
 
     /**
-     * Controls-screen category for this mod's keybinds. As of 1.21.9 KeyBinding takes a
-     * KeyBinding.Category (identified by an Identifier) instead of a translation-key String.
+     * Controls-screen category for this mod's keybinds. As of 1.21.9 KeyMapping takes a
+     * KeyMapping.Category (identified by an Identifier) instead of a translation-key String.
      * Its label resolves to "key.category.enchantify.main" — see the lang file.
      */
-    public static final KeyBinding.Category KEY_CATEGORY =
-        KeyBinding.Category.create(Identifier.of(MOD_ID, "main"));
+    public static final KeyMapping.Category KEY_CATEGORY =
+        new KeyMapping.Category(Identifier.fromNamespaceAndPath(MOD_ID, "main"));
 
-    public static KeyBinding MAXXING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    public static KeyMapping MAXXING = KeyMappingHelper.registerKeyMapping(new KeyMapping(
         "key.enchantify.opengui",
-        InputUtil.Type.KEYSYM, 
+        InputConstants.Type.KEYSYM, 
         GLFW.GLFW_KEY_X, 
         KEY_CATEGORY
     )); //does OWO Lib have something to make this better?
 
-    public static KeyBinding ORDERING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    public static KeyMapping ORDERING = KeyMappingHelper.registerKeyMapping(new KeyMapping(
         "key.enchantify.ordering",
-        InputUtil.Type.KEYSYM,
+        InputConstants.Type.KEYSYM,
         GLFW.GLFW_KEY_Y,
         KEY_CATEGORY
     ));
 
-    public static KeyBinding GRAPH = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    public static KeyMapping GRAPH = KeyMappingHelper.registerKeyMapping(new KeyMapping(
         "key.enchantify.graph",
-        InputUtil.Type.KEYSYM,
+        InputConstants.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN, // unbound by default — assign it in Controls
         KEY_CATEGORY
     ));
@@ -91,13 +91,13 @@ public class EnchantifyClient implements ClientModInitializer {
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
 			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, keyInput) -> {
-                if (screen instanceof net.minecraft.client.gui.screen.ChatScreen || screen instanceof net.minecraft.client.gui.screen.DeathScreen) {
+                if (screen instanceof net.minecraft.client.gui.screens.ChatScreen || screen instanceof net.minecraft.client.gui.screens.DeathScreen) {
                     return;
                 }
-                if (MAXXING.matchesKey(keyInput)) {
+                if (MAXXING.matches(keyInput)) {
                     on_emenu_open(client);
                 }
-                if (GRAPH.matchesKey(keyInput)) {
+                if (GRAPH.matches(keyInput)) {
                     on_graph_open(client);
                 }
             });
@@ -106,13 +106,13 @@ public class EnchantifyClient implements ClientModInitializer {
         // LOGGER.debug("Starting request: %s".formatted(request));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (MAXXING.wasPressed()) {
+            while (MAXXING.consumeClick()) {
                 on_emenu_open(client);
             }
-            while (ORDERING.wasPressed()){
+            while (ORDERING.consumeClick()){
                 on_amenu_open(client);
             }
-            while (GRAPH.wasPressed()){
+            while (GRAPH.consumeClick()){
                 on_graph_open(client);
             }
         });
@@ -125,10 +125,10 @@ public class EnchantifyClient implements ClientModInitializer {
         });
 
         ClientPlayConnectionEvents.INIT.register((handler, _client) -> {
-            var enchantments = handler.getRegistryManager()
-            .getOrThrow(RegistryKeys.ENCHANTMENT);
+            var enchantments = handler.registryAccess()
+            .lookupOrThrow(Registries.ENCHANTMENT);
             Stream<Enchantment> stream = StreamSupport.stream(enchantments.spliterator(), false);
-            var entries = stream.map((Enchantment x) ->enchantments.getEntry(x));
+            var entries = stream.map((Enchantment x) ->enchantments.wrapAsHolder(x));
             GLOBAL_ARCHETYPES = EnchantmaxBuilder.global_archetypes(entries);
         });
 
@@ -138,12 +138,12 @@ public class EnchantifyClient implements ClientModInitializer {
     }
 
     /** This is called when the Anvil Menu Key is pressed. */
-    public static void on_amenu_open(MinecraftClient client){
+    public static void on_amenu_open(Minecraft client){
         client.setScreen(AnvilMenu.start());
     }
 
     /** Opens the order graph for the hovered item, if it has an active task. */
-    public static void on_graph_open(MinecraftClient client){
+    public static void on_graph_open(Minecraft client){
         var item = detect_hovered_item(client);
         if(item.isEmpty()){
             return;
@@ -157,23 +157,21 @@ public class EnchantifyClient implements ClientModInitializer {
         if(order == null){
             // Still computing on the background thread — tell the player and bail; the result is
             // cached, so pressing the key again in a moment will open the graph instantly.
-            if(client.player != null){
-                client.player.sendMessage(net.minecraft.text.Text.literal("Calculating order…"), true);
-            }
+            client.gui.setOverlayMessage(net.minecraft.network.chat.Component.literal("Calculating order…"), false);
             return;
         }
         client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
     }
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */
-    public static void on_emenu_open(MinecraftClient client){
+    public static void on_emenu_open(Minecraft client){
         var item = detect_hovered_item(client);
 
         if(CONFIG.defaultX){
             var default_profile = net.nosam08.enchantmaxxing.profiles.DefaultProfiles.profile_for(item);
             if(default_profile != null){
                 if(client.player != null){
-                    client.player.playSound(CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+                    client.player.playSound(CONFIG.anvil_apply_sound ? SoundEvents.ANVIL_USE : SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
                 }
                 Enchantips.start_tooltips(item, default_profile);
                 return;
@@ -204,9 +202,9 @@ public class EnchantifyClient implements ClientModInitializer {
     }
 
     /** Detects the item that is hovered. */
-    public static ItemStack detect_hovered_item(MinecraftClient client){
-        if(client.currentScreen != null && client.currentScreen instanceof HandledScreen<?> handledScreen){
-            var cursor = handledScreen.getScreenHandler().getCursorStack();
+    public static ItemStack detect_hovered_item(Minecraft client){
+        if(client.screen != null && client.screen instanceof AbstractContainerScreen<?> handledScreen){
+            var cursor = handledScreen.getMenu().getCarried();
             
             if(!cursor.isEmpty()){
                 return cursor;
@@ -216,7 +214,7 @@ public class EnchantifyClient implements ClientModInitializer {
             var item = mixin.getFocusedSlot();
             
             if(item != null){
-                var stack = item.getStack();
+                var stack = item.getItem();
                 if(stack != null){
                     return stack;
                 }
@@ -227,7 +225,7 @@ public class EnchantifyClient implements ClientModInitializer {
             return ItemStack.EMPTY;
         }
 
-        return client.player.getMainHandStack();
+        return client.player.getMainHandItem();
     }
 
 

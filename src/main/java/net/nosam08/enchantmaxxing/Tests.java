@@ -6,11 +6,11 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.Component;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
 import net.nosam08.enchantmaxxing.emm.OppositeArchetypes;
 import net.nosam08.enchantmaxxing.emm.ds.Bucket;
@@ -63,7 +63,7 @@ public class Tests {
     }
 
     public static Enchantment enchantment(String name){
-        return new Enchantment(Text.of(name), null, null, null);
+        return new Enchantment(Component.literal(name), null, null, null);
     }
 
     public static Bucket bucket(String contents){
@@ -171,9 +171,9 @@ public class Tests {
         var smite = reg.getOrThrow(Enchantments.SMITE);
 
         ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
-        sword.addEnchantment(sharpness, 1);
+        sword.enchant(sharpness, 1);
 
-        var r1 = smite.value().isAcceptableItem(sword);
+        var r1 = smite.value().isSupportedItem(sword);
         EnchantifyClient.LOGGER.info(r1+"");
 
         var r2 = smite.value().isPrimaryItem(sword);

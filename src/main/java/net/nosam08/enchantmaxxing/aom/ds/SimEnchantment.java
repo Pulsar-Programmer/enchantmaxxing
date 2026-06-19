@@ -1,6 +1,6 @@
 package net.nosam08.enchantmaxxing.aom.ds;
 
-import net.minecraft.enchantment.EnchantmentLevelEntry;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.nosam08.enchantmaxxing.aom.actors.AnvilOrdering;
 
 /** Represents the data structure of an enchantment that tracks its cost throughout. */
@@ -17,9 +17,9 @@ public class SimEnchantment {
     }
 
     /** Creates a new SimEnchantment from the Enchantment and a level. */
-    public static SimEnchantment from_enchantment(EnchantmentLevelEntry enchantment){   
+    public static SimEnchantment from_enchantment(EnchantmentInstance enchantment){   
         var cost = Math.max(1, enchantment.enchantment().value().getAnvilCost() / 2) * enchantment.level();
-        return new SimEnchantment(0, cost, enchantment.enchantment().getIdAsString() + ";" + enchantment.level());
+        return new SimEnchantment(0, cost, enchantment.enchantment().getRegisteredName() + ";" + enchantment.level());
     }
 
     /** Merges two enchantments and computes the result as another Enchantment. */

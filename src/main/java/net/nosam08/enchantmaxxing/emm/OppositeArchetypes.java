@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.util.Pair;
-import net.nosam08.enchantmaxxing.Tests;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.util.Tuple;
 import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.emm.ds.ComparePool;
@@ -31,7 +30,7 @@ public class OppositeArchetypes {
 
         HashMap<Enchantment, Integer> stc_mapping = new HashMap<>();
         ArrayList<ArrayList<ArrayList<Enchantment>>> the_stc = new ArrayList<>();
-        ArrayList<Pair<Integer, Integer>> merge_orders = new ArrayList<>();
+        ArrayList<Tuple<Integer, Integer>> merge_orders = new ArrayList<>();
         for (int i = 0; i < bars.size(); i++) {
             var bar = bars.get(i);
             Integer bar_focused_bucket;
@@ -63,7 +62,7 @@ public class OppositeArchetypes {
                     }
 
                     //insert merge order because these are the same buckets
-                    merge_orders.add(new Pair<Integer,Integer>(bar_focused_bucket, res));
+                    merge_orders.add(new Tuple<Integer,Integer>(bar_focused_bucket, res));
                 }
             }
             the_stc.get(bar_focused_bucket).add(bar);
@@ -77,8 +76,8 @@ public class OppositeArchetypes {
         //it is guaranteed that when we merge, we can merge in reverse
         while (!merge_orders.isEmpty()) {
             var top = merge_orders.removeLast();
-            var from = Math.max(top.getLeft(), top.getRight());
-            var to = Math.min(top.getLeft(), top.getRight());
+            var from = Math.max(top.getA(), top.getB());
+            var to = Math.min(top.getA(), top.getB());
             //move them
             var from_section = the_stc.get(from);
             var to_section = the_stc.get(to);
@@ -189,7 +188,7 @@ public class OppositeArchetypes {
             var len = mutated_bucketgroup.size();
             
             ArrayList<Integer> indices = ensure_length(len, 0);
-            ArrayList<ArrayList<Pair<Enchantment, Integer>>> row = ensure_length_new(len);
+            ArrayList<ArrayList<Tuple<Enchantment, Integer>>> row = ensure_length_new(len);
             
 
 
@@ -223,7 +222,7 @@ public class OppositeArchetypes {
     public static void afterfuse_register(
         ArrayList<Integer> smallest, 
         Enchantment letter, 
-        ArrayList<ArrayList<Pair<Enchantment, Integer>>> registry
+        ArrayList<ArrayList<Tuple<Enchantment, Integer>>> registry
     ){
         Optional<Integer> original_idx = Optional.empty();
         int chain = 0;
@@ -239,14 +238,14 @@ public class OppositeArchetypes {
                 chain++;
             } else{
                 ///We push the formation to the proper entry.
-                var pair = new Pair<Enchantment,Integer>(letter, chain);
+                var pair = new Tuple<Enchantment,Integer>(letter, chain);
                 registry.get(original_idx.get()).add(pair);
                 ///Reset the chain.
                 chain = 0;
             }
         }
         ///We push the formation to the proper entry.
-        var pair = new Pair<Enchantment,Integer>(letter, chain);
+        var pair = new Tuple<Enchantment,Integer>(letter, chain);
         registry.get(original_idx.get()).add(pair);
 
 

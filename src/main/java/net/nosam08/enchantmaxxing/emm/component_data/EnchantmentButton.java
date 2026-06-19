@@ -3,13 +3,14 @@ package net.nosam08.enchantmaxxing.emm.component_data;
 import java.util.function.Consumer;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.OwoUIGraphics;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
+import net.minecraft.resources.Identifier;
 
 public class EnchantmentButton extends ButtonComponent {
 
@@ -21,9 +22,9 @@ public class EnchantmentButton extends ButtonComponent {
      * being a flat ~10% alpha overlay. The snippet is exposed via enchantify.accesswidener.
      */
     private static final RenderPipeline ENCHANT_GLINT_PIPELINE = RenderPipeline
-        .builder(RenderPipelines.POSITION_TEX_COLOR_SNIPPET)
-        .withLocation(Identifier.of("enchantify", "pipeline/enchant_glint"))
-        .withBlend(BlendFunction.GLINT)
+        .builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+        .withLocation(Identifier.fromNamespaceAndPath("enchantify", "pipeline/enchant_glint"))
+        .withColorTargetState(new ColorTargetState(BlendFunction.GLINT))
         .build();
 
     public boolean enchanted = false;
@@ -34,9 +35,9 @@ public class EnchantmentButton extends ButtonComponent {
 
     private float glintOffset = 0f;
 
-    // Fully-qualified: ButtonWidget (our superclass chain) gained a nested type named Text in
-    // 1.21.11, which would otherwise shadow net.minecraft.text.Text for this unqualified reference.
-    public EnchantmentButton(net.minecraft.text.Text message, Consumer<ButtonComponent> onPress, int b_index, int bg_index) {
+    // Fully-qualified: ButtonWidget (our superclass chain) gained a nested type named Component in
+    // 1.21.11, which would otherwise shadow net.minecraft.network.chat.Component for this unqualified reference.
+    public EnchantmentButton(net.minecraft.network.chat.Component message, Consumer<ButtonComponent> onPress, int b_index, int bg_index) {
         super(message, onPress);
         this.b_index = b_index;
         this.bg_index = bg_index;
@@ -80,9 +81,9 @@ public class EnchantmentButton extends ButtonComponent {
         // takes a RenderPipeline instead of a RenderLayer function, and RenderSystem shader-color
         // state was removed in favor of the per-call color argument (the render pipeline overhaul).
         // The additive GLINT pipeline makes the texture glow rather than tint the button flat.
-        context.drawTexture(
+        context.blit(
             ENCHANT_GLINT_PIPELINE,
-            ItemRenderer.ITEM_ENCHANTMENT_GLINT,
+            ItemFeatureRenderer.ENCHANTED_GLINT_ITEM,
             x, y,           // x, y position
             glintOffset, glintOffset,     // u, v texture coordinates (float)
             width, height,  // width, height to draw

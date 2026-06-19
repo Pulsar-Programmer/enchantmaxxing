@@ -3,9 +3,9 @@ package net.nosam08.enchantmaxxing.emm.ds;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.EnchantmentTags;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.EnchantmentTags;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.config.CurseOrderOptions;
 
@@ -88,8 +88,8 @@ public class Bucket {
 
         var curses = new ArrayList<Enchantment>();
         for (Enchantment enchantment : inner) {
-            var entry = reg.getEntry(enchantment);
-            if(entry.isIn(EnchantmentTags.CURSE)){
+            var entry = reg.wrapAsHolder(enchantment);
+            if(entry.is(EnchantmentTags.CURSE)){
                 curses.add(enchantment);
             } else {
                 main.add(enchantment);

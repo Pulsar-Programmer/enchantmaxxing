@@ -14,8 +14,8 @@ import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
@@ -74,13 +74,13 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
         OrderNode.layout(tree);
 
         // Header: the item's name as the title, with the affordability-coloured cost right below it.
-        int player_level = this.client != null && this.client.player != null
-            ? this.client.player.experienceLevel : 0;
+        int player_level = this.minecraft != null && this.minecraft.player != null
+            ? this.minecraft.player.experienceLevel : 0;
         int cost_color = 0xFF000000 | (player_level >= order.cost ? 0x80FF20 : 0xFF6060);
 
         FlowLayout header = UIContainers.verticalFlow(Sizing.content(), Sizing.content());
-        header.child(UIComponents.label(subject.getName()).color(Color.ofArgb(0xFFFFFFFF)).shadow(true));
-        header.child(UIComponents.label(Text.literal("Cost: " + order.cost))
+        header.child(UIComponents.label(subject.getHoverName()).color(Color.ofArgb(0xFFFFFFFF)).shadow(true));
+        header.child(UIComponents.label(Component.literal("Cost: " + order.cost))
             .color(Color.ofArgb(cost_color)).shadow(true).margins(Insets.top(2)));
         header.horizontalAlignment(HorizontalAlignment.CENTER);
         header.verticalAlignment(VerticalAlignment.CENTER);
@@ -120,9 +120,9 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Escape / close returns to the task list rather than the game. */
     @Override
-    public void close() {
-        if (this.client != null) {
-            this.client.setScreen(AnvilMenu.start());
+    public void onClose() {
+        if (this.minecraft != null) {
+            this.minecraft.setScreen(AnvilMenu.start());
         }
     }
 }

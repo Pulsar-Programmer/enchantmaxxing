@@ -27,16 +27,16 @@ import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Pair;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Tuple;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
@@ -59,7 +59,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     protected EnchantmentButton selected_level_button;
     ArrayList<BucketGroupScroller<UIComponent>> horizontal_scrollers = new ArrayList<>();
     // ArrayList<ScrollContainer<UIComponent>> vertical_scroller = new ArrayList<>();
-    HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
+    HashMap<Integer, Tuple<Integer, HashMap<Holder<Enchantment>, Tuple<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
 
     /// --- Profiles ---
     /** The active *user* (green) profile, or {@code null} for the white "None"/"Default" profiles. */
@@ -177,13 +177,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Builds the bottom menu specifying the options. */
     public UIComponent bottom_menu(){
-        var back = UIComponents.button(Text.translatable("option.enchantify.enchantmax.back"), button -> {
-            client.setScreen(null);
+        var back = UIComponents.button(Component.translatable("option.enchantify.enchantmax.back"), button -> {
+            minecraft.setScreen(null);
         }).verticalSizing(Sizing.fixed(20));
 
-        var apply = UIComponents.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
-            client.player.playSound(EnchantifyClient.CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
-            client.setScreen(null);
+        var apply = UIComponents.button(Component.translatable("option.enchantify.enchantmax.apply"), button -> {
+            minecraft.player.playSound(EnchantifyClient.CONFIG.anvil_apply_sound ? SoundEvents.ANVIL_USE : SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+            minecraft.setScreen(null);
             var profile = new EnchantmaxProfile(selected_enchantments);
             Enchantips.start_tooltips(item, profile);
         }).verticalSizing(Sizing.fixed(20));
@@ -222,13 +222,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     /** Creates the UIComponent and also its proposed size. */
-    public Pair<UIComponent, Integer> bucket(Bucket bucket, int b_index, int bg_index){
+    public Tuple<UIComponent, Integer> bucket(Bucket bucket, int b_index, int bg_index){
         ArrayList<UIComponent> children = new ArrayList<>();
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
         var levels = EnchantmaxBuilder.levels_map(item);
         bucket.to_vec_curses(reg).forEach(x -> {
-            var level = levels.getOrDefault(reg.getId(x), Integer.valueOf(0));
-            var button = enchant_level_select(level, reg.getEntry(x), b_index, bg_index);
+            var level = levels.getOrDefault(reg.getKey(x), Integer.valueOf(0));
+            var button = enchant_level_select(level, reg.wrapAsHolder(x), b_index, bg_index);
             children.add(button);
         });
 
@@ -237,7 +237,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER);
 
-        return new Pair<UIComponent, Integer>(vertical, children.size());
+        return new Tuple<UIComponent, Integer>(vertical, children.size());
     }
 
     public UIComponent bucket_group(BucketGroup bucketGroup, int bg_index){
@@ -246,8 +246,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         for(var i = 0; i < bucketGroup.inner.size(); i++){
             Bucket bucket = bucketGroup.inner.get(i);
             var component = bucket(bucket, i, bg_index);
-            size = Math.max(component.getRight() * 26, size); //does the removed 6 of margin ruin it?
-            children.add(component.getLeft());
+            size = Math.max(component.getB() * 26, size); //does the removed 6 of margin ruin it?
+            children.add(component.getA());
         }
 
         ArrayList<UIComponent> children_lines = new ArrayList<>();
@@ -276,10 +276,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .margins(Insets.bottom(5));
     }
 
-    public ArrayList<UIComponent> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
+    public ArrayList<UIComponent> generate_levels(int level, Holder<Enchantment> enchantment){
         var list = new ArrayList<UIComponent>();
         for(var i = level; i <= enchantment.value().getMaxLevel(); i++){
-            var text = Text.translatable("enchantment.level." + Integer.toString(i));
+            var text = Component.translatable("enchantment.level." + Integer.toString(i));
             var lvl = Integer.valueOf(i);
             list.add(level_button(text, x -> {
                 on_level_select(x, lvl, level, enchantment);
@@ -288,13 +288,13 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return list;
     }
 
-    public static Text enchantment_text(RegistryEntry<Enchantment> e, int level){
-        var str = level == 0 ? e.value().description() : Enchantment.getName(e, level);
-        var text = e.isIn(EnchantmentTags.CURSE) ? Text.translatable(str.getString()).withColor(0xFA655D) : Text.translatable(str.getString());
+    public static Component enchantment_text(Holder<Enchantment> e, int level){
+        var str = level == 0 ? e.value().description() : Enchantment.getFullname(e, level);
+        var text = e.is(EnchantmentTags.CURSE) ? Component.translatable(str.getString()).withColor(0xFA655D) : Component.translatable(str.getString());
         return text;
     }
 
-    public UIComponent enchant_level_select(int level, RegistryEntry<Enchantment> enchantment, int b_index, int bg_index){
+    public UIComponent enchant_level_select(int level, Holder<Enchantment> enchantment, int b_index, int bg_index){
 
         var name = enchantment_text(enchantment, level);
         ArrayList<UIComponent> levels = generate_levels(level, enchantment);
@@ -316,18 +316,18 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .horizontalAlignment(HorizontalAlignment.CENTER);
 
         // Index this enchantment so a loaded profile can re-select it without a real mouse click.
-        enchant_index.put(enchantment.getIdAsString(), new EnchantSlot(btn, level, horizontal));
+        enchant_index.put(enchantment.getRegisteredName(), new EnchantSlot(btn, level, horizontal));
 
         return head;
     }
 
     
 
-    public static UIComponent level_button(Text name, Consumer<ButtonComponent> fn){
+    public static UIComponent level_button(Component name, Consumer<ButtonComponent> fn){
         return UIComponents.button(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
-    // public static UIComponent enchant_button(Text name, Consumer<ButtonComponent> fn){
+    // public static UIComponent enchant_button(Component name, Consumer<ButtonComponent> fn){
     //     return UIComponents.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
     // }
 
@@ -343,7 +343,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         horizontal.horizontalSizing(Sizing.content());
     }
 
-    public void on_level_select(ButtonComponent lvl_btn, int level, int reg_level, RegistryEntry<Enchantment> ench){
+    public void on_level_select(ButtonComponent lvl_btn, int level, int reg_level, Holder<Enchantment> ench){
         lvl_btn.parent().horizontalSizing(Sizing.fixed(0));
         selected_level_button.active(true);
         
@@ -368,42 +368,42 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     /** Register level in output map. */
-    public void register_enchantment(RegistryEntry<Enchantment> ench, int level){
-        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new HashMap<>()));
-        if(present.getLeft() == selected_level_button.b_index){
-            present.getRight().put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
+    public void register_enchantment(Holder<Enchantment> ench, int level){
+        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Tuple<>(selected_level_button.b_index, new HashMap<>()));
+        if(present.getA() == selected_level_button.b_index){
+            present.getB().put(ench, new Tuple<Integer,EnchantmentButton>(level, selected_level_button));
             selected_enchantments.put(selected_level_button.bg_index, present);
         } else {
-            present.setLeft(selected_level_button.b_index);
+            present.setA(selected_level_button.b_index);
             ///Free all the buttons!!
-            for (var btn_pair : present.getRight().entrySet()) {
-                EnchantmentButton btn = btn_pair.getValue().getRight();
+            for (var btn_pair : present.getB().entrySet()) {
+                EnchantmentButton btn = btn_pair.getValue().getB();
                 ///Press the first level button to reset!
                 var temp_select_btn = selected_level_button;
                 selected_level_button = btn;
                 var first_lvl_btn = ((ButtonComponent)((ParentUIComponent)btn.parent().children().get(1)).children().get(0));
                 // 1.21.9: ButtonWidget#onPress needs the triggering input; owo only forwards to its
                 // press consumer, so a synthetic left-click stands in for a programmatic press.
-                first_lvl_btn.onPress(new MouseInput(0, 0));
+                first_lvl_btn.onPress(new MouseButtonInfo(0, 0));
                 selected_level_button = temp_select_btn;
             }
             ///Add new selection.
-            HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>> hm = new HashMap<>();
-            hm.put(ench, new Pair<Integer,EnchantmentButton>(level, selected_level_button));
-            present.setRight(hm);
+            HashMap<Holder<Enchantment>, Tuple<Integer, EnchantmentButton>> hm = new HashMap<>();
+            hm.put(ench, new Tuple<Integer,EnchantmentButton>(level, selected_level_button));
+            present.setB(hm);
         }
     }
 
     /** Unregister level in output map. */
-    public void unregister_enchantment(RegistryEntry<Enchantment> ench, int level){
-        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Pair<>(selected_level_button.b_index, new HashMap<>()));
-        present.getRight().remove(ench);
+    public void unregister_enchantment(Holder<Enchantment> ench, int level){
+        var present = selected_enchantments.getOrDefault(selected_level_button.bg_index, new Tuple<>(selected_level_button.b_index, new HashMap<>()));
+        present.getB().remove(ench);
     }
 
     /** Makes the button fancy. */
     public void animate_button(EnchantmentButton button){
         if(!applying){
-            client.player.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
+            minecraft.player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
         }
         button.enchanted = true;
     }
@@ -419,12 +419,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Builds the bottom-right profile control: a [+ | name] bar that grows a dropdown upward. */
     public UIComponent profile_selector(){
-        profile_label = UIComponents.label(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
+        profile_label = UIComponents.label(Component.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
         profile_label.shadow(true);
         profile_label.cursorStyle(CursorStyle.HAND);
         profile_label.margins(Insets.horizontal(6));
-        profile_label.tooltip(Text.literal("Select Profile"));
-        profile_label.mouseDown().subscribe((Click click, boolean dbl) -> {
+        profile_label.tooltip(Component.literal("Select Profile"));
+        profile_label.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if(click.button() == 0){
                 toggle_dropdown();
                 return true;
@@ -432,14 +432,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return false;
         });
 
-        var plus = UIComponents.label(Text.literal("+")).color(Color.ofArgb(0xFF40FF40));
+        var plus = UIComponents.label(Component.literal("+")).color(Color.ofArgb(0xFF40FF40));
         plus.shadow(true);
         plus.cursorStyle(CursorStyle.HAND);
         plus.margins(Insets.of(0, 0, 4, 4));
-        plus.tooltip(Text.literal("Add Profile"));
+        plus.tooltip(Component.literal("Add Profile"));
         plus.mouseEnter().subscribe(() -> plus.color(Color.ofArgb(0xFF80FF80)));
         plus.mouseLeave().subscribe(() -> plus.color(Color.ofArgb(0xFF40FF40)));
-        plus.mouseDown().subscribe((Click click, boolean dbl) -> {
+        plus.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if(click.button() == 0){
                 start_naming();
                 return true;
@@ -448,14 +448,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         });
 
         // Blue checkmark: overwrite the active profile with the current on-screen selection.
-        var save = UIComponents.label(Text.literal("✔")).color(Color.ofArgb(0xFF55AAFF));
+        var save = UIComponents.label(Component.literal("✔")).color(Color.ofArgb(0xFF55AAFF));
         save.shadow(true);
         save.cursorStyle(CursorStyle.HAND);
         save.margins(Insets.of(0, 0, 2, 4));
-        save.tooltip(Text.literal("Save Profile"));
+        save.tooltip(Component.literal("Save Profile"));
         save.mouseEnter().subscribe(() -> save.color(Color.ofArgb(0xFF80C8FF)));
         save.mouseLeave().subscribe(() -> save.color(Color.ofArgb(0xFF55AAFF)));
-        save.mouseDown().subscribe((Click click, boolean dbl) -> {
+        save.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if(click.button() == 0){
                 overwrite_active_profile();
                 return true;
@@ -473,7 +473,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         bar.padding(Insets.of(4, 4, 2, 4));
         bar.surface(Surface.DARK_PANEL);
         // Clicking anywhere in the bar (not just the name text) pulls up the dropdown.
-        bar.mouseDown().subscribe((Click click, boolean dbl) -> {
+        bar.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if(click.button() == 0){
                 toggle_dropdown();
                 return true;
@@ -493,11 +493,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     /** Repaints the bar label to reflect the active profile (white "None" or green name). */
     private void refresh_label(){
         if(default_active){
-            profile_label.text(Text.literal("Default")).color(Color.ofArgb(0xFFFFFFFF));
+            profile_label.text(Component.literal("Default")).color(Color.ofArgb(0xFFFFFFFF));
         } else if(active_profile != null){
-            profile_label.text(Text.literal(active_profile)).color(Color.ofArgb(0xFF40FF40));
+            profile_label.text(Component.literal(active_profile)).color(Color.ofArgb(0xFF40FF40));
         } else {
-            profile_label.text(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
+            profile_label.text(Component.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
         }
     }
 
@@ -552,14 +552,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         row.margins(Insets.vertical(1));
 
         if(kind == RowKind.USER){
-            var trash = UIComponents.label(Text.literal("✕")).color(Color.ofArgb(0xFFFF5555));
+            var trash = UIComponents.label(Component.literal("✕")).color(Color.ofArgb(0xFFFF5555));
             trash.shadow(true);
             trash.cursorStyle(CursorStyle.HAND);
             trash.margins(Insets.horizontal(4));
-            trash.tooltip(Text.literal("Delete Profile"));
+            trash.tooltip(Component.literal("Delete Profile"));
             trash.mouseEnter().subscribe(() -> trash.color(Color.ofArgb(0xFFFF0000)));
             trash.mouseLeave().subscribe(() -> trash.color(Color.ofArgb(0xFFFF5555)));
-            trash.mouseDown().subscribe((Click click, boolean dbl) -> {
+            trash.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
                 if(click.button() == 0){
                     delete_profile(name);
                     return true;
@@ -569,7 +569,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             row.child(trash);
         } else {
             // White profiles can't be deleted; keep their name aligned with the user rows.
-            row.child(UIComponents.label(Text.literal("")).margins(Insets.horizontal(4)));
+            row.child(UIComponents.label(Component.literal("")).margins(Insets.horizontal(4)));
         }
 
         String text = switch(kind){
@@ -584,11 +584,11 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         };
         int color = kind == RowKind.USER ? 0xFF40FF40 : 0xFFFFFFFF;
 
-        var label = UIComponents.label(Text.literal(active ? text + " ◄" : text)).color(Color.ofArgb(color));
+        var label = UIComponents.label(Component.literal(active ? text + " ◄" : text)).color(Color.ofArgb(color));
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
         label.margins(Insets.horizontal(2));
-        label.mouseDown().subscribe((Click click, boolean dbl) -> {
+        label.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if(click.button() == 0){
                 switch(kind){
                     case NONE -> select_none();
@@ -613,14 +613,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var box = UIComponents.textBox(Sizing.fixed(90));
         box.setMaxLength(32);
 
-        var confirm = UIComponents.label(Text.literal("✔")).color(Color.ofArgb(0xFF40FF40));
+        var confirm = UIComponents.label(Component.literal("✔")).color(Color.ofArgb(0xFF40FF40));
         confirm.shadow(true);
         confirm.cursorStyle(CursorStyle.HAND);
         confirm.margins(Insets.horizontal(4));
-        confirm.tooltip(Text.literal("Create Profile"));
-        confirm.mouseDown().subscribe((Click click, boolean dbl) -> {
+        confirm.tooltip(Component.literal("Create Profile"));
+        confirm.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if(click.button() == 0){
-                confirm_name(box.getText());
+                confirm_name(box.getValue());
                 return true;
             }
             return false;
@@ -736,7 +736,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         var profile = new EnchantmaxProfile(selected_enchantments);
         List<Profiles.Entry> entries = new ArrayList<>();
         for(var ple : profile.profile){
-            entries.add(new Profiles.Entry(ple.enchantment().getIdAsString(), ple.level()));
+            entries.add(new Profiles.Entry(ple.enchantment().getRegisteredName(), ple.level()));
         }
         Profiles.save(active_profile, entries);
     }
@@ -753,15 +753,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return; // Item can't reach this level (e.g. already higher) — skip it.
         }
         selected_level_button = slot.button;
-        ((ButtonComponent) levels.get(idx)).onPress(new MouseInput(0, 0)); // synthetic left-click (see above)
+        ((ButtonComponent) levels.get(idx)).onPress(new MouseButtonInfo(0, 0)); // synthetic left-click (see above)
     }
 
     /** Resets every currently-selected enchantment back to its base level (i.e. deselects all). */
     private void clear_all_selections(){
         ArrayList<String> ids = new ArrayList<>();
         for(var bucket_group : selected_enchantments.values()){
-            for(var ench : bucket_group.getRight().keySet()){
-                ids.add(ench.getIdAsString());
+            for(var ench : bucket_group.getB().keySet()){
+                ids.add(ench.getRegisteredName());
             }
         }
         for(String id : ids){
@@ -774,8 +774,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Plays the standard UI click sound. */
     private void play_click(){
-        if(client != null && client.player != null){
-            client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
+        if(minecraft != null && minecraft.player != null){
+            minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
         }
     }
 

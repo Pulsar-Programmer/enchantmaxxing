@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 25
 
       - name: Build
         run: |
@@ -36,5 +36,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           files: build/libs/!(*-sources).jar
           loaders: fabric
-          game-versions: 1.21.11
+          game-versions: |
+            26.1
+            26.1.1
+            26.1.2
           version-type: release

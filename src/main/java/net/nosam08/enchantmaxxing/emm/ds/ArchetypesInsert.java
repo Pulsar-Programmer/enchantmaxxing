@@ -1,10 +1,10 @@
 package net.nosam08.enchantmaxxing.emm.ds;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class ArchetypesInsert {
     public HashMap<Enchantment, HashSet<Enchantment>> inner = new HashMap<>();

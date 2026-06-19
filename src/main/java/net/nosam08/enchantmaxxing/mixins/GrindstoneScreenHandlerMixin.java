@@ -5,40 +5,39 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.GrindstoneScreenHandler;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.item.ItemStack;
 import net.nosam08.enchantmaxxing.tooltips.Enchantips;
 
 /**
  * Drops the active enchant task when an item is ground down. We hook the output slot's
- * {@code onTakeItem} — the grindstone's equivalent of the anvil's {@code onTakeOutput} — so the
- * task is only removed once the player actually takes the de-enchanted result, not when they
- * merely place or pull back an input. {@code GrindstoneScreenHandler$4} is the output slot
- * (the only inner slot that overrides {@code onTakeItem}).
+ * {@code onTake} so the task is only removed once the player actually takes the de-enchanted
+ * result, not when they merely place or pull back an input. {@code GrindstoneMenu$4} is the
+ * output slot (the only inner slot that overrides {@code onTake}).
  */
-@Mixin(targets = "net.minecraft.screen.GrindstoneScreenHandler$4")
+@Mixin(targets = "net.minecraft.world.inventory.GrindstoneMenu$4")
 public class GrindstoneScreenHandlerMixin {
 
-    @Inject(method = "onTakeItem", at = @At("HEAD"))
-    private void onGrindOutputTaken(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+    @Inject(method = "onTake", at = @At("HEAD"))
+    private void onGrindOutputTaken(Player player, ItemStack stack, CallbackInfo ci) {
         // ACTIVE_TASKS is client-side state; only act there.
-        if (!player.getEntityWorld().isClient()) return;
+        if (!player.level().isClientSide()) return;
 
-        ScreenHandler handler = player.currentScreenHandler;
-        if (!(handler instanceof GrindstoneScreenHandler grindstone)) return;
+        AbstractContainerMenu handler = player.containerMenu;
+        if (!(handler instanceof GrindstoneMenu grindstone)) return;
 
-        // Inputs are still present at HEAD (onTakeItem consumes them). Each input that carried
+        // Inputs are still present at HEAD (onTake consumes them). Each input that carried
         // enchantments had its own task keyed off it; grinding clears those enchantments, so drop
         // the corresponding tasks.
-        clearTaskFor(grindstone, GrindstoneScreenHandler.INPUT_1_ID);
-        clearTaskFor(grindstone, GrindstoneScreenHandler.INPUT_2_ID);
+        clearTaskFor(grindstone, GrindstoneMenu.INPUT_SLOT);
+        clearTaskFor(grindstone, GrindstoneMenu.ADDITIONAL_SLOT);
     }
 
-    private void clearTaskFor(GrindstoneScreenHandler grindstone, int slotIndex) {
-        ItemStack input = grindstone.getSlot(slotIndex).getStack();
-        if (input.isEmpty() || !input.hasEnchantments()) return;
+    private void clearTaskFor(GrindstoneMenu grindstone, int slotIndex) {
+        ItemStack input = grindstone.getSlot(slotIndex).getItem();
+        if (input.isEmpty() || !input.isEnchanted()) return;
         Enchantips.grindstone_task(input);
     }
 }

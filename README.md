@@ -82,9 +82,13 @@ Releases typically follow the (MILESTONE).(ISSUE).(COMMIT) pattern. Version 1.0.
 
 The following table represents a guide for the dependencies used in what versions.
 
+Starting with Minecraft 26.1, the game is **unobfuscated**: there are no Yarn mappings to download, the
+build uses the non-remapping `net.fabricmc.fabric-loom` plugin, and **Java 25+** is required to run and to build.
+
 | FTT               | Fabric Loader | Cloth Config | Owo Lib        | Mod Menu (optional) |
 | ----------------- | ------------- | ------------ | -------------- | ------------------- |
-| **2.0.0+1.21.11** | 0.19.3        | 21.11.153    | 0.13.0+1.21.11 | 17.0.0              |
+| **2.0.0+26.1.x**  | 0.19.3        | 26.1.154     | 0.13.0+26.1    | 18.0.0-beta.1       |
+| 2.0.0+1.21.11     | 0.19.3        | 21.11.153    | 0.13.0+1.21.11 | 17.0.0              |
 | 2.0.0+1.21.10     | 0.19.3        | 20.0.149     | 0.12.24+1.21.9 | 16.0.1              |
 | 2.0.0+1.21.9      | 0.19.3        | 20.0.149     | 0.12.24+1.21.9 | 16.0.1              |
 | 2.0.0+1.21.8      | 0.19.3        | 19.0.147     | 0.12.23+1.21.8 | 15.0.2              |

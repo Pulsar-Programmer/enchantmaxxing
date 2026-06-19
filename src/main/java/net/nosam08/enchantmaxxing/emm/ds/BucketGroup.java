@@ -2,9 +2,9 @@ package net.nosam08.enchantmaxxing.emm.ds;
 
 import java.util.ArrayList;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.tag.EnchantmentTags;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.EnchantmentTags;
 
 public class BucketGroup {
     public ArrayList<Bucket> inner;
@@ -49,7 +49,7 @@ public class BucketGroup {
     public boolean generally_contains_curse(Registry<Enchantment> reg){
         for(var x: inner){
             for(var y: x.inner){
-                if(reg.getEntry(y).isIn(EnchantmentTags.CURSE)) return true;
+                if(reg.wrapAsHolder(y).is(EnchantmentTags.CURSE)) return true;
             }
         }
         return false;

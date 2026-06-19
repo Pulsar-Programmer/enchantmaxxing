@@ -9,18 +9,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Tuple;
 import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 import net.nosam08.enchantmaxxing.aom.ds.SimEnchantment;
 import net.nosam08.enchantmaxxing.aom.ds.SimItem;
@@ -32,19 +29,19 @@ import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 public class AnvilOrdering {
     /**
      * Cache of solved orders, keyed by a content {@link #signature}. Previously keyed by
-     * {@code Pair<ItemStackKey, EnchantmaxProfile>} — but {@code net.minecraft.util.Pair} has no
+     * {@code Tuple<ItemStackKey, EnchantmaxProfile>} — but {@code net.minecraft.util.Tuple} has no
      * {@code equals}/{@code hashCode}, so every lookup missed and the (exponential) solve reran on
      * every menu open. A value-based string key makes it actually hit, and lets the solved order
      * be persisted and reloaded across restarts (see {@link #seed}/{@link #peek}). Concurrent
      * because the background solver thread writes to it while the client thread reads.
      */
-    public static ConcurrentHashMap<String, Pair<String, Integer>> STORE = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, Tuple<String, Integer>> STORE = new ConcurrentHashMap<>();
 
     /** Deterministic, restart-stable key for an (item, profile) pair: item id + base work
      * penalty + the sorted profile. The solved cost/order depend only on these. */
     public static String signature(ItemStackKey item, EnchantmaxProfile enchantments){
         var stack = item.inner();
-        var pwp_item = stack.get(DataComponentTypes.REPAIR_COST);
+        var pwp_item = stack.get(DataComponents.REPAIR_COST);
         int base_pwp = pwp_item != null ? pwp_item : 0;
 
         var entries = enchantments.profile.stream()
@@ -52,17 +49,17 @@ public class AnvilOrdering {
             .sorted()
             .collect(Collectors.joining(","));
 
-        return Registries.ITEM.getId(stack.getItem()) + "|" + base_pwp + "|" + entries;
+        return BuiltInRegistries.ITEM.getKey(stack.getItem()) + "|" + base_pwp + "|" + entries;
     }
 
     /** Returns the already-solved (order, cost) for this task, or null if not cached yet. */
-    public static Pair<String, Integer> peek(ItemStackKey item, EnchantmaxProfile enchantments){
+    public static Tuple<String, Integer> peek(ItemStackKey item, EnchantmaxProfile enchantments){
         return STORE.get(signature(item, enchantments));
     }
 
     /** Pre-populates the cache with a previously-solved order (used when loading from disk). */
     public static void seed(ItemStackKey item, EnchantmaxProfile enchantments, String order, int cost){
-        STORE.put(signature(item, enchantments), new Pair<>(order, cost));
+        STORE.put(signature(item, enchantments), new Tuple<>(order, cost));
     }
 
     /** Background solver thread so a large profile never freezes the client; results land in
@@ -79,7 +76,7 @@ public class AnvilOrdering {
     public static OrderString cached(ItemStackKey item, EnchantmaxProfile enchantments){
         var result = STORE.get(signature(item, enchantments));
         if(result == null) return null;
-        return new OrderString(item.inner(), result.getLeft(), result.getRight());
+        return new OrderString(item.inner(), result.getA(), result.getB());
     }
 
     /** Whether a solve for this task is still running in the background. */
@@ -95,10 +92,10 @@ public class AnvilOrdering {
     public static OrderString request(ItemStackKey item, EnchantmaxProfile enchantments){
         String key = signature(item, enchantments);
         var result = STORE.get(key);
-        if(result != null) return new OrderString(item.inner(), result.getLeft(), result.getRight());
+        if(result != null) return new OrderString(item.inner(), result.getA(), result.getB());
 
         if(PENDING.add(key)){
-            var pwp_item = item.inner().get(DataComponentTypes.REPAIR_COST);
+            var pwp_item = item.inner().get(DataComponents.REPAIR_COST);
             int base_pwp = pwp_item != null ? pwp_item : 0;
             var e = enchantments.profile.stream()
                 .map(SimEnchantment::from_enchantment)
@@ -129,14 +126,14 @@ public class AnvilOrdering {
      * objects (which carry the identifiers) to build the nested string. Runs off-thread; see
      * {@link #request}.
      */
-    public static Pair<String, Integer> solve(SimItem o, ArrayList<SimEnchantment> e){
+    public static Tuple<String, Integer> solve(SimItem o, ArrayList<SimEnchantment> e){
         if(e.isEmpty()){
-            return new Pair<String, Integer>("OBJ", 0);
+            return new Tuple<String, Integer>("OBJ", 0);
         }
         HashMap<String, Integer> memo = new HashMap<>();
         int cost = min_cost(o.pwp, pool_of(e), memo);
         String order = reconstruct(o, e, memo);
-        return new Pair<String, Integer>(order, cost);
+        return new Tuple<String, Integer>(order, cost);
     }
 
     /** Canonical pool representation: one {pwp, cost} pair per enchantment, identities dropped. */
@@ -261,8 +258,8 @@ public class AnvilOrdering {
     }
 
     /** Creates a String from the enchantment. */
-    public static String serialize_enchantment(EnchantmentLevelEntry entry){
-        return entry.enchantment().getIdAsString() + ";" + entry.level();
+    public static String serialize_enchantment(EnchantmentInstance entry){
+        return entry.enchantment().getRegisteredName() + ";" + entry.level();
     }
 
     /** Creates an ItemStack from the Enchantment. */
@@ -282,12 +279,10 @@ public class AnvilOrdering {
         
         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
         
-        RegistryWrapper<Enchantment> enchantmentRegistry = EnchantmaxBuilder.all_enchantments();
-        Optional<RegistryEntry.Reference<Enchantment>> enchantmentEntry = enchantmentRegistry.getOptional(
-            RegistryKey.of(RegistryKeys.ENCHANTMENT, id)
-        );
+        var enchantmentRegistry = EnchantmaxBuilder.all_enchantments();
+        Optional<Holder.Reference<Enchantment>> enchantmentEntry = enchantmentRegistry.get(id);
 
-        book.addEnchantment(enchantmentEntry.get(), level);
+        book.enchant(enchantmentEntry.get(), level);
         
         return book;
     }
