@@ -1,17 +1,17 @@
 package net.nosam08.enchantmaxxing.emm.component_data;
 
 import io.wispforest.owo.ui.container.ScrollContainer;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Sizing;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 
-public class BucketGroupScroller<C extends Component> extends ScrollContainer<C> {
+public class BucketGroupScroller<C extends UIComponent> extends ScrollContainer<C> {
 
     protected BucketGroupScroller(ScrollDirection direction, Sizing horizontalSizing, Sizing verticalSizing, C child) {
         super(direction, horizontalSizing, verticalSizing, child);
     }
 
-    public static <C extends Component> BucketGroupScroller<C> bucket_group_scroller(C child){
+    public static <C extends UIComponent> BucketGroupScroller<C> bucket_group_scroller(C child){
 
         BucketGroupScroller<C> h_scroller = new BucketGroupScroller<C>(ScrollDirection.HORIZONTAL, Sizing.fixed(0), Sizing.content(), child) ;
         

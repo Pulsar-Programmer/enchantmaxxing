@@ -7,13 +7,13 @@ import java.util.Stack;
 import org.jetbrains.annotations.NotNull;
 
 import io.wispforest.owo.ui.base.BaseOwoScreen;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.LabelComponent;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Color;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
@@ -38,14 +38,14 @@ import net.nosam08.enchantmaxxing.tooltips.ds.ItemStackKey;
 
 public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
-    ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
+    ArrayList<BucketGroupScroller<UIComponent>> horizontal_scrollers = new ArrayList<>();
 
     /** Number of task rows still showing "Calculating…" — used to refresh once a background solve lands. */
     private int loading_count = 0;
 
     @Override
     protected @NotNull OwoUIAdapter<FlowLayout> createAdapter() {
-        return OwoUIAdapter.create(this, Containers::verticalFlow);
+        return OwoUIAdapter.create(this, UIContainers::verticalFlow);
     }
 
     @Override
@@ -94,14 +94,14 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
         var active_tasks = tasks();
 
-        var flow = Containers.verticalFlow(Sizing.content(), Sizing.content())
+        var flow = UIContainers.verticalFlow(Sizing.content(), Sizing.content())
             .children(active_tasks)
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER)
             .margins(Insets.horizontal(3)
         );
 
-        var scroller = Containers.verticalScroll(Sizing.content(), Sizing.fill(), 
+        var scroller = UIContainers.verticalScroll(Sizing.content(), Sizing.fill(), 
             flow
         )
         .scrollbarThiccness(4)
@@ -109,7 +109,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
         
-        var padder = Containers.verticalFlow(Sizing.fill(85), Sizing.fill(85))
+        var padder = UIContainers.verticalFlow(Sizing.fill(85), Sizing.fill(85))
             .child(scroller)
             .padding(Insets.of(5))
             .surface(Surface.DARK_PANEL)
@@ -124,8 +124,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     /** Creates the tasks for the main display of the menu. Orders are computed off-thread; tasks
      * whose order isn't ready yet show a "Calculating…" row until the next tick refreshes them. */
-    public ArrayList<Component> tasks(){
-        ArrayList<Component> active_tasks = new ArrayList<>();
+    public ArrayList<UIComponent> tasks(){
+        ArrayList<UIComponent> active_tasks = new ArrayList<>();
         loading_count = 0;
         Enchantips.ACTIVE_TASKS.forEach((ItemStackKey k, EnchantmaxProfile v) -> {
             var ordering = AnvilOrdering.request(k, v);
@@ -140,13 +140,13 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     /** A placeholder row shown while a task's order is still being computed in the background. */
-    public Component loading_task(ItemStackKey k){
-        var label = Components.label(Text.literal("Calculating…"))
+    public UIComponent loading_task(ItemStackKey k){
+        var label = UIComponents.label(Text.literal("Calculating…"))
             .color(Color.ofArgb(0xFFFFFF55)) // soft yellow
             .shadow(true);
         label.margins(Insets.horizontal(4));
 
-        return Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        return UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(item_stack(k.inner()))
             .child(label)
             .verticalAlignment(VerticalAlignment.CENTER)
@@ -154,7 +154,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             .margins(Insets.vertical(2));
     }
 
-    public Component task(ItemStackKey k, OrderString order){
+    public UIComponent task(ItemStackKey k, OrderString order){
 
         var x_button = x_button(k, client);
 
@@ -162,7 +162,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
         var cost = cost_label(order.cost).margins(Insets.horizontal(2));
 
-        var task = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        var task = UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
         .children(Arrays.asList(graph_button, AnvilMenu.order(order), cost, x_button))
         // .padding(Insets.both(0, 2))
         .verticalAlignment(VerticalAlignment.CENTER)
@@ -180,8 +180,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     ///Creates the button that can delete the task.
-    public static Component x_button(ItemStackKey k, MinecraftClient client){
-        LabelComponent label = Components.label(Text.literal("✕"));
+    public static UIComponent x_button(ItemStackKey k, MinecraftClient client){
+        LabelComponent label = UIComponents.label(Text.literal("✕"));
         label.color(Color.ofArgb(0xFFFFFFFF)); // White
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
@@ -212,8 +212,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     ///Creates the button that opens the task's combine-order graph.
-    public static Component graph_button(OrderString order, MinecraftClient client){
-        LabelComponent label = Components.label(Text.literal("●"));
+    public static UIComponent graph_button(OrderString order, MinecraftClient client){
+        LabelComponent label = UIComponents.label(Text.literal("●"));
         label.color(Color.ofArgb(0xFFFFFFFF)); // White
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
@@ -241,7 +241,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     ///Creates the label of the cost.
-    public static Component cost_label(Integer cost){
+    public static UIComponent cost_label(Integer cost){
         var player = MinecraftClient.getInstance().player;
         int playerLevel = player != null ? player.experienceLevel : 0;
 
@@ -250,7 +250,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         // and the cost number renders invisibly.
         int color = (playerLevel >= cost ? 0xFF80FF20 : 0xFFFF6060);
 
-        LabelComponent label = Components.label(Text.literal(cost.toString()));
+        LabelComponent label = UIComponents.label(Text.literal(cost.toString()));
         label.color(Color.ofArgb(color)); // green if affordable, red if not
         label.shadow(true);
         label.tooltip(Text.literal("Total Level Cost"));
@@ -259,12 +259,12 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
     
     /** Builds the components based on the given order. */
-    public static Component order(OrderString order_string){
+    public static UIComponent order(OrderString order_string){
         var order = order_string.ordering;
         var obj = order_string.object;
 
         // int pending_pairs = 0;
-        Stack<Component> last_left = new Stack<Component>();
+        Stack<UIComponent> last_left = new Stack<UIComponent>();
         StringBuilder reading_buffer = new StringBuilder();
 
         for (int i = 0; i < order.length(); i++) {
@@ -276,7 +276,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             } else if (c == ')') {
                 // pending_pairs-=1;
                 var left = last_left.pop();
-                Component right;
+                UIComponent right;
                 if(!reading_buffer.isEmpty()){
                     right = item_if(reading_buffer.toString(), obj);
                     reading_buffer = new StringBuilder();
@@ -307,8 +307,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
 
     /** Creates a pair of items. */
-    public static Component item_pair(Component left, Component right){
-        var container = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+    public static UIComponent item_pair(UIComponent left, UIComponent right){
+        var container = UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
         .children(Arrays.asList(left, right))
         // .padding(Insets.both(0, 2))
         .surface(Surface.PANEL_INSET) //WELLS effect 
@@ -319,25 +319,25 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
     }
 
     /** Exactly item but handles if OBJ is given. To be used with the order component creator. */
-    public static Component item_if(String name, ItemStack obj){
+    public static UIComponent item_if(String name, ItemStack obj){
         return name.equals("OBJ") ? item_stack(obj) : item(name);
     }
 
     /** Creates an item component from the name of the item. */
-    public static Component item(String name){
+    public static UIComponent item(String name){
         Identifier item_id = Identifier.tryParse(name);
         ItemStack item_stack = item_id != null ?
             new ItemStack(Registries.ITEM.get(item_id), 1) :
             AnvilOrdering.deserialize_enchantment(name);
 
-        var item = Components.item(item_stack).showOverlay(true).setTooltipFromStack(true)
+        var item = UIComponents.item(item_stack).showOverlay(true).setTooltipFromStack(true)
         .margins(Insets.both(1, 0));
         return item;
     }
 
     /** Creates an item component from the ItemStack. */
-    public static Component item_stack(ItemStack obj){
-        var item = Components.item(obj).showOverlay(true).setTooltipFromStack(true)
+    public static UIComponent item_stack(ItemStack obj){
+        var item = UIComponents.item(obj).showOverlay(true).setTooltipFromStack(true)
         .margins(Insets.both(1, 0));
         return item;
     }

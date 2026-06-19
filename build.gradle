@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+	id 'fabric-loom' version '1.17-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -24,6 +24,7 @@ repositories {
 	maven { url = "https://maven.shedaniel.me" } // Cloth Config
 	maven { url = "https://maven.terraformersmc.com/releases/" } //mod menu
 	maven { url = "https://maven.wispforest.io" } // owo
+	maven { url = "https://jitpack.io" } // kdl4j, a transitive dependency of owo-lib 0.13.0+
 
 }
 

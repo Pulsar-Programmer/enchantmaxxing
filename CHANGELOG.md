@@ -1,3 +1,13 @@
+2.0.0+1.21.11
+- Updated to Minecraft 1.21.11
+- Bumped all dependencies to latest: Fabric API 0.141.4, Cloth Config 21.11.153, owo-lib 0.13.0, Mod Menu 17.0.0
+- Bumped build tooling: Fabric Loom 1.17, Gradle 9.6 (required by the newer dependencies)
+- Added JitPack repository (owo-lib 0.13.0 pulls in kdl4j transitively)
+- Migrated to the owo-lib 0.13.0 UI API rename: Component->UIComponent, ParentComponent->ParentUIComponent,
+  Components->UIComponents, Containers->UIContainers, OwoUIDrawContext->OwoUIGraphics
+- Fully-qualified net.minecraft.text.Text in EnchantmentButton (1.21.11 ButtonWidget added a nested Text type that shadowed it)
+- Fixed graph menu connector lines rendering above the item boxes (drawn as fill() quads instead of owo drawLine, which the new GUI renderer layered on top)
+
 2.0.0+1.21.10
 - Updated to Minecraft 1.21.10
 - Bumped Fabric API to 0.138.4 (owo-lib 0.12.24, Cloth Config 20.0.149, Mod Menu 16.0.1 unchanged — all 1.21.10 compatible)

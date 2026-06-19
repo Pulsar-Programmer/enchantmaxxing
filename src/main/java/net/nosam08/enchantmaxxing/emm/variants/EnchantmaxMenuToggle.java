@@ -2,7 +2,7 @@ package net.nosam08.enchantmaxxing.emm.variants;
 
 import java.util.ArrayList;
 
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -16,8 +16,8 @@ public class EnchantmaxMenuToggle extends EnchantmaxMenu {
         super(item, original);
     }
 
-    public ArrayList<Component> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
-        var list = new ArrayList<Component>();
+    public ArrayList<UIComponent> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
+        var list = new ArrayList<UIComponent>();
         for(var i = level + 1; i <= enchantment.value().getMaxLevel(); i++){
             var text = Text.translatable("enchantment.level." + Integer.toString(i));
             var lvl = Integer.valueOf(i);
@@ -28,7 +28,7 @@ public class EnchantmaxMenuToggle extends EnchantmaxMenu {
         return list;
     }
 
-    // public void on_enchant_click(ButtonComponent b, Component horizontal){
+    // public void on_enchant_click(ButtonComponent b, UIComponent horizontal){
     //     if(selected_level_button != null){
     //         selected_level_button.active = true;
     //         var selected_level_horizontal = selected_level_button.parent().children().get(1);

@@ -6,10 +6,9 @@ import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class EnchantmentButton extends ButtonComponent {
@@ -35,7 +34,9 @@ public class EnchantmentButton extends ButtonComponent {
 
     private float glintOffset = 0f;
 
-    public EnchantmentButton(Text message, Consumer<ButtonComponent> onPress, int b_index, int bg_index) {
+    // Fully-qualified: ButtonWidget (our superclass chain) gained a nested type named Text in
+    // 1.21.11, which would otherwise shadow net.minecraft.text.Text for this unqualified reference.
+    public EnchantmentButton(net.minecraft.text.Text message, Consumer<ButtonComponent> onPress, int b_index, int bg_index) {
         super(message, onPress);
         this.b_index = b_index;
         this.bg_index = bg_index;
@@ -55,7 +56,7 @@ public class EnchantmentButton extends ButtonComponent {
     // }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIGraphics context, int mouseX, int mouseY, float partialTicks, float delta) {
         super.draw(context, mouseX, mouseY, partialTicks, delta);
 
         ///Manually animate the glint for faster speeds.
@@ -68,7 +69,7 @@ public class EnchantmentButton extends ButtonComponent {
     }
 
     /** Creates the associated enchantment glint. */
-    private void drawEnchantmentGlint(OwoUIDrawContext context) {
+    private void drawEnchantmentGlint(OwoUIGraphics context) {
         // Get the button's bounds
         int x = this.x();
         int y = this.y();

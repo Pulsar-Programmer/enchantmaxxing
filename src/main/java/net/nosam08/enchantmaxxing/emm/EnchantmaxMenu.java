@@ -10,18 +10,18 @@ import org.jetbrains.annotations.NotNull;
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.LabelComponent;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Color;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
-import io.wispforest.owo.ui.core.ParentComponent;
+import io.wispforest.owo.ui.core.ParentUIComponent;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
@@ -57,8 +57,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     ///Associated data with the Menu instance.
     protected EnchantmentButton selected_level_button;
-    ArrayList<BucketGroupScroller<Component>> horizontal_scrollers = new ArrayList<>();
-    // ArrayList<ScrollContainer<Component>> vertical_scroller = new ArrayList<>();
+    ArrayList<BucketGroupScroller<UIComponent>> horizontal_scrollers = new ArrayList<>();
+    // ArrayList<ScrollContainer<UIComponent>> vertical_scroller = new ArrayList<>();
     HashMap<Integer, Pair<Integer, HashMap<RegistryEntry<Enchantment>, Pair<Integer, EnchantmentButton>>>> selected_enchantments = new HashMap<>();
 
     /// --- Profiles ---
@@ -83,8 +83,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     private static class EnchantSlot {
         final EnchantmentButton button;
         final int base_level;
-        final ParentComponent level_row;
-        EnchantSlot(EnchantmentButton button, int base_level, ParentComponent level_row) {
+        final ParentUIComponent level_row;
+        EnchantSlot(EnchantmentButton button, int base_level, ParentUIComponent level_row) {
             this.button = button;
             this.base_level = base_level;
             this.level_row = level_row;
@@ -125,7 +125,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     @Override
     protected @NotNull OwoUIAdapter<FlowLayout> createAdapter() {
-        return OwoUIAdapter.create(this, Containers::verticalFlow);
+        return OwoUIAdapter.create(this, UIContainers::verticalFlow);
     }
 
     @Override
@@ -137,14 +137,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
         var buttons = buttons();
 
-        var flow = Containers.verticalFlow(Sizing.content(), Sizing.content())
+        var flow = UIContainers.verticalFlow(Sizing.content(), Sizing.content())
             .children(buttons)
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER)
             .margins(Insets.horizontal(3)
         );
 
-        var scroller = Containers.verticalScroll(Sizing.content(), Sizing.fill(), 
+        var scroller = UIContainers.verticalScroll(Sizing.content(), Sizing.fill(), 
             flow
         )
         .scrollbarThiccness(4)
@@ -154,7 +154,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
         // vertical_scroller.add(scroller);
 
-        var padder = Containers.verticalFlow(Sizing.content(), Sizing.fill(85))
+        var padder = UIContainers.verticalFlow(Sizing.content(), Sizing.fill(85))
             .child(scroller)
             .padding(Insets.of(5))
             .surface(Surface.DARK_PANEL)
@@ -176,22 +176,22 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     /** Builds the bottom menu specifying the options. */
-    public Component bottom_menu(){
-        var back = Components.button(Text.translatable("option.enchantify.enchantmax.back"), button -> {
+    public UIComponent bottom_menu(){
+        var back = UIComponents.button(Text.translatable("option.enchantify.enchantmax.back"), button -> {
             client.setScreen(null);
         }).verticalSizing(Sizing.fixed(20));
 
-        var apply = Components.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
+        var apply = UIComponents.button(Text.translatable("option.enchantify.enchantmax.apply"), button -> {
             client.player.playSound(EnchantifyClient.CONFIG.anvil_apply_sound ? SoundEvents.BLOCK_ANVIL_USE : SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
             client.setScreen(null);
             var profile = new EnchantmaxProfile(selected_enchantments);
             Enchantips.start_tooltips(item, profile);
         }).verticalSizing(Sizing.fixed(20));
 
-        var item = Components.item(this.item.copy())
+        var item = UIComponents.item(this.item.copy())
         .margins(Insets.both(10, 2));
 
-        return Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        return UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(back)
             // .child(button_box(20))
             .child(item)
@@ -205,15 +205,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     /** Creates the tiny box separating the buckets. */
-    public static Component button_box(int px_size){
+    public static UIComponent button_box(int px_size){
         var box = new BoxComponent(Sizing.fixed(1), Sizing.fixed(px_size))
         .color(Color.ofRgb(0xDDDDDD)).margins(Insets.horizontal(5));
         return box;
     }
 
     /** Creates the buttons for the main part of the menu. */
-    public ArrayList<Component> buttons(){
-        ArrayList<Component> bucket_groups = new ArrayList<>();
+    public ArrayList<UIComponent> buttons(){
+        ArrayList<UIComponent> bucket_groups = new ArrayList<>();
         original = EnchantmaxBuilder.to_vec_curses(original, EnchantmaxBuilder.all_enchantments()); //TODO
         for(var i = 0; i < original.size(); i++){
             bucket_groups.add(bucket_group(original.get(i), i));
@@ -221,9 +221,9 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return bucket_groups;
     }
 
-    /** Creates the Component and also its proposed size. */
-    public Pair<Component, Integer> bucket(Bucket bucket, int b_index, int bg_index){
-        ArrayList<Component> children = new ArrayList<>();
+    /** Creates the UIComponent and also its proposed size. */
+    public Pair<UIComponent, Integer> bucket(Bucket bucket, int b_index, int bg_index){
+        ArrayList<UIComponent> children = new ArrayList<>();
         var reg = EnchantmaxBuilder.all_enchantments(); // we should not keep getting the registry TODO
         var levels = EnchantmaxBuilder.levels_map(item);
         bucket.to_vec_curses(reg).forEach(x -> {
@@ -232,16 +232,16 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             children.add(button);
         });
 
-        var vertical = Containers.verticalFlow(Sizing.content(), Sizing.content())
+        var vertical = UIContainers.verticalFlow(Sizing.content(), Sizing.content())
             .children(children)
             .verticalAlignment(VerticalAlignment.CENTER)
             .horizontalAlignment(HorizontalAlignment.CENTER);
 
-        return new Pair<Component, Integer>(vertical, children.size());
+        return new Pair<UIComponent, Integer>(vertical, children.size());
     }
 
-    public Component bucket_group(BucketGroup bucketGroup, int bg_index){
-        ArrayList<Component> children = new ArrayList<>();
+    public UIComponent bucket_group(BucketGroup bucketGroup, int bg_index){
+        ArrayList<UIComponent> children = new ArrayList<>();
         Integer size = 20;
         for(var i = 0; i < bucketGroup.inner.size(); i++){
             Bucket bucket = bucketGroup.inner.get(i);
@@ -250,14 +250,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             children.add(component.getLeft());
         }
 
-        ArrayList<Component> children_lines = new ArrayList<>();
-        for (Component component : children) {
+        ArrayList<UIComponent> children_lines = new ArrayList<>();
+        for (UIComponent component : children) {
             children_lines.add(component);
             children_lines.add(button_box(size));
         }
         children_lines.removeLast();
 
-        var container = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        var container = UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
         .children(children_lines)
         // .padding(Insets.both(0, 2))
         // .surface(Surface.PANEL_INSET) //WELLS effect 
@@ -276,8 +276,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         .margins(Insets.bottom(5));
     }
 
-    public ArrayList<Component> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
-        var list = new ArrayList<Component>();
+    public ArrayList<UIComponent> generate_levels(int level, RegistryEntry<Enchantment> enchantment){
+        var list = new ArrayList<UIComponent>();
         for(var i = level; i <= enchantment.value().getMaxLevel(); i++){
             var text = Text.translatable("enchantment.level." + Integer.toString(i));
             var lvl = Integer.valueOf(i);
@@ -294,12 +294,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         return text;
     }
 
-    public Component enchant_level_select(int level, RegistryEntry<Enchantment> enchantment, int b_index, int bg_index){
+    public UIComponent enchant_level_select(int level, RegistryEntry<Enchantment> enchantment, int b_index, int bg_index){
 
         var name = enchantment_text(enchantment, level);
-        ArrayList<Component> levels = generate_levels(level, enchantment);
+        ArrayList<UIComponent> levels = generate_levels(level, enchantment);
 
-        var horizontal = Containers.horizontalFlow(Sizing.fixed(0), Sizing.content())
+        var horizontal = UIContainers.horizontalFlow(Sizing.fixed(0), Sizing.content())
         .children(levels)
         .verticalAlignment(VerticalAlignment.CENTER)
         .horizontalAlignment(HorizontalAlignment.CENTER);
@@ -309,7 +309,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }, b_index, bg_index);
         btn.margins(Insets.horizontal(3));
 
-        var head = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        var head = UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
         .child(btn)
         .child(horizontal)
         .verticalAlignment(VerticalAlignment.CENTER)
@@ -323,15 +323,15 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     
 
-    public static Component level_button(Text name, Consumer<ButtonComponent> fn){
-        return Components.button(name, fn).verticalSizing(Sizing.fixed(20));
+    public static UIComponent level_button(Text name, Consumer<ButtonComponent> fn){
+        return UIComponents.button(name, fn).verticalSizing(Sizing.fixed(20));
     }
 
-    // public static Component enchant_button(Text name, Consumer<ButtonComponent> fn){
-    //     return Components.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
+    // public static UIComponent enchant_button(Text name, Consumer<ButtonComponent> fn){
+    //     return UIComponents.button(name, fn).margins(Insets.horizontal(3)).verticalSizing(Sizing.fixed(20));
     // }
 
-    public void on_enchant_click(ButtonComponent b, Component horizontal){
+    public void on_enchant_click(ButtonComponent b, UIComponent horizontal){
         if(selected_level_button != null){
             selected_level_button.active = true;
             var selected_level_horizontal = selected_level_button.parent().children().get(1);
@@ -381,7 +381,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
                 ///Press the first level button to reset!
                 var temp_select_btn = selected_level_button;
                 selected_level_button = btn;
-                var first_lvl_btn = ((ButtonComponent)((ParentComponent)btn.parent().children().get(1)).children().get(0));
+                var first_lvl_btn = ((ButtonComponent)((ParentUIComponent)btn.parent().children().get(1)).children().get(0));
                 // 1.21.9: ButtonWidget#onPress needs the triggering input; owo only forwards to its
                 // press consumer, so a synthetic left-click stands in for a programmatic press.
                 first_lvl_btn.onPress(new MouseInput(0, 0));
@@ -418,8 +418,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     /// ----------------------------------------------------------------------
 
     /** Builds the bottom-right profile control: a [+ | name] bar that grows a dropdown upward. */
-    public Component profile_selector(){
-        profile_label = Components.label(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
+    public UIComponent profile_selector(){
+        profile_label = UIComponents.label(Text.literal("None")).color(Color.ofArgb(0xFFFFFFFF));
         profile_label.shadow(true);
         profile_label.cursorStyle(CursorStyle.HAND);
         profile_label.margins(Insets.horizontal(6));
@@ -432,7 +432,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return false;
         });
 
-        var plus = Components.label(Text.literal("+")).color(Color.ofArgb(0xFF40FF40));
+        var plus = UIComponents.label(Text.literal("+")).color(Color.ofArgb(0xFF40FF40));
         plus.shadow(true);
         plus.cursorStyle(CursorStyle.HAND);
         plus.margins(Insets.of(0, 0, 4, 4));
@@ -448,7 +448,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         });
 
         // Blue checkmark: overwrite the active profile with the current on-screen selection.
-        var save = Components.label(Text.literal("✔")).color(Color.ofArgb(0xFF55AAFF));
+        var save = UIComponents.label(Text.literal("✔")).color(Color.ofArgb(0xFF55AAFF));
         save.shadow(true);
         save.cursorStyle(CursorStyle.HAND);
         save.margins(Insets.of(0, 0, 2, 4));
@@ -463,7 +463,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return false;
         });
 
-        var bar = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        var bar = UIContainers.horizontalFlow(Sizing.content(), Sizing.content())
             .child(plus)
             .child(save)
             .child(button_box(16))
@@ -481,7 +481,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return false;
         });
 
-        profile_area = Containers.verticalFlow(Sizing.content(), Sizing.content());
+        profile_area = UIContainers.verticalFlow(Sizing.content(), Sizing.content());
         profile_area.child(bar);
         profile_area.verticalAlignment(VerticalAlignment.BOTTOM);
         profile_area.horizontalAlignment(HorizontalAlignment.RIGHT);
@@ -528,7 +528,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     /** Builds the list: white "None", then the white "Default" (if this item has one), then user
      * profiles. White profiles carry no delete handle; user profiles do. */
     private FlowLayout build_dropdown(){
-        FlowLayout list = Containers.verticalFlow(Sizing.content(), Sizing.content());
+        FlowLayout list = UIContainers.verticalFlow(Sizing.content(), Sizing.content());
         list.horizontalAlignment(HorizontalAlignment.LEFT);
         list.padding(Insets.of(4));
         list.surface(Surface.DARK_PANEL);
@@ -545,14 +545,14 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     }
 
     /** One dropdown entry: a red delete handle (user profiles only) plus the clickable name. */
-    private Component dropdown_row(RowKind kind, String name){
-        FlowLayout row = Containers.horizontalFlow(Sizing.content(), Sizing.content());
+    private UIComponent dropdown_row(RowKind kind, String name){
+        FlowLayout row = UIContainers.horizontalFlow(Sizing.content(), Sizing.content());
         row.verticalAlignment(VerticalAlignment.CENTER);
         row.horizontalAlignment(HorizontalAlignment.LEFT);
         row.margins(Insets.vertical(1));
 
         if(kind == RowKind.USER){
-            var trash = Components.label(Text.literal("✕")).color(Color.ofArgb(0xFFFF5555));
+            var trash = UIComponents.label(Text.literal("✕")).color(Color.ofArgb(0xFFFF5555));
             trash.shadow(true);
             trash.cursorStyle(CursorStyle.HAND);
             trash.margins(Insets.horizontal(4));
@@ -569,7 +569,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             row.child(trash);
         } else {
             // White profiles can't be deleted; keep their name aligned with the user rows.
-            row.child(Components.label(Text.literal("")).margins(Insets.horizontal(4)));
+            row.child(UIComponents.label(Text.literal("")).margins(Insets.horizontal(4)));
         }
 
         String text = switch(kind){
@@ -584,7 +584,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         };
         int color = kind == RowKind.USER ? 0xFF40FF40 : 0xFFFFFFFF;
 
-        var label = Components.label(Text.literal(active ? text + " ◄" : text)).color(Color.ofArgb(color));
+        var label = UIComponents.label(Text.literal(active ? text + " ◄" : text)).color(Color.ofArgb(color));
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
         label.margins(Insets.horizontal(2));
@@ -610,10 +610,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         if(naming_row != null){
             return;
         }
-        var box = Components.textBox(Sizing.fixed(90));
+        var box = UIComponents.textBox(Sizing.fixed(90));
         box.setMaxLength(32);
 
-        var confirm = Components.label(Text.literal("✔")).color(Color.ofArgb(0xFF40FF40));
+        var confirm = UIComponents.label(Text.literal("✔")).color(Color.ofArgb(0xFF40FF40));
         confirm.shadow(true);
         confirm.cursorStyle(CursorStyle.HAND);
         confirm.margins(Insets.horizontal(4));
@@ -626,7 +626,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return false;
         });
 
-        naming_row = Containers.horizontalFlow(Sizing.content(), Sizing.content());
+        naming_row = UIContainers.horizontalFlow(Sizing.content(), Sizing.content());
         naming_row.child(box);
         naming_row.child(confirm);
         naming_row.verticalAlignment(VerticalAlignment.CENTER);

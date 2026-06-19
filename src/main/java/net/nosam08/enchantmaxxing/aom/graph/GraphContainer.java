@@ -3,12 +3,11 @@ package net.nosam08.enchantmaxxing.aom.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.component.UIComponents;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
@@ -27,7 +26,8 @@ public class GraphContainer extends FlowLayout {
     private static final int BOX = 32;
     private static final int PAD = 18;
 
-    private static final Color LINE_COLOR = Color.ofArgb(0xFFFFFFFF);
+    private static final int LINE_COLOR = 0xFFFFFFFF;
+    private static final double LINE_THICKNESS = 1.5;
     private static final int JUNCTION_COLOR = 0xFFFFFFFF;
     private static final int JUNCTION_HALF = 3;
 
@@ -52,8 +52,8 @@ public class GraphContainer extends FlowLayout {
 
     /** A bordered box holding the leaf's item, with the vanilla tooltip on hover. */
     private static FlowLayout leaf_box(OrderNode node) {
-        FlowLayout box = Containers.verticalFlow(Sizing.fixed(BOX), Sizing.fixed(BOX));
-        box.child(Components.item(node.stack).showOverlay(true).setTooltipFromStack(true));
+        FlowLayout box = UIContainers.verticalFlow(Sizing.fixed(BOX), Sizing.fixed(BOX));
+        box.child(UIComponents.item(node.stack).showOverlay(true).setTooltipFromStack(true));
         box.surface(Surface.DARK_PANEL.and(Surface.outline(0xFFFFFFFF)));
         box.horizontalAlignment(HorizontalAlignment.CENTER);
         box.verticalAlignment(VerticalAlignment.CENTER);
@@ -79,14 +79,18 @@ public class GraphContainer extends FlowLayout {
     }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        // Edges first so the boxes/junctions paint over the line ends.
+    public void draw(OwoUIGraphics context, int mouseX, int mouseY, float partialTicks, float delta) {
+        // Edges first so the boxes/junctions paint over the line ends. We draw them as rotated
+        // fill() quads rather than owo's drawLine(): drawLine submits a LineElementRenderState on a
+        // separate pipeline that the 1.21.6+ GUI renderer layers ABOVE the item/panel pipelines, so
+        // the lines floated on top of the boxes. fill() shares the same colored-quad pipeline as the
+        // junctions and obeys submission order, keeping the edges underneath the leaf boxes.
         for (OrderNode node : this.nodes) {
             if (node.leaf) continue;
             int px = center_x(node);
             int py = center_y(node);
-            context.drawLine(px, py, center_x(node.left), center_y(node.left), 1.5, LINE_COLOR);
-            context.drawLine(px, py, center_x(node.right), center_y(node.right), 1.5, LINE_COLOR);
+            draw_edge(context, px, py, center_x(node.left), center_y(node.left));
+            draw_edge(context, px, py, center_x(node.right), center_y(node.right));
         }
 
         // Combine junctions as small square markers.
@@ -99,5 +103,26 @@ public class GraphContainer extends FlowLayout {
 
         // Then the leaf boxes (children).
         super.draw(context, mouseX, mouseY, partialTicks, delta);
+    }
+
+    /**
+     * Draws a connector as a thin rotated rectangle via {@link OwoUIGraphics#fill}, so it uses the
+     * standard colored-quad GUI pipeline (same as the junctions) and stays beneath the leaf boxes,
+     * instead of owo's drawLine() which renders on a pipeline layered above them.
+     */
+    private static void draw_edge(OwoUIGraphics context, int x1, int y1, int x2, int y2) {
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double len = Math.sqrt(dx * dx + dy * dy);
+        if (len < 1e-3) return;
+
+        int half = Math.max(1, (int) Math.round(LINE_THICKNESS / 2));
+        var matrices = context.getMatrices();
+        matrices.pushMatrix();
+        matrices.translate((float) x1, (float) y1);
+        matrices.rotate((float) Math.atan2(dy, dx));
+        // Rectangle runs along +x from the origin (x1,y1) to the far node, centred on the axis.
+        context.fill(0, -half, (int) Math.round(len), half, LINE_COLOR);
+        matrices.popMatrix();
     }
 }

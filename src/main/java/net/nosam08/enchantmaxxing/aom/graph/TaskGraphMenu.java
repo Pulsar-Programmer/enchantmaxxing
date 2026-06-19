@@ -3,8 +3,8 @@ package net.nosam08.enchantmaxxing.aom.graph;
 import org.jetbrains.annotations.NotNull;
 
 import io.wispforest.owo.ui.base.BaseOwoScreen;
-import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.component.UIComponents;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Color;
@@ -60,7 +60,7 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
 
     @Override
     protected @NotNull OwoUIAdapter<FlowLayout> createAdapter() {
-        return OwoUIAdapter.create(this, Containers::verticalFlow);
+        return OwoUIAdapter.create(this, UIContainers::verticalFlow);
     }
 
     @Override
@@ -78,9 +78,9 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
             ? this.client.player.experienceLevel : 0;
         int cost_color = 0xFF000000 | (player_level >= order.cost ? 0x80FF20 : 0xFF6060);
 
-        FlowLayout header = Containers.verticalFlow(Sizing.content(), Sizing.content());
-        header.child(Components.label(subject.getName()).color(Color.ofArgb(0xFFFFFFFF)).shadow(true));
-        header.child(Components.label(Text.literal("Cost: " + order.cost))
+        FlowLayout header = UIContainers.verticalFlow(Sizing.content(), Sizing.content());
+        header.child(UIComponents.label(subject.getName()).color(Color.ofArgb(0xFFFFFFFF)).shadow(true));
+        header.child(UIComponents.label(Text.literal("Cost: " + order.cost))
             .color(Color.ofArgb(cost_color)).shadow(true).margins(Insets.top(2)));
         header.horizontalAlignment(HorizontalAlignment.CENTER);
         header.verticalAlignment(VerticalAlignment.CENTER);
@@ -100,13 +100,13 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
         // Content-sized scroller (so the outer panel can centre it horizontally). Sizing.expand()
         // makes it take the height *remaining* after the header — Sizing.fill() would be 100% of the
         // panel and overflow past the bottom, cutting off the lowest graph rows.
-        var scroller = Containers.verticalScroll(Sizing.content(), Sizing.expand(), this.h_scroll)
+        var scroller = UIContainers.verticalScroll(Sizing.content(), Sizing.expand(), this.h_scroll)
             .scrollbarThiccness(4)
             .scrollbar(ScrollContainer.Scrollbar.vanilla());
         scroller.horizontalAlignment(HorizontalAlignment.CENTER);
         scroller.verticalAlignment(VerticalAlignment.CENTER);
 
-        FlowLayout padder = Containers.verticalFlow(Sizing.fill(90), Sizing.fill(90));
+        FlowLayout padder = UIContainers.verticalFlow(Sizing.fill(90), Sizing.fill(90));
         padder.child(header);
         padder.child(scroller);
         padder.padding(Insets.of(8));
