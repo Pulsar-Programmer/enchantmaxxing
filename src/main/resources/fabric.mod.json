@@ -15,6 +15,7 @@
 	"license": "CC0-1.0",
 	"icon": "assets/enchantmaxxing/icon.png",
 	"environment": "client",
+	"accessWidener": "enchantify.accesswidener",
 	"entrypoints": {
 		"client": [
 			"net.nosam08.enchantmaxxing.EnchantifyClient"

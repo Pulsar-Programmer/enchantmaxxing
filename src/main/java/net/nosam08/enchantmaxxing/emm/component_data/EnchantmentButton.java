@@ -2,15 +2,30 @@ package net.nosam08.enchantmaxxing.emm.component_data;
 
 import java.util.function.Consumer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class EnchantmentButton extends ButtonComponent {
+
+    /**
+     * GUI-space enchantment glint pipeline. Reuses vanilla's POSITION_TEX_COLOR snippet
+     * (vertex shader core/gui, fragment core/position_tex_color, Sampler0 plus the
+     * Projection/DynamicTransforms uniforms) so it draws like any GUI texture, but swaps
+     * the blend for the additive GLINT function so the glint texture glows instead of
+     * being a flat ~10% alpha overlay. The snippet is exposed via enchantify.accesswidener.
+     */
+    private static final RenderPipeline ENCHANT_GLINT_PIPELINE = RenderPipeline
+        .builder(RenderPipelines.POSITION_TEX_COLOR_SNIPPET)
+        .withLocation(Identifier.of("enchantify", "pipeline/enchant_glint"))
+        .withBlend(BlendFunction.GLINT)
+        .build();
 
     public boolean enchanted = false;
     /** Tracks the index of the bucket. */
@@ -60,20 +75,18 @@ public class EnchantmentButton extends ButtonComponent {
         int width = this.width();
         int height = this.height();
         
-        // Use vanilla's enchantment glint rendering. The glint render layer
-        // manages its own blend state in 1.21.5+ (RenderSystem.enableBlend/
-        // disableBlend were removed in the render pipeline overhaul).
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        
-        // This renders the enchantment glint texture
+        // Draw the scrolling enchantment glint overlay. As of 1.21.6 DrawContext#drawTexture
+        // takes a RenderPipeline instead of a RenderLayer function, and RenderSystem shader-color
+        // state was removed in favor of the per-call color argument (the render pipeline overhaul).
+        // The additive GLINT pipeline makes the texture glow rather than tint the button flat.
         context.drawTexture(
-            (_id) -> RenderLayer.getGlint(),
+            ENCHANT_GLINT_PIPELINE,
             ItemRenderer.ITEM_ENCHANTMENT_GLINT,
             x, y,           // x, y position
             glintOffset, glintOffset,     // u, v texture coordinates (float)
             width, height,  // width, height to draw
-            1, 1,         // texture width, height
-            0x1AD4FFFF      // color (not sure this does much lol)
+            1, 1,         // texture region width, height
+            0x1AD4FFFF      // color tint (not sure this does much lol)
         );
     }
 }

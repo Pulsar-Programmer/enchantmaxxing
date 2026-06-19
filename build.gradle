@@ -10,6 +10,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/enchantify.accesswidener")
+}
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -26,6 +30,16 @@ repositories {
 fabricApi {
 	configureDataGeneration {
 		client = true
+	}
+}
+
+// Multi-version libraries (owo, mod menu, cloth) can transitively request a Fabric API
+// built for a newer Minecraft version, and Gradle's conflict resolution would pick that
+// higher version — which then refuses to load on our target MC. Pin Fabric API to the
+// version declared in gradle.properties so the runtime always matches minecraft_version.
+configurations.all {
+	resolutionStrategy {
+		force "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	}
 }
 
