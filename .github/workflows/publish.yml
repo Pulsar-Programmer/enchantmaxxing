@@ -26,6 +26,18 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
 
+      # Pull just the top section of CHANGELOG.md (from the first version
+      # header down to — but not including — the next one) into a file we can
+      # hand to mc-publish as the release notes.
+      - name: Extract latest changelog section
+        run: |
+          awk '
+            /^[0-9]+\.[0-9]+\.[0-9]+\+/ { if (seen) exit; seen=1 }
+            seen { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          echo "---- release notes ----"
+          cat RELEASE_NOTES.md
+
       - name: Publish
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -36,8 +48,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           files: build/libs/!(*-sources).jar
           loaders: fabric
-          game-versions: |
-            26.1
-            26.1.1
-            26.1.2
+          # game-versions and dependencies are inferred from fabric.mod.json
+          # (minecraft ">=26.1 <26.2"), so the supported-versions list lives in
+          # exactly one place instead of being duplicated here.
           version-type: release
+          changelog-file: RELEASE_NOTES.md
+
+      # Sync the Modrinth project description (body) from README.md so the
+      # dependency chart on the project page stays current with every release.
+      - name: Sync Modrinth description from README
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: |
+          jq -Rs '{body: .}' README.md > body.json
+          curl -sS --fail-with-body \
+            -X PATCH "https://api.modrinth.com/v2/project/ftt" \
+            -H "Authorization: $MODRINTH_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data @body.json
+          echo "Modrinth description synced from README.md"

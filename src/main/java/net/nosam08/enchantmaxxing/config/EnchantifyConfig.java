@@ -1,8 +1,10 @@
 package net.nosam08.enchantmaxxing.config;
 
+import main.walksy.lib.core.config.local.options.type.WalksyLibColor;
+
 public class EnchantifyConfig {
     /**The color of enchantments that appear under the item. */
-    public Integer hoverColor = 0xFFA500;
+    public WalksyLibColor hoverColor = new WalksyLibColor(0xFFA500);
     
     /** Skips the `X` button press required to start maxing out an item. */
     //automatically applies the default profile of the item
@@ -28,7 +30,7 @@ public class EnchantifyConfig {
     public boolean do_afterfuse = false; //should be turned on in later versions of the Autofuse Update
 
     /** Determines whether to use the Anvil sound when clicking apply to your item. */
-    public boolean anvil_apply_sound = true;
+    public boolean anvil_apply_sound = false;
 
     /** Determines whether to implement the fancy menu or the regular one. */
     public boolean do_fancy_menu = false; //TODO

@@ -66,8 +66,6 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     private String active_profile = null;
     /** True when the read-only white "Default" profile is the active one. */
     private boolean default_active = false;
-    /** Suppresses per-edit auto-save (and selection sounds) while a profile is being applied in bulk. */
-    private boolean applying = false; //consider removing this
     /** Bottom-right container holding the optional dropdown/naming row above the [+ | name] bar. */
     private FlowLayout profile_area;
     /** Shows white "None" or the green active profile name. */
@@ -402,9 +400,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     /** Makes the button fancy. */
     public void animate_button(EnchantmentButton button){
-        if(!applying){
-            minecraft.player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
-        }
+        minecraft.player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
         button.enchanted = true;
     }
 
@@ -678,12 +674,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         }
         default_active = true;
         active_profile = null;
-        applying = true;
         clear_all_selections();
         for(Profiles.Entry entry : entries){
             apply_selection(entry.id(), entry.level());
         }
-        applying = false;
         refresh_label();
         play_click();
     }
@@ -693,12 +687,10 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         close_dropdown();
         default_active = false;
         active_profile = name;
-        applying = true;
         clear_all_selections();
         for(Profiles.Entry entry : Profiles.load(name)){
             apply_selection(entry.id(), entry.level());
         }
-        applying = false;
 
         refresh_label();
         play_click();

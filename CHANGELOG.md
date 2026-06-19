@@ -1,3 +1,15 @@
+2.1.0+26.1.x
+- Switched the config library from Cloth Config to WalksyLib (1.0.11+26.1, pulled from the Modrinth maven)
+  - All existing config options are unchanged: Max Out Items by Default, Enchantment Tooltip Hover Color,
+    Static Enchantmax Notes, Do Afterfuse in Menu, Anvil Apply Sound, Fancy Menu, Force Combinable Enchantments, Curse Order
+  - WalksyLib now owns persistence too — config is read/written by the library at `config/enchantify.json`
+    (the old Jankson-based `config/enchantify.json5` and `Filesystem` helper were removed). Settings are not
+    auto-migrated from the old file; re-set them once in the new screen if upgrading from 2.0.0
+  - The config screen is now provided by WalksyLib's own ModMenu integration via a `walksylib` entrypoint,
+    so the mod's own ModMenu entrypoint (`EnchantifyModMenu`) is gone
+  - `hoverColor` is now a `WalksyLibColor` (supports rainbow/pulse), serialized with the rest of the config
+- Replaces dependency `cloth-config` with `walksylib` in fabric.mod.json and swaps the shedaniel maven for the Modrinth maven
+
 2.0.0+26.1.x
 - Updated to Minecraft 26.1 — the first unobfuscated Minecraft version (new year-based version scheme)
 - Single jar covers the whole 26.1 patch line (26.1, 26.1.1, 26.1.2): fabric.mod.json declares `minecraft ">=26.1 <26.2"`,

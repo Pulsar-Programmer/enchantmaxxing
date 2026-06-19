@@ -21,8 +21,8 @@
 			"net.nosam08.enchantmaxxing.EnchantifyClient"
 		],
 
-		"modmenu": [
-			"net.nosam08.enchantmaxxing.config.EnchantifyModMenu"
+		"walksylib": [
+			"net.nosam08.enchantmaxxing.config.EnchantifyWalksyApi"
 		]
 	},
 	"mixins": [
@@ -34,7 +34,7 @@
 		"java": ">=25",
 
 		"fabric-api": ">=${fabric_version}",
-		"cloth-config": ">=${cloth_config}",
+		"walksylib": ">=${walksylib_version}",
 		"owo": ">=${owo_version}"
 	},
 	"suggests": {

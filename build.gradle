@@ -21,7 +21,7 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 
-	maven { url = "https://maven.shedaniel.me" } // Cloth Config
+	maven { url = "https://api.modrinth.com/maven" } // WalksyLib
 	maven { url = "https://maven.terraformersmc.com/releases/" } //mod menu
 	maven { url = "https://maven.wispforest.io" } // owo
 	maven { url = "https://jitpack.io" } // kdl4j, a transitive dependency of owo-lib 0.13.0+
@@ -54,9 +54,10 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Cloth Config
-	api("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config}") {
-        exclude(group: "net.fabricmc.fabric-api") //maybe we include and get rid of previous statement?
+	// WalksyLib — builder-based config library that supplies the ModMenu config screen.
+	// Pulled from the Modrinth maven; excludes Fabric API so our pinned version wins (see resolutionStrategy above).
+	implementation("maven.modrinth:walksylib:${project.walksylib_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
     }
 
 	//Mod Menu
@@ -73,7 +74,7 @@ processResources {
 		"loader_version": project.loader_version,
         "minecraft_version": project.minecraft_version,
         "fabric_version": project.fabric_version,
-        "cloth_config": project.cloth_config,
+        "walksylib_version": project.walksylib_version,
         "owo_version": project.owo_version,
         "mod_menu": project.mod_menu
     ])
@@ -84,7 +85,7 @@ processResources {
 			"loader_version": project.loader_version,
             "minecraft_version": project.minecraft_version,
             "fabric_version": project.fabric_version,
-            "cloth_config": project.cloth_config,
+            "walksylib_version": project.walksylib_version,
             "owo_version": project.owo_version,
             "mod_menu": project.mod_menu
         ])

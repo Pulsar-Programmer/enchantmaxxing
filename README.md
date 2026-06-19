@@ -85,9 +85,9 @@ The following table represents a guide for the dependencies used in what version
 Starting with Minecraft 26.1, the game is **unobfuscated**: there are no Yarn mappings to download, the
 build uses the non-remapping `net.fabricmc.fabric-loom` plugin, and **Java 25+** is required to run and to build.
 
-| FTT               | Fabric Loader | Cloth Config | Owo Lib        | Mod Menu (optional) |
+| FTT               | Fabric Loader | Config Lib¹  | Owo Lib        | Mod Menu (optional) |
 | ----------------- | ------------- | ------------ | -------------- | ------------------- |
-| **2.0.0+26.1.x**  | 0.19.3        | 26.1.154     | 0.13.0+26.1    | 18.0.0-beta.1       |
+| **2.1.0+26.1.x**  | 0.19.3        | 1.0.11+26.1  | 0.13.0+26.1    | 18.0.0-beta.1       |
 | 2.0.0+1.21.11     | 0.19.3        | 21.11.153    | 0.13.0+1.21.11 | 17.0.0              |
 | 2.0.0+1.21.10     | 0.19.3        | 20.0.149     | 0.12.24+1.21.9 | 16.0.1              |
 | 2.0.0+1.21.9      | 0.19.3        | 20.0.149     | 0.12.24+1.21.9 | 16.0.1              |
@@ -96,3 +96,7 @@ build uses the non-remapping `net.fabricmc.fabric-loom` plugin, and **Java 25+**
 | 2.0.0+1.21.6      | 0.19.3        | 19.0.147     | 0.12.21+1.21.6 | 15.0.2              |
 | 2.0.0+1.21.5      | 0.19.3        | 18.0.145     | 0.12.21+1.21.5 | 14.0.2              |
 | 2.0.0+1.21.4      | 0.19.3        | 17.0.144     | 0.12.20+1.21.4 | 13.0.3              |
+
+¹ **Config Lib**: from `2.1.0+26.1.x` onward FTT uses [WalksyLib](https://modrinth.com/mod/walksylib) for its
+config screen and persistence (the value shown is the WalksyLib version). Releases `2.0.0` and earlier used
+[Cloth Config](https://modrinth.com/mod/cloth-config) instead.

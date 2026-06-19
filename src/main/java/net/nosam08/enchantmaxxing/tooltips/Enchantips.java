@@ -31,7 +31,7 @@ public class Enchantips {
         for (var ench_level : selected_enchantments.profile) {
             var name = Enchantment.getFullname(ench_level.enchantment(), ench_level.level());
             var insert_idx = enchantment_line_idx(stack);
-            lines.add(insert_idx, Component.translatable(name.getString()).withColor(EnchantifyClient.CONFIG.hoverColor));
+            lines.add(insert_idx, Component.translatable(name.getString()).withColor(EnchantifyClient.CONFIG.hoverColor.getRGB() & 0xFFFFFF));
         }
     }
 

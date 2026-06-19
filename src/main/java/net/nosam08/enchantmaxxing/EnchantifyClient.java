@@ -48,7 +48,12 @@ public class EnchantifyClient implements ClientModInitializer {
             || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
 
-    public static EnchantifyConfig CONFIG = Filesystem.load_config();
+    /**
+     * In-memory config holder. WalksyLib owns persistence: it reads {@code config/enchantify.json}
+     * at startup (Minecraft constructor tail) and applies the saved values into this instance via the
+     * setters wired up in {@link net.nosam08.enchantmaxxing.config.EnchantifyConfigDefinition}.
+     */
+    public static EnchantifyConfig CONFIG = new EnchantifyConfig();
 
     /**
      * Controls-screen category for this mod's keybinds. As of 1.21.9 KeyMapping takes a
@@ -84,10 +89,6 @@ public class EnchantifyClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Tests.testing();
-
-        // if (FabricLoader.getInstance().isModLoaded("modmenu")) {
-        //     CONFIG = EnchantifyModMenu.load();
-        // }
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
 			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, keyInput) -> {
