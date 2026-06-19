@@ -1,3 +1,15 @@
+2.0.0+1.21.9
+- Updated to Minecraft 1.21.9
+- Bumped dependencies: Fabric API 0.134.1, Cloth Config 20.0.149, owo-lib 0.12.24, Mod Menu 16.0.1
+- Bumped build tooling for 1.21.9 mappings: Fabric Loom 1.11, Gradle 8.14.3
+- Adapted to 1.21.9 API changes:
+  - PlayerEntity.getWorld() -> getEntityWorld()
+  - Screen.hasShiftDown() removed; added EnchantifyClient.hasShiftDown() helper (queries GLFW via InputUtil)
+  - KeyBinding now takes a KeyBinding.Category instead of a String category (added enchantify:main category + lang key)
+  - ScreenKeyboardEvents.afterKeyPress and KeyBinding.matchesKey now take a KeyInput
+  - owo MouseDown callbacks now receive (Click, boolean) instead of (double, double, int)
+  - ButtonWidget.onPress() now requires the triggering AbstractInput
+
 2.0.0+1.21.8
 - Updated to Minecraft 1.21.8
 - Bumped Fabric API to 0.136.1 (owo-lib 0.12.23, Cloth Config 19.0.147, Mod Menu 15.0.2 unchanged — all native to 1.21.8)

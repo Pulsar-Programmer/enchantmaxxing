@@ -23,7 +23,7 @@ public class AnvilScreenHandlerMixin {
 
     @Inject(method = "onTakeOutput", at = @At("HEAD"))
     private void captureInput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
-        if (!player.getWorld().isClient()) return;
+        if (!player.getEntityWorld().isClient()) return;
         AnvilScreenHandler self = (AnvilScreenHandler)(Object)this;
         // Capture a copy before the method consumes the slot
         captured_old = self.slots.get(AnvilScreenHandler.INPUT_1_ID).getStack().copy();
@@ -31,7 +31,7 @@ public class AnvilScreenHandlerMixin {
 
     @Inject(method = "onTakeOutput", at = @At("RETURN"))
     private void onAnvil(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
-        if (!player.getWorld().isClient()) return;
+        if (!player.getEntityWorld().isClient()) return;
         if (captured_old == null || captured_old.isEmpty()) return;
         if (stack.isEmpty()) { captured_old = null; return; } //quick-move path: handled in ScreenHandlerMixin pre-mutation
 

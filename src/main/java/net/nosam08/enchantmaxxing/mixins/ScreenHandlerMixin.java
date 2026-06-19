@@ -22,7 +22,7 @@ public class ScreenHandlerMixin {
 
     @Inject(method = "onSlotClick", at = @At("HEAD"))
     private void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
-        if (!player.getWorld().isClient()) return;
+        if (!player.getEntityWorld().isClient()) return;
 
         ScreenHandler handler = (ScreenHandler)(Object)this;
 

@@ -22,6 +22,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
 import net.nosam08.enchantmaxxing.config.EnchantifyConfig;
 import net.nosam08.enchantmaxxing.emm.EnchantmaxBuilder;
@@ -37,27 +38,45 @@ public class EnchantifyClient implements ClientModInitializer {
     public static final String MOD_ID = "enchantify";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    /**
+     * Whether either shift key is currently held. Replaces vanilla's Screen.hasShiftDown(),
+     * which was removed in 1.21.9 (shift state now lives on per-event KeyInput records).
+     */
+    public static boolean hasShiftDown() {
+        var window = MinecraftClient.getInstance().getWindow();
+        return InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_LEFT_SHIFT)
+            || InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+    }
+
     public static EnchantifyConfig CONFIG = Filesystem.load_config();
+
+    /**
+     * Controls-screen category for this mod's keybinds. As of 1.21.9 KeyBinding takes a
+     * KeyBinding.Category (identified by an Identifier) instead of a translation-key String.
+     * Its label resolves to "key.category.enchantify.main" — see the lang file.
+     */
+    public static final KeyBinding.Category KEY_CATEGORY =
+        KeyBinding.Category.create(Identifier.of(MOD_ID, "main"));
 
     public static KeyBinding MAXXING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.enchantify.opengui",
         InputUtil.Type.KEYSYM, 
         GLFW.GLFW_KEY_X, 
-        "title.enchantify.config"
+        KEY_CATEGORY
     )); //does OWO Lib have something to make this better?
 
     public static KeyBinding ORDERING = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.enchantify.ordering",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_Y,
-        "title.enchantify.config"
+        KEY_CATEGORY
     ));
 
     public static KeyBinding GRAPH = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.enchantify.graph",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN, // unbound by default — assign it in Controls
-        "title.enchantify.config"
+        KEY_CATEGORY
     ));
 
     public static ArchetypesInsert GLOBAL_ARCHETYPES;
@@ -71,14 +90,14 @@ public class EnchantifyClient implements ClientModInitializer {
         // }
 
         ScreenEvents.BEFORE_INIT.register((client, _screen, scaledWidth, scaledHeight) -> {
-			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, key, scancode, modifiers) -> {
+			ScreenKeyboardEvents.afterKeyPress(_screen).register((screen, keyInput) -> {
                 if (screen instanceof net.minecraft.client.gui.screen.ChatScreen || screen instanceof net.minecraft.client.gui.screen.DeathScreen) {
                     return;
                 }
-                if (MAXXING.matchesKey(key, scancode)) {
+                if (MAXXING.matchesKey(keyInput)) {
                     on_emenu_open(client);
                 }
-                if (GRAPH.matchesKey(key, scancode)) {
+                if (GRAPH.matchesKey(keyInput)) {
                     on_graph_open(client);
                 }
             });

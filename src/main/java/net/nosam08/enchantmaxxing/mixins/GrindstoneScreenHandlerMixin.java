@@ -24,7 +24,7 @@ public class GrindstoneScreenHandlerMixin {
     @Inject(method = "onTakeItem", at = @At("HEAD"))
     private void onGrindOutputTaken(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
         // ACTIVE_TASKS is client-side state; only act there.
-        if (!player.getWorld().isClient()) return;
+        if (!player.getEntityWorld().isClient()) return;
 
         ScreenHandler handler = player.currentScreenHandler;
         if (!(handler instanceof GrindstoneScreenHandler grindstone)) return;

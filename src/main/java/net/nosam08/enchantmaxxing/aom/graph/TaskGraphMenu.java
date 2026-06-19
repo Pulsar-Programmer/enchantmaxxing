@@ -14,7 +14,6 @@ import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.nosam08.enchantmaxxing.aom.AnvilMenu;
@@ -53,7 +52,7 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
      * forward the horizontal axis here to avoid double-scrolling. */
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (this.h_scroll != null && Screen.hasShiftDown()) {
+        if (this.h_scroll != null && net.nosam08.enchantmaxxing.EnchantifyClient.hasShiftDown()) {
             this.h_scroll.onMouseScroll(mouseX, mouseY, horizontalAmount);
         }
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);

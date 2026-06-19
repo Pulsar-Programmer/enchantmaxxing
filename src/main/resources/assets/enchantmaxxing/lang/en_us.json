@@ -1,5 +1,6 @@
-{   
+{
     "title.enchantify.config": "FTT Configuration",
+    "key.category.enchantify.main": "FTT Configuration",
 
     "category.enchantify.general": "General",
     "option.enchantify.defaultX": "Max Out Items by Default",

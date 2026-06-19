@@ -22,7 +22,8 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Click;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvents;
@@ -49,7 +50,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (Screen.hasShiftDown()) {
+        if (EnchantifyClient.hasShiftDown()) {
             horizontal_scrollers.forEach(x -> {
                 x.onMouseScroll(mouseX, mouseY, horizontalAmount);
             });
@@ -194,9 +195,9 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             label.color(Color.ofArgb(0xFFFFFFFF)); // White
         });
         
-        label.mouseDown().subscribe((double mouseX, double mouseY, int button) -> {
+        label.mouseDown().subscribe((Click click, boolean dbl) -> {
             var key = k;
-            if (button == 0) { // Left click
+            if (click.button() == 0) { // Left click
                 Enchantips.ACTIVE_TASKS.remove(key);
                 net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
                 client.setScreen(null);
@@ -227,8 +228,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             label.color(Color.ofArgb(0xFFFFFFFF)); // White
         });
 
-        label.mouseDown().subscribe((double mouseX, double mouseY, int button) -> {
-            if (button == 0) { // Left click
+        label.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if (click.button() == 0) { // Left click
                 client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
                 client.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 return true;

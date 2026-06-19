@@ -28,6 +28,8 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -101,7 +103,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (Screen.hasShiftDown()) {
+        if (EnchantifyClient.hasShiftDown()) {
             horizontal_scrollers.forEach(x -> {
                 x.onMouseScroll(mouseX, mouseY, horizontalAmount);
             });
@@ -380,7 +382,9 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
                 var temp_select_btn = selected_level_button;
                 selected_level_button = btn;
                 var first_lvl_btn = ((ButtonComponent)((ParentComponent)btn.parent().children().get(1)).children().get(0));
-                first_lvl_btn.onPress();
+                // 1.21.9: ButtonWidget#onPress needs the triggering input; owo only forwards to its
+                // press consumer, so a synthetic left-click stands in for a programmatic press.
+                first_lvl_btn.onPress(new MouseInput(0, 0));
                 selected_level_button = temp_select_btn;
             }
             ///Add new selection.
@@ -420,8 +424,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         profile_label.cursorStyle(CursorStyle.HAND);
         profile_label.margins(Insets.horizontal(6));
         profile_label.tooltip(Text.literal("Select Profile"));
-        profile_label.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if(button == 0){
+        profile_label.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if(click.button() == 0){
                 toggle_dropdown();
                 return true;
             }
@@ -435,8 +439,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         plus.tooltip(Text.literal("Add Profile"));
         plus.mouseEnter().subscribe(() -> plus.color(Color.ofArgb(0xFF80FF80)));
         plus.mouseLeave().subscribe(() -> plus.color(Color.ofArgb(0xFF40FF40)));
-        plus.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if(button == 0){
+        plus.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if(click.button() == 0){
                 start_naming();
                 return true;
             }
@@ -451,8 +455,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         save.tooltip(Text.literal("Save Profile"));
         save.mouseEnter().subscribe(() -> save.color(Color.ofArgb(0xFF80C8FF)));
         save.mouseLeave().subscribe(() -> save.color(Color.ofArgb(0xFF55AAFF)));
-        save.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if(button == 0){
+        save.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if(click.button() == 0){
                 overwrite_active_profile();
                 return true;
             }
@@ -469,8 +473,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         bar.padding(Insets.of(4, 4, 2, 4));
         bar.surface(Surface.DARK_PANEL);
         // Clicking anywhere in the bar (not just the name text) pulls up the dropdown.
-        bar.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if(button == 0){
+        bar.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if(click.button() == 0){
                 toggle_dropdown();
                 return true;
             }
@@ -555,8 +559,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             trash.tooltip(Text.literal("Delete Profile"));
             trash.mouseEnter().subscribe(() -> trash.color(Color.ofArgb(0xFFFF0000)));
             trash.mouseLeave().subscribe(() -> trash.color(Color.ofArgb(0xFFFF5555)));
-            trash.mouseDown().subscribe((mouseX, mouseY, button) -> {
-                if(button == 0){
+            trash.mouseDown().subscribe((Click click, boolean dbl) -> {
+                if(click.button() == 0){
                     delete_profile(name);
                     return true;
                 }
@@ -584,8 +588,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
         label.margins(Insets.horizontal(2));
-        label.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if(button == 0){
+        label.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if(click.button() == 0){
                 switch(kind){
                     case NONE -> select_none();
                     case DEFAULT -> select_default();
@@ -614,8 +618,8 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
         confirm.cursorStyle(CursorStyle.HAND);
         confirm.margins(Insets.horizontal(4));
         confirm.tooltip(Text.literal("Create Profile"));
-        confirm.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if(button == 0){
+        confirm.mouseDown().subscribe((Click click, boolean dbl) -> {
+            if(click.button() == 0){
                 confirm_name(box.getText());
                 return true;
             }
@@ -749,7 +753,7 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
             return; // Item can't reach this level (e.g. already higher) — skip it.
         }
         selected_level_button = slot.button;
-        ((ButtonComponent) levels.get(idx)).onPress();
+        ((ButtonComponent) levels.get(idx)).onPress(new MouseInput(0, 0)); // synthetic left-click (see above)
     }
 
     /** Resets every currently-selected enchantment back to its base level (i.e. deselects all). */

@@ -3,7 +3,7 @@ package net.nosam08.enchantmaxxing.emm.component_data;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.screen.Screen;
+import net.nosam08.enchantmaxxing.EnchantifyClient;
 
 public class BucketGroupScroller<C extends Component> extends ScrollContainer<C> {
 
@@ -20,7 +20,7 @@ public class BucketGroupScroller<C extends Component> extends ScrollContainer<C>
 
     @Override
     public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
-        if (!Screen.hasShiftDown()) {
+        if (!EnchantifyClient.hasShiftDown()) {
             return false;
         }
         return super.onMouseScroll(mouseX, mouseY, amount);
