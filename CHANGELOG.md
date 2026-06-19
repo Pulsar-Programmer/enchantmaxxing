@@ -1,3 +1,8 @@
+2.0.0+1.21.10
+- Updated to Minecraft 1.21.10
+- Bumped Fabric API to 0.138.4 (owo-lib 0.12.24, Cloth Config 20.0.149, Mod Menu 16.0.1 unchanged — all 1.21.10 compatible)
+- No source changes needed
+
 2.0.0+1.21.9
 - Updated to Minecraft 1.21.9
 - Bumped dependencies: Fabric API 0.134.1, Cloth Config 20.0.149, owo-lib 0.12.24, Mod Menu 16.0.1
