@@ -26,7 +26,7 @@ jobs:
       - name: Publish
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          modrinth-id: modrinth.com/mod/ftt
+          modrinth-id: ftt
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 1580266
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
