@@ -184,7 +184,8 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         label.color(Color.ofArgb(0xFFFFFFFF)); // White
         label.shadow(true);
         label.cursorStyle(CursorStyle.HAND);
-        
+        label.tooltip(Text.literal("Cancel Task"));
+
         label.mouseEnter().subscribe(() -> {
             label.color(Color.ofArgb(0xFFFF0000)); // Red
         });
@@ -243,14 +244,16 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         var player = MinecraftClient.getInstance().player;
         int playerLevel = player != null ? player.experienceLevel : 0;
 
-        // Determine color based on whether player can afford it
-        int color = (playerLevel >= cost ? 0x80FF20 : 0xFF6060);
+        // Determine color based on whether player can afford it.
+        // Note the leading 0xFF alpha byte — without it the color is fully transparent
+        // and the cost number renders invisibly.
+        int color = (playerLevel >= cost ? 0xFF80FF20 : 0xFFFF6060);
 
         LabelComponent label = Components.label(Text.literal(cost.toString()));
-        label.color(Color.ofArgb(color)); // White
+        label.color(Color.ofArgb(color)); // green if affordable, red if not
         label.shadow(true);
-        label.tooltip(Text.literal("Cancel Task"));
-        
+        label.tooltip(Text.literal("Total Level Cost"));
+
         return label;
     }
     
