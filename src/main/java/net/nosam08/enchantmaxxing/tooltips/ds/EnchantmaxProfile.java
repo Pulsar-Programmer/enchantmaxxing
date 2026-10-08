@@ -6,7 +6,7 @@ import java.util.HashMap;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.core.Holder;
-import net.minecraft.util.Tuple;
+import net.nosam08.enchantmaxxing.Tuple;
 import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
 
 public class EnchantmaxProfile {

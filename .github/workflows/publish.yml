@@ -49,7 +49,7 @@ jobs:
           files: build/libs/!(*-sources).jar
           loaders: fabric
           # game-versions and dependencies are inferred from fabric.mod.json
-          # (minecraft ">=26.1 <26.2"), so the supported-versions list lives in
+          # (minecraft ">=26.2 <26.3"), so the supported-versions list lives in
           # exactly one place instead of being duplicated here.
           version-type: release
           changelog-file: RELEASE_NOTES.md

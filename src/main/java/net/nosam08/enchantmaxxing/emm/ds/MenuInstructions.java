@@ -3,7 +3,7 @@ package net.nosam08.enchantmaxxing.emm.ds;
 import java.util.ArrayList;
 
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.util.Tuple;
+import net.nosam08.enchantmaxxing.Tuple;
 
 public class MenuInstructions {
     public ArrayList<ArrayList<ArrayList<Tuple<Enchantment, Integer>>>> rows;

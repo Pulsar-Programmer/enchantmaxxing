@@ -140,7 +140,7 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** This is called when the Anvil Menu Key is pressed. */
     public static void on_amenu_open(Minecraft client){
-        client.setScreen(AnvilMenu.start());
+        client.gui.setScreen(AnvilMenu.start());
     }
 
     /** Opens the order graph for the hovered item, if it has an active task. */
@@ -158,10 +158,10 @@ public class EnchantifyClient implements ClientModInitializer {
         if(order == null){
             // Still computing on the background thread — tell the player and bail; the result is
             // cached, so pressing the key again in a moment will open the graph instantly.
-            client.gui.setOverlayMessage(net.minecraft.network.chat.Component.literal("Calculating order…"), false);
+            client.gui.hud.setOverlayMessage(net.minecraft.network.chat.Component.literal("Calculating order…"), false);
             return;
         }
-        client.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
+        client.gui.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
     }
 
     /** This is called when the Enchantmaxxing Menu Key is pressed. */
@@ -189,7 +189,7 @@ public class EnchantifyClient implements ClientModInitializer {
             //     Enchantify.LOGGER.info(bucketGroup.display());
             // }
 
-            client.setScreen(EnchantmaxMenu.direct(item, instructions));
+            client.gui.setScreen(EnchantmaxMenu.direct(item, instructions));
         } else {
             var instructions = EnchantmaxBuilder.build_afterfuse(item);
             if(instructions.rows.isEmpty()){
@@ -204,7 +204,7 @@ public class EnchantifyClient implements ClientModInitializer {
 
     /** Detects the item that is hovered. */
     public static ItemStack detect_hovered_item(Minecraft client){
-        if(client.screen != null && client.screen instanceof AbstractContainerScreen<?> handledScreen){
+        if(client.gui.screen() instanceof AbstractContainerScreen<?> handledScreen){
             var cursor = handledScreen.getMenu().getCarried();
             
             if(!cursor.isEmpty()){

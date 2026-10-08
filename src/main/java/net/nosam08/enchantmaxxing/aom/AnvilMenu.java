@@ -67,7 +67,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
         // If a background solve finished, fewer tasks are still loading — rebuild so the freshly
         // computed order replaces its "Calculating…" row.
         if (loading_count > 0 && still_loading() < loading_count && minecraft != null) {
-            minecraft.setScreen(AnvilMenu.start());
+            minecraft.gui.setScreen(AnvilMenu.start());
         }
     }
 
@@ -200,7 +200,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
             if (click.button() == 0) { // Left click
                 Enchantips.ACTIVE_TASKS.remove(key);
                 net.nosam08.enchantmaxxing.profiles.ProfileStore.save();
-                minecraft.setScreen(null);
+                minecraft.gui.setScreen(null);
                 minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 // TODO maybe also add a pop up to prevent quick task losses
                 return true;
@@ -230,7 +230,7 @@ public class AnvilMenu extends BaseOwoScreen<FlowLayout>  {
 
         label.mouseDown().subscribe((MouseButtonEvent click, boolean dbl) -> {
             if (click.button() == 0) { // Left click
-                minecraft.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
+                minecraft.gui.setScreen(new net.nosam08.enchantmaxxing.aom.graph.TaskGraphMenu(order.object, order));
                 minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
                 return true;
             }

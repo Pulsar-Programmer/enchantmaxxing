@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.util.Tuple;
+import net.nosam08.enchantmaxxing.Tuple;
 import net.nosam08.enchantmaxxing.emm.ds.ArchetypesInsert;
 import net.nosam08.enchantmaxxing.emm.ds.BucketGroup;
 import net.nosam08.enchantmaxxing.emm.ds.ComparePool;

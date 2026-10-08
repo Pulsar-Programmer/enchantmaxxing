@@ -36,7 +36,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Tuple;
+import net.nosam08.enchantmaxxing.Tuple;
 import net.nosam08.enchantmaxxing.EnchantifyClient;
 import net.nosam08.enchantmaxxing.emm.component_data.BucketGroupScroller;
 import net.nosam08.enchantmaxxing.emm.component_data.EnchantmentButton;
@@ -176,12 +176,12 @@ public class EnchantmaxMenu extends BaseOwoScreen<FlowLayout> {
     /** Builds the bottom menu specifying the options. */
     public UIComponent bottom_menu(){
         var back = UIComponents.button(Component.translatable("option.enchantify.enchantmax.back"), button -> {
-            minecraft.setScreen(null);
+            minecraft.gui.setScreen(null);
         }).verticalSizing(Sizing.fixed(20));
 
         var apply = UIComponents.button(Component.translatable("option.enchantify.enchantmax.apply"), button -> {
             minecraft.player.playSound(EnchantifyClient.CONFIG.anvil_apply_sound ? SoundEvents.ANVIL_USE : SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
-            minecraft.setScreen(null);
+            minecraft.gui.setScreen(null);
             var profile = new EnchantmaxProfile(selected_enchantments);
             Enchantips.start_tooltips(item, profile);
         }).verticalSizing(Sizing.fixed(20));

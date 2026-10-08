@@ -17,7 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
+import net.nosam08.enchantmaxxing.Tuple;
 import net.nosam08.enchantmaxxing.aom.ds.OrderString;
 import net.nosam08.enchantmaxxing.aom.ds.SimEnchantment;
 import net.nosam08.enchantmaxxing.aom.ds.SimItem;

@@ -122,7 +122,7 @@ public class TaskGraphMenu extends BaseOwoScreen<FlowLayout> {
     @Override
     public void onClose() {
         if (this.minecraft != null) {
-            this.minecraft.setScreen(AnvilMenu.start());
+            this.minecraft.gui.setScreen(AnvilMenu.start());
         }
     }
 }

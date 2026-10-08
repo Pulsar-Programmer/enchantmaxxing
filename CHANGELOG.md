@@ -1,3 +1,12 @@
+2.1.0+26.2
+- Updated to Minecraft 26.2 (fabric.mod.json now declares `minecraft ">=26.2 <26.3"`; the 26.1 patch line lives on the `26.1.x` branch)
+- Bumped all dependencies to the latest that support 26.2: Fabric API 0.161.0+26.2, WalksyLib 1.0.12+26.2, owo-lib 0.13.1+26.2,
+  Mod Menu 20.0.3; Fabric Loader 0.19.5; Loom 1.18.3 (which needs Gradle 9.7+, so the wrapper is now 9.8.1)
+- Adapted to 26.2 API moves:
+  - `Minecraft#setScreen` / `Minecraft.screen` moved onto `Gui` (`minecraft.gui.setScreen(...)`, `minecraft.gui.screen()`)
+  - The action-bar message moved from `Gui` to the new `Hud` (`minecraft.gui.hud.setOverlayMessage(...)`)
+  - `net.minecraft.util.Tuple` was removed; replaced with an identical in-mod `Tuple` class
+
 2.1.0+26.1.x
 - Switched the config library from Cloth Config to WalksyLib (1.0.11+26.1, pulled from the Modrinth maven)
   - All existing config options are unchanged: Max Out Items by Default, Enchantment Tooltip Hover Color,
